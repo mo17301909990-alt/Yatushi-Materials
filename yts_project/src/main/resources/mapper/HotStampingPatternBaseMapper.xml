@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.HotStampingPatternBaseMapper">
+
+    <resultMap id="patternBaseMap" type="com.it.yts_project.model.HotStampingPatternBase">
+        <id property="id" column="id"/>
+        <result property="optionName" column="option_name"/>
+        <result property="patternType" column="pattern_type"/>
+        <result property="lineThicknessMin" column="line_thickness_min"/>
+        <result property="lineThicknessMax" column="line_thickness_max"/>
+        <result property="solidAreaMin" column="solid_area_min"/>
+        <result property="solidAreaMax" column="solid_area_max"/>
+        <result property="isActive" column="is_active"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <select id="getByIds" resultMap="patternBaseMap">
+        SELECT id, option_name, pattern_type,
+               line_thickness_min, line_thickness_max,
+               solid_area_min, solid_area_max,
+               is_active, sort_order, created_at, updated_at
+        FROM hot_stamping_pattern_base
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND is_active = true
+        ORDER BY sort_order ASC, id ASC
+    </select>
+
+</mapper>
+
+

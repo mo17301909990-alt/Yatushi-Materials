@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.ProductMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="ProductResultMap" type="com.it.yts_project.model.Product">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="modelNumber" column="model_number"/>
+        <result property="materialNumber" column="material_number"/>
+        <result property="hotStampingPaperType" column="hot_stamping_paper_type"/>
+        <result property="descirption" column="descirption"/>
+        <result property="fengdu" column="fengdu"/>
+        <result property="paizi" column="paizi"/>
+        <result property="gaishu" column="gaishu"/>
+        <result property="danwei" column="danwei"/>
+        <result property="isChangyong" column="is_changyong"/>
+        <result property="isJiehuo" column="is_jiehuo"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <!-- 查询所有产品 -->
+    <select id="findAll" resultMap="ProductResultMap">
+        SELECT * FROM products ORDER BY id DESC
+    </select>
+
+    <!-- 根据ID查询产品 -->
+    <select id="findById" resultMap="ProductResultMap">
+        SELECT * FROM products WHERE id = #{id}
+    </select>
+
+    <!-- 根据燙金紙系列查询 -->
+    <select id="findByName" resultMap="ProductResultMap">
+        SELECT * FROM products WHERE name LIKE CONCAT('%', #{name}, '%') ORDER BY id DESC
+    </select>
+
+    <!-- 根据型号查询 -->
+    <select id="findByModelNumber" resultMap="ProductResultMap">
+        SELECT * FROM products WHERE model_number LIKE CONCAT('%', #{modelNumber}, '%') ORDER BY id DESC
+    </select>
+
+    <!-- 根据物料编号查询 -->
+    <select id="findByMaterialNumber" resultMap="ProductResultMap">
+        SELECT * FROM products WHERE material_number LIKE CONCAT('%', #{materialNumber}, '%') ORDER BY id DESC
+    </select>
+
+    <!-- 根据烫金纸张类型查询 -->
+    <select id="findByHotStampingPaperType" resultMap="ProductResultMap">
+        SELECT * FROM products WHERE hot_stamping_paper_type = #{hotStampingPaperType} ORDER BY id DESC
+    </select>
+
+    <!-- 搜索产品 -->
+    <select id="searchProducts" resultMap="ProductResultMap">
+        SELECT * FROM products 
+        WHERE name LIKE CONCAT('%', #{keyword}, '%') 
+           OR model_number LIKE CONCAT('%', #{keyword}, '%')
+           OR material_number LIKE CONCAT('%', #{keyword}, '%')
+           OR hot_stamping_paper_type LIKE CONCAT('%', #{keyword}, '%')
+           OR descirption LIKE CONCAT('%', #{keyword}, '%')
+           OR fengdu LIKE CONCAT('%', #{keyword}, '%')
+           OR paizi LIKE CONCAT('%', #{keyword}, '%')
+           OR gaishu LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY id DESC
+    </select>
+
+    <!-- 插入产品 -->
+    <insert id="insert" parameterType="com.it.yts_project.model.Product" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO products (name, model_number, material_number, hot_stamping_paper_type, descirption, fengdu, paizi, gaishu, danwei, is_changyong, is_jiehuo, status)
+        VALUES (#{name}, #{modelNumber}, #{materialNumber}, #{hotStampingPaperType}, #{descirption}, #{fengdu}, #{paizi}, #{gaishu}, #{danwei}, #{isChangyong}, #{isJiehuo}, COALESCE(#{status}, '可用'))
+    </insert>
+
+    <!-- 更新产品 -->
+    <update id="update" parameterType="com.it.yts_project.model.Product">
+        UPDATE products SET
+            name = #{name},
+            model_number = #{modelNumber},
+            material_number = #{materialNumber},
+            hot_stamping_paper_type = #{hotStampingPaperType},
+            descirption = #{descirption},
+            fengdu = #{fengdu},
+            paizi = #{paizi},
+            gaishu = #{gaishu},
+            danwei = #{danwei},
+            is_changyong = #{isChangyong},
+            is_jiehuo = #{isJiehuo},
+            status = COALESCE(#{status}, '可用')
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除产品 -->
+    <delete id="deleteById">
+        DELETE FROM products WHERE id = #{id}
+    </delete>
+
+    <!-- 获取所有烫金纸张类型选项 -->
+    <select id="getHotStampingPaperTypeOptions" resultType="string">
+        SELECT DISTINCT hot_stamping_paper_type FROM products WHERE hot_stamping_paper_type IS NOT NULL AND hot_stamping_paper_type != '' ORDER BY hot_stamping_paper_type
+    </select>
+
+    <!-- 获取所有单位选项 -->
+    <select id="getDanweiOptions" resultType="string">
+        SELECT DISTINCT danwei FROM products WHERE danwei IS NOT NULL AND danwei != '' ORDER BY danwei
+    </select>
+
+    <!-- 获取所有牌子选项 -->
+    <select id="getPaiziOptions" resultType="string">
+        SELECT DISTINCT paizi FROM products WHERE paizi IS NOT NULL AND paizi != '' ORDER BY paizi
+    </select>
+
+    <!-- 获取所有封度选项 -->
+    <select id="getFengduOptions" resultType="string">
+        SELECT DISTINCT fengdu FROM products WHERE fengdu IS NOT NULL AND fengdu != '' ORDER BY fengdu
+    </select>
+
+    <!-- 获取所有产品名称 -->
+    <select id="getAllProductNames" resultType="string">
+        SELECT DISTINCT name FROM products WHERE name IS NOT NULL AND name != '' ORDER BY name
+    </select>
+    <select id="findByModelNumberAndName" resultType="com.it.yts_project.model.Product">
+        SELECT *  FROM products WHERE model_number = #{modelNumber} AND name = #{name}
+    </select>
+    
+    <select id="findByModelNumberAndNameAndPaperType" resultType="com.it.yts_project.model.Product">
+        SELECT * FROM products 
+        WHERE model_number = #{modelNumber} 
+        AND name = #{name}
+        <choose>
+            <when test="paperType == null or paperType == ''">
+                AND (hot_stamping_paper_type IS NULL OR hot_stamping_paper_type = '')
+            </when>
+            <otherwise>
+                AND hot_stamping_paper_type = #{paperType}
+            </otherwise>
+        </choose>
+    </select>
+
+</mapper>

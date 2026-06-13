@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.ReferenceWritingFunctionMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="ReferenceWritingFunctionResultMap" type="com.it.yts_project.model.ReferenceWritingFunction">
+        <id column="id" property="id"/>
+        <result column="category" property="category"/>
+        <result column="detail_name" property="detailName"/>
+        <result column="display_order" property="displayOrder"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <!-- 查询所有 -->
+    <select id="findAll" resultMap="ReferenceWritingFunctionResultMap">
+        SELECT id, category, detail_name, display_order, created_at, updated_at
+        FROM reference_writing_function
+        ORDER BY display_order ASC, id ASC
+    </select>
+
+    <!-- 根据ID查询 -->
+    <select id="findById" resultMap="ReferenceWritingFunctionResultMap">
+        SELECT id, category, detail_name, display_order, created_at, updated_at
+        FROM reference_writing_function
+        WHERE id = #{id}
+    </select>
+
+    <!-- 根据分类查询 -->
+    <select id="findByCategory" resultMap="ReferenceWritingFunctionResultMap">
+        SELECT id, category, detail_name, display_order, created_at, updated_at
+        FROM reference_writing_function
+        WHERE category = #{category}
+        ORDER BY display_order ASC, id ASC
+    </select>
+
+    <!-- 插入 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO reference_writing_function (
+            category, detail_name, display_order, created_at, updated_at
+        ) VALUES (
+            #{category}, #{detailName}, #{displayOrder}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!-- 更新 -->
+    <update id="update">
+        UPDATE reference_writing_function
+        SET category = #{category},
+            detail_name = #{detailName},
+            display_order = #{displayOrder},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除 -->
+    <delete id="deleteById">
+        DELETE FROM reference_writing_function WHERE id = #{id}
+    </delete>
+
+</mapper>

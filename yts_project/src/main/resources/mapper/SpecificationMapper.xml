@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.SpecificationMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="SpecificationResultMap" type="com.it.yts_project.model.Specification">
+        <id property="id" column="id"/>
+        <result property="projectId" column="project_id"/>
+        <result property="color" column="color"/>
+        <result property="size" column="size"/>
+        <result property="tightness" column="tightness"/>
+        <result property="temperatureRange" column="temperature_range"/>
+        <result property="performance" column="performance"/>
+    </resultMap>
+
+    <!-- 根据产品ID查询规格 -->
+    <select id="findByProjectId" resultMap="SpecificationResultMap">
+        SELECT * FROM specifications WHERE project_id = #{projectId} ORDER BY id DESC
+    </select>
+
+    <!-- 根据ID查询规格 -->
+    <select id="findById" resultMap="SpecificationResultMap">
+        SELECT * FROM specifications WHERE id = #{id}
+    </select>
+
+    <!-- 插入规格 -->
+    <insert id="insert" parameterType="com.it.yts_project.model.Specification" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO specifications (project_id, color, size, tightness, temperature_range, performance)
+        VALUES (#{projectId}, #{color}, #{size}, #{tightness}, #{temperatureRange}, #{performance})
+    </insert>
+
+    <!-- 更新规格 -->
+    <update id="update" parameterType="com.it.yts_project.model.Specification">
+        UPDATE specifications SET
+            project_id = #{projectId},
+            color = #{color},
+            size = #{size},
+            tightness = #{tightness},
+            temperature_range = #{temperatureRange},
+            performance = #{performance}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除规格 -->
+    <delete id="deleteById">
+        DELETE FROM specifications WHERE id = #{id}
+    </delete>
+
+    <!-- 根据产品ID删除所有规格 -->
+    <delete id="deleteByProjectId">
+        DELETE FROM specifications WHERE project_id = #{projectId}
+    </delete>
+
+    <!-- 获取所有颜色选项 -->
+    <select id="getColorOptions" resultType="string">
+        SELECT DISTINCT color FROM specifications WHERE color IS NOT NULL AND color != '' ORDER BY color
+    </select>
+
+    <!-- 获取所有尺寸选项 -->
+    <select id="getSizeOptions" resultType="string">
+        SELECT DISTINCT size FROM specifications WHERE size IS NOT NULL AND size != '' ORDER BY size
+    </select>
+
+    <!-- 获取所有紧密度选项 -->
+    <select id="getTightnessOptions" resultType="string">
+        SELECT DISTINCT tightness FROM specifications WHERE tightness IS NOT NULL AND tightness != '' ORDER BY tightness
+    </select>
+
+    <!-- 获取所有温度范围选项 -->
+    <select id="getTemperatureRangeOptions" resultType="string">
+        SELECT DISTINCT temperature_range FROM specifications WHERE temperature_range IS NOT NULL AND temperature_range != '' ORDER BY temperature_range
+    </select>
+
+</mapper>

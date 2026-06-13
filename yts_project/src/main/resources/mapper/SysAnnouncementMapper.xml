@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.SysAnnouncementMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="SysAnnouncementResultMap" type="com.it.yts_project.model.SysAnnouncement">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="msgContent" column="msg_content"/>
+        <result property="sender" column="sender"/>
+        <result property="priority" column="priority"/>
+        <result property="msgCategory" column="msg_category"/>
+        <result property="msgType" column="msg_type"/>
+        <result property="sendStatus" column="send_status"/>
+        <result property="sendTime" column="send_time"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="busType" column="bus_type"/>
+        <result property="busId" column="bus_id"/>
+        <result property="userIds" column="user_ids"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="readFlag" column="read_flag"/>
+        <result property="readTime" column="read_time"/>
+    </resultMap>
+
+    <!-- 插入消息 -->
+    <insert id="insert" parameterType="com.it.yts_project.model.SysAnnouncement">
+        INSERT INTO sys_announcement (
+            id, title, msg_content, sender, priority, msg_category, msg_type,
+            send_status, send_time, start_time, end_time,
+            bus_type, bus_id, user_ids,
+            create_by, create_time, update_by, update_time
+        ) VALUES (
+            #{id}, #{title}, #{msgContent}, #{sender}, #{priority}, #{msgCategory}, #{msgType},
+            COALESCE(#{sendStatus}, 0),
+            #{sendTime}, #{startTime}, #{endTime},
+            #{busType}, #{busId}, #{userIds},
+            #{createBy}, COALESCE(#{createTime}, CURRENT_TIMESTAMP),
+            #{updateBy}, COALESCE(#{updateTime}, CURRENT_TIMESTAMP)
+        )
+    </insert>
+
+    <!-- 根据ID查询消息 -->
+    <select id="selectById" resultMap="SysAnnouncementResultMap">
+        SELECT * FROM sys_announcement WHERE id = #{id}
+    </select>
+
+    <!-- 更新消息 -->
+    <update id="updateById" parameterType="com.it.yts_project.model.SysAnnouncement">
+        UPDATE sys_announcement SET
+            title = #{title},
+            msg_content = #{msgContent},
+            sender = #{sender},
+            priority = #{priority},
+            msg_category = #{msgCategory},
+            msg_type = #{msgType},
+            send_status = #{sendStatus},
+            send_time = #{sendTime},
+            start_time = #{startTime},
+            end_time = #{endTime},
+            bus_type = #{busType},
+            bus_id = #{busId},
+            user_ids = #{userIds},
+            update_by = #{updateBy},
+            update_time = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除消息 -->
+    <delete id="deleteById">
+        DELETE FROM sys_announcement WHERE id = #{id}
+    </delete>
+
+    <!-- 查询消息列表（管理员） -->
+    <select id="selectList" resultMap="SysAnnouncementResultMap">
+        SELECT * FROM sys_announcement
+        <where>
+            <if test="title != null and title != ''">
+                AND title LIKE '%' || #{title} || '%'
+            </if>
+            <if test="msgCategory != null and msgCategory != ''">
+                AND msg_category = #{msgCategory}
+            </if>
+            <if test="sendStatus != null">
+                AND send_status = #{sendStatus}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+        <if test="offset != null and limit != null">
+            LIMIT #{limit} OFFSET #{offset}
+        </if>
+    </select>
+
+    <!-- 统计消息总数（管理员） -->
+    <select id="countList" resultType="int">
+        SELECT COUNT(*) FROM sys_announcement
+        <where>
+            <if test="title != null and title != ''">
+                AND title LIKE '%' || #{title} || '%'
+            </if>
+            <if test="msgCategory != null and msgCategory != ''">
+                AND msg_category = #{msgCategory}
+            </if>
+            <if test="sendStatus != null">
+                AND send_status = #{sendStatus}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询用户消息列表
+         消息类型：
+           - 通知公告（msgCategory='1'）：需要派发记录，使用INNER JOIN
+           - 系统消息（msgCategory='2'）：需要派发记录，使用INNER JOIN
+         发送范围：
+           - ALL - 全体用户
+           - USER - 指定用户
+         发布状态：
+           - 1 - 已发布
+         注意：所有消息类型都需要创建 sys_announcement_send 记录以跟踪读取状态
+    -->
+    <select id="selectListByUser" resultMap="SysAnnouncementResultMap">
+        SELECT 
+            a.*,
+            <!-- 所有消息类型都返回 read_flag 和 read_time -->
+            COALESCE(s.read_flag, 0) as read_flag,
+            s.read_time
+        FROM sys_announcement a
+        INNER JOIN sys_announcement_send s ON a.id = s.annt_id AND s.user_id = #{userId}
+        WHERE a.send_status = 1
+          AND (a.start_time IS NULL OR a.start_time &lt;= CURRENT_TIMESTAMP)
+          AND (a.end_time IS NULL OR a.end_time &gt;= CURRENT_TIMESTAMP)
+          <if test="msgCategory != null and msgCategory != ''">
+            AND a.msg_category = #{msgCategory}
+          </if>
+          <!-- readFlag 筛选：支持所有消息类型 -->
+          <if test="readFlag != null">
+            AND s.read_flag = #{readFlag}
+          </if>
+          <!-- 时间筛选：按创建时间筛选 -->
+          <if test="startTime != null and startTime != ''">
+            AND a.create_time &gt;= #{startTime}::timestamp
+          </if>
+          <if test="endTime != null and endTime != ''">
+            AND a.create_time &lt;= (#{endTime}::timestamp + INTERVAL '1 day')
+          </if>
+        ORDER BY a.create_time DESC
+        <if test="offset != null and limit != null">
+            LIMIT #{limit} OFFSET #{offset}
+        </if>
+    </select>
+
+    <!-- 统计用户消息总数 -->
+    <select id="countListByUser" resultType="int">
+        SELECT COUNT(*)
+        FROM sys_announcement a
+        INNER JOIN sys_announcement_send s ON a.id = s.annt_id AND s.user_id = #{userId}
+        WHERE a.send_status = 1
+          AND (a.start_time IS NULL OR a.start_time &lt;= CURRENT_TIMESTAMP)
+          AND (a.end_time IS NULL OR a.end_time &gt;= CURRENT_TIMESTAMP)
+          <if test="msgCategory != null and msgCategory != ''">
+            AND a.msg_category = #{msgCategory}
+          </if>
+          <!-- readFlag 筛选：支持所有消息类型 -->
+          <if test="readFlag != null">
+            AND s.read_flag = #{readFlag}
+          </if>
+          <!-- 时间筛选：按创建时间筛选 -->
+          <if test="startTime != null and startTime != ''">
+            AND a.create_time &gt;= #{startTime}::timestamp
+          </if>
+          <if test="endTime != null and endTime != ''">
+            AND a.create_time &lt;= (#{endTime}::timestamp + INTERVAL '1 day')
+          </if>
+    </select>
+
+    <!-- 查询所有活跃用户ID（用于发布给全体用户） -->
+    <select id="selectAllActiveUserIds" resultType="int">
+        SELECT id FROM users WHERE is_active = true
+    </select>
+
+</mapper>
+

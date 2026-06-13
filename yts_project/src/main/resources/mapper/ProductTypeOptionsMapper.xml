@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.ProductTypeOptionsMapper">
+    
+    <resultMap id="productTypeOptionsMap" type="com.it.yts_project.model.ProductTypeOptions">
+        <id property="id" column="id"/>
+        <result property="productName" column="product_name"/>
+        <result property="displayOrder" column="display_order"/>
+        <result property="isActive" column="is_active"/>
+        <result property="description" column="description"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+    
+    <select id="getAllActiveOptions" resultMap="productTypeOptionsMap">
+        SELECT 
+            id, product_name, display_order, is_active, 
+            description, created_at, updated_at
+        FROM product_type_options 
+        WHERE is_active = true
+        ORDER BY display_order ASC, id ASC
+    </select>
+    
+    <select id="getById" resultMap="productTypeOptionsMap">
+        SELECT 
+            id, product_name, display_order, is_active, 
+            description, created_at, updated_at
+        FROM product_type_options 
+        WHERE id = #{id}
+    </select>
+    
+    <select id="getAllOptions" resultMap="productTypeOptionsMap">
+        SELECT 
+            id, product_name, display_order, is_active, 
+            description, created_at, updated_at
+        FROM product_type_options 
+        ORDER BY display_order ASC, id ASC
+    </select>
+    
+    <insert id="insert" parameterType="com.it.yts_project.model.ProductTypeOptions" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO product_type_options (
+            product_name, display_order, is_active, description, created_at, updated_at
+        ) VALUES (
+            #{productName}, #{displayOrder}, #{isActive}, #{description}, 
+            NOW(), NOW()
+        )
+    </insert>
+    
+    <update id="update" parameterType="com.it.yts_project.model.ProductTypeOptions">
+        UPDATE product_type_options SET
+            product_name = #{productName},
+            display_order = #{displayOrder},
+            is_active = #{isActive},
+            description = #{description},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+    
+    <delete id="deleteById">
+        DELETE FROM product_type_options WHERE id = #{id}
+    </delete>
+    
+</mapper>

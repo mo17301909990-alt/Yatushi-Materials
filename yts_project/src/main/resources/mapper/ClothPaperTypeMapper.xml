@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.ClothPaperTypeMapper">
+
+    <!-- 获取所有激活的布料纸类型 -->
+    <select id="getAllActiveClothPaperTypes" resultType="com.it.yts_project.dto.ClothPaperTypeDTO">
+        SELECT 
+            id,
+            type_name as typeName,
+            category,
+            sort_order as sortOrder,
+            is_active as isActive,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM cloth_paper_types 
+        WHERE is_active = true 
+        ORDER BY sort_order ASC, id ASC
+    </select>
+    
+    <!-- 获取所有布料纸类型（包括未激活的） -->
+    <select id="getAllClothPaperTypes" resultType="com.it.yts_project.dto.ClothPaperTypeDTO">
+        SELECT 
+            id,
+            type_name as typeName,
+            category,
+            sort_order as sortOrder,
+            is_active as isActive,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM cloth_paper_types 
+        ORDER BY sort_order ASC, id ASC
+    </select>
+    
+    <!-- 根据ID获取布料纸类型 -->
+    <select id="getById" resultType="com.it.yts_project.dto.ClothPaperTypeDTO">
+        SELECT 
+            id,
+            type_name as typeName,
+            category,
+            sort_order as sortOrder,
+            is_active as isActive,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM cloth_paper_types 
+        WHERE id = #{id}
+    </select>
+    
+    <!-- 根据分类获取布料纸类型 -->
+    <select id="getByCategory" resultType="com.it.yts_project.dto.ClothPaperTypeDTO">
+        SELECT 
+            id,
+            type_name as typeName,
+            category,
+            sort_order as sortOrder,
+            is_active as isActive,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM cloth_paper_types 
+        WHERE category = #{category}
+        ORDER BY sort_order ASC, id ASC
+    </select>
+    
+    <!-- 插入布料纸类型 -->
+    <insert id="insert" parameterType="com.it.yts_project.dto.ClothPaperTypeDTO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cloth_paper_types (
+            type_name, category, sort_order, is_active, created_at, updated_at
+        ) VALUES (
+            #{typeName}, #{category}, #{sortOrder}, #{isActive}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+        )
+    </insert>
+    
+    <!-- 更新布料纸类型 -->
+    <update id="update" parameterType="com.it.yts_project.dto.ClothPaperTypeDTO">
+        UPDATE cloth_paper_types SET
+            type_name = #{typeName},
+            category = #{category},
+            sort_order = #{sortOrder},
+            is_active = #{isActive},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+    
+    <!-- 根据ID删除布料纸类型 -->
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        DELETE FROM cloth_paper_types WHERE id = #{id}
+    </delete>
+    
+    <!-- 批量更新状态 -->
+    <update id="batchUpdateStatus">
+        UPDATE cloth_paper_types 
+        SET is_active = #{isActive}, updated_at = NOW()
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+    
+    <!-- 更新排序顺序 -->
+    <update id="updateSortOrder">
+        UPDATE cloth_paper_types 
+        SET sort_order = #{sortOrder}, updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+    
+    <!-- 根据类型名称和分类获取布料纸类型 -->
+    <select id="getByTypeNameAndCategory" resultType="com.it.yts_project.dto.ClothPaperTypeDTO">
+        SELECT 
+            id,
+            type_name as typeName,
+            category,
+            sort_order as sortOrder,
+            is_active as isActive,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM cloth_paper_types 
+        WHERE type_name = #{typeName} AND category = #{category}
+        LIMIT 1
+    </select>
+    
+    <!-- 根据类型名称获取布料纸类型（返回第一个匹配的） -->
+    <select id="getByTypeName" resultType="com.it.yts_project.dto.ClothPaperTypeDTO">
+        SELECT 
+            id,
+            type_name as typeName,
+            category,
+            sort_order as sortOrder,
+            is_active as isActive,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM cloth_paper_types 
+        WHERE type_name = #{typeName}
+        ORDER BY sort_order ASC, id ASC
+        LIMIT 1
+    </select>
+
+</mapper>
+
+

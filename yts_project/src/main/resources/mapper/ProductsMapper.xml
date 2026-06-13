@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.ProductsMapper">
+    
+    <resultMap id="productsMap" type="com.it.yts_project.model.Products">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="model_number" column="model_number"/>
+        <result property="material_number" column="material_number"/>
+        <result property="hot_stamping_paper_type" column="hot_stamping_paper_type"/>
+    </resultMap>
+    
+    <select id="getAllSeriesNames" resultType="java.lang.String">
+        SELECT DISTINCT name 
+        FROM products 
+        WHERE name IS NOT NULL 
+        ORDER BY name
+    </select>
+    
+    <select id="getPaperTypesBySeriesName" resultType="java.lang.String">
+        SELECT DISTINCT p.hot_stamping_paper_type
+        FROM products p
+        WHERE p.name = #{seriesName}
+    </select>
+    
+    <!-- 备选查询：如果cloth_paper_types表不存在，使用products表的hot_stamping_paper_type字段 -->
+    <select id="getPaperTypesBySeriesNameFallback" resultType="java.lang.String">
+        SELECT DISTINCT hot_stamping_paper_type 
+        FROM products 
+        WHERE name = #{seriesName} 
+        AND hot_stamping_paper_type IS NOT NULL 
+        AND hot_stamping_paper_type != ''
+        ORDER BY hot_stamping_paper_type
+    </select>
+    
+    <select id="getProductById" resultMap="productsMap">
+        SELECT 
+            id, name, model_number, material_number, hot_stamping_paper_type
+        FROM products 
+        WHERE id = #{id}
+    </select>
+    
+    <select id="getProductsBySeriesName" resultMap="productsMap">
+        SELECT 
+            id, name, model_number, material_number, hot_stamping_paper_type
+        FROM products 
+        WHERE name = #{seriesName}
+        ORDER BY model_number
+    </select>
+    
+    <!-- 根据烫金纸性能类型获取支持的产品系列名称列表 -->
+    <select id="getSeriesNamesByPaperType" resultType="java.lang.String">
+        SELECT DISTINCT name
+        FROM products
+        WHERE hot_stamping_paper_type = #{paperType}
+        AND name IS NOT NULL
+        AND hot_stamping_paper_type IS NOT NULL
+        AND hot_stamping_paper_type != ''
+        ORDER BY name
+    </select>
+    
+    <!-- 检查产品系列是否支持指定的烫金纸性能类型 -->
+    <select id="checkSeriesSupportsPaperType" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM products
+        WHERE name = #{seriesName}
+        AND hot_stamping_paper_type = #{paperType}
+        AND hot_stamping_paper_type IS NOT NULL
+        AND hot_stamping_paper_type != ''
+    </select>
+    
+    <!-- 根据公司编号和烫金纸性能类型获取产品系列名称列表 -->
+    <select id="getSeriesNamesByCompanyNumberAndPaperType" resultType="java.lang.String">
+        SELECT DISTINCT p.name
+        FROM products p
+        INNER JOIN leo_gp_numbers lgn ON p.id = lgn.project_id
+        WHERE lgn.company_number = #{companyNumber}
+        AND p.hot_stamping_paper_type = #{paperType}
+        AND p.name IS NOT NULL
+        AND p.hot_stamping_paper_type IS NOT NULL
+        AND p.hot_stamping_paper_type != ''
+        AND lgn.company_number IS NOT NULL
+        AND lgn.company_number != ''
+        ORDER BY p.name
+    </select>
+    
+    <!-- 根据公司编号、烫金纸性能类型和产品系列名称获取产品列表 -->
+    <select id="getProductsByCompanyNumberAndPaperTypeAndSeries" resultMap="productsMap">
+        SELECT 
+            p.id, p.name, p.model_number, p.material_number, p.hot_stamping_paper_type
+        FROM products p
+        INNER JOIN leo_gp_numbers lgn ON p.id = lgn.project_id
+        WHERE lgn.company_number = #{companyNumber}
+        AND p.hot_stamping_paper_type = #{paperType}
+        AND p.name = #{seriesName}
+        AND p.hot_stamping_paper_type IS NOT NULL
+        AND p.hot_stamping_paper_type != ''
+        AND lgn.company_number IS NOT NULL
+        AND lgn.company_number != ''
+        ORDER BY p.model_number
+    </select>
+    
+</mapper>

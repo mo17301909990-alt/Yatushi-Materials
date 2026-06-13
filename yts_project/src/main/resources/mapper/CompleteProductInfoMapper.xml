@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.CompleteProductInfoMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="CompleteProductInfoResultMap" type="com.it.yts_project.model.CompleteProductInfo">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="modelNumber" column="model_number"/>
+        <result property="materialNumber" column="material_number"/>
+        <result property="hotStampingPaperType" column="hot_stamping_paper_type"/>
+        <result property="description" column="descirption"/>
+        <result property="paizi" column="paizi"/>
+        <result property="fengdu" column="fengdu"/>
+        <result property="danwei" column="danwei"/>
+        <result property="isChangyong" column="is_changyong"/>
+        <result property="isJiehuo" column="is_jiehuo"/>
+        <result property="gaishu" column="gaishu"/>
+        <result property="status" column="status"/>
+        <result property="companyNumber" column="company_number"/>
+        <result property="gpNo" column="gp_no"/>
+        <result property="color" column="color"/>
+        <result property="colorNum" column="color_num"/>
+        <result property="tightness" column="tightness"/>
+        <result property="performance" column="performance"/>
+        <result property="size" column="size"/>
+        <result property="temperatureRange" column="temperature_range"/>
+        <result property="projectId" column="project_id"/>
+        <result property="price" column="price"/>
+    </resultMap>
+
+    <!-- 获取所有完整产品信息 -->
+    <select id="findAllCompleteProductInfo" resultMap="CompleteProductInfoResultMap">
+        SELECT 
+            p.id,
+            p.name,
+            p.model_number,
+            p.material_number,
+            p.hot_stamping_paper_type,
+            p.descirption,
+            p.paizi,
+            p.fengdu,
+            p.danwei,
+            p.is_changyong,
+            p.is_jiehuo,
+            p.gaishu,
+            p.status,
+            lgn.company_number,
+            lgn.gp_no,
+            s.color,
+            s.color_num,
+            s.tightness,
+            s.performance,
+            s.size,
+            s.temperature_range,
+            s.project_id,
+            pr.price
+        FROM products p
+        LEFT JOIN leo_gp_numbers lgn ON p.id = lgn.project_id
+        LEFT JOIN specifications s ON p.id = s.project_id
+        LEFT JOIN LATERAL (
+            SELECT price FROM pricing 
+            WHERE project_id = p.id 
+            ORDER BY id DESC 
+            LIMIT 1
+        ) pr ON true
+        ORDER BY p.id DESC
+    </select>
+
+    <!-- 根据产品ID获取完整产品信息 -->
+    <select id="findCompleteProductInfoById" resultMap="CompleteProductInfoResultMap">
+        SELECT 
+            p.id,
+            p.name,
+            p.model_number,
+            p.material_number,
+            p.hot_stamping_paper_type,
+            p.descirption,
+            p.paizi,
+            p.fengdu,
+            p.danwei,
+            p.is_changyong,
+            p.is_jiehuo,
+            p.gaishu,
+            p.status,
+            lgn.company_number,
+            lgn.gp_no,
+            s.color,
+            s.color_num,
+            s.tightness,
+            s.performance,
+            s.size,
+            s.temperature_range,
+            s.project_id,
+            pr.price
+        FROM products p
+        LEFT JOIN leo_gp_numbers lgn ON p.id = lgn.project_id
+        LEFT JOIN specifications s ON p.id = s.project_id
+        LEFT JOIN LATERAL (
+            SELECT price FROM pricing 
+            WHERE project_id = p.id 
+            ORDER BY id DESC 
+            LIMIT 1
+        ) pr ON true
+        WHERE p.id = #{id}
+    </select>
+
+    <!-- 根据物料编号获取完整产品信息 -->
+    <select id="findCompleteProductInfoByMaterialNumber" resultMap="CompleteProductInfoResultMap">
+        SELECT 
+            p.id,
+            p.name,
+            p.model_number,
+            p.material_number,
+            p.hot_stamping_paper_type,
+            p.descirption,
+            p.paizi,
+            p.fengdu,
+            p.danwei,
+            p.is_changyong,
+            p.is_jiehuo,
+            p.gaishu,
+            p.status,
+            lgn.company_number,
+            lgn.gp_no,
+            s.color,
+            s.color_num,
+            s.tightness,
+            s.performance,
+            s.size,
+            s.temperature_range,
+            s.project_id,
+            pr.price
+        FROM products p
+        LEFT JOIN leo_gp_numbers lgn ON p.id = lgn.project_id
+        LEFT JOIN specifications s ON p.id = s.project_id
+        LEFT JOIN LATERAL (
+            SELECT price FROM pricing 
+            WHERE project_id = p.id 
+            ORDER BY id DESC 
+            LIMIT 1
+        ) pr ON true
+        WHERE p.material_number = #{materialNumber}
+        ORDER BY p.id DESC
+    </select>
+
+    <!-- 根据型号获取完整产品信息 -->
+    <select id="findCompleteProductInfoByModelNumber" resultMap="CompleteProductInfoResultMap">
+        SELECT 
+            p.id,
+            p.name,
+            p.model_number,
+            p.material_number,
+            p.hot_stamping_paper_type,
+            p.descirption,
+            p.paizi,
+            p.fengdu,
+            p.danwei,
+            p.is_changyong,
+            p.is_jiehuo,
+            p.gaishu,
+            p.status,
+            lgn.company_number,
+            lgn.gp_no,
+            s.color,
+            s.color_num,
+            s.tightness,
+            s.performance,
+            s.size,
+            s.temperature_range,
+            s.project_id,
+            pr.price
+        FROM products p
+        LEFT JOIN leo_gp_numbers lgn ON p.id = lgn.project_id
+        LEFT JOIN specifications s ON p.id = s.project_id
+        LEFT JOIN LATERAL (
+            SELECT price FROM pricing 
+            WHERE project_id = p.id 
+            ORDER BY id DESC 
+            LIMIT 1
+        ) pr ON true
+        WHERE p.model_number LIKE CONCAT('%', #{modelNumber}, '%')
+        ORDER BY p.id DESC
+    </select>
+
+    <!-- 根据Leo Touch编号获取完整产品信息 -->
+    <select id="findCompleteProductInfoByCompanyNumber" resultMap="CompleteProductInfoResultMap">
+        SELECT 
+            p.id,
+            p.name,
+            p.model_number,
+            p.material_number,
+            p.hot_stamping_paper_type,
+            p.descirption,
+            p.paizi,
+            p.fengdu,
+            p.danwei,
+            p.is_changyong,
+            p.is_jiehuo,
+            p.gaishu,
+            p.status,
+            lgn.company_number,
+            lgn.gp_no,
+            s.color,
+            s.color_num,
+            s.tightness,
+            s.performance,
+            s.size,
+            s.temperature_range,
+            s.project_id,
+            pr.price
+        FROM products p
+        LEFT JOIN leo_gp_numbers lgn ON p.id = lgn.project_id
+        LEFT JOIN specifications s ON p.id = s.project_id
+        LEFT JOIN LATERAL (
+            SELECT price FROM pricing 
+            WHERE project_id = p.id 
+            ORDER BY id DESC 
+            LIMIT 1
+        ) pr ON true
+        WHERE lgn.company_number LIKE CONCAT('%', #{companyNumber}, '%')
+        ORDER BY p.id DESC
+    </select>
+
+    <!-- 根据SPNO获取完整产品信息 -->
+    <select id="findCompleteProductInfoByGpNo" resultMap="CompleteProductInfoResultMap">
+        SELECT 
+            p.id,
+            p.name,
+            p.model_number,
+            p.material_number,
+            p.hot_stamping_paper_type,
+            p.descirption,
+            p.paizi,
+            p.fengdu,
+            p.danwei,
+            p.is_changyong,
+            p.is_jiehuo,
+            p.gaishu,
+            p.status,
+            lgn.company_number,
+            lgn.gp_no,
+            s.color,
+            s.color_num,
+            s.tightness,
+            s.performance,
+            s.size,
+            s.temperature_range,
+            s.project_id,
+            pr.price
+        FROM products p
+        LEFT JOIN leo_gp_numbers lgn ON p.id = lgn.project_id
+        LEFT JOIN specifications s ON p.id = s.project_id
+        LEFT JOIN LATERAL (
+            SELECT price FROM pricing 
+            WHERE project_id = p.id 
+            ORDER BY id DESC 
+            LIMIT 1
+        ) pr ON true
+        WHERE lgn.gp_no LIKE CONCAT('%', #{gpNo}, '%')
+        ORDER BY p.id DESC
+    </select>
+
+    <!-- 根据烫金纸张类型获取完整产品信息 -->
+    <select id="findCompleteProductInfoByHotStampingPaperType" resultMap="CompleteProductInfoResultMap">
+        SELECT 
+            p.id,
+            p.name,
+            p.model_number,
+            p.material_number,
+            p.hot_stamping_paper_type,
+            p.descirption,
+            p.paizi,
+            p.fengdu,
+            p.danwei,
+            p.is_changyong,
+            p.is_jiehuo,
+            p.gaishu,
+            p.status,
+            lgn.company_number,
+            lgn.gp_no,
+            s.color,
+            s.color_num,
+            s.tightness,
+            s.performance,
+            s.size,
+            s.temperature_range,
+            s.project_id,
+            pr.price
+        FROM products p
+        LEFT JOIN leo_gp_numbers lgn ON p.id = lgn.project_id
+        LEFT JOIN specifications s ON p.id = s.project_id
+        LEFT JOIN LATERAL (
+            SELECT price FROM pricing 
+            WHERE project_id = p.id 
+            ORDER BY id DESC 
+            LIMIT 1
+        ) pr ON true
+        WHERE p.hot_stamping_paper_type LIKE CONCAT('%', #{hotStampingPaperType}, '%')
+        ORDER BY p.id DESC
+    </select>
+
+</mapper>

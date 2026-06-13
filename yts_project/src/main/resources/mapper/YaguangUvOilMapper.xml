@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.YaguangUvOilMapper">
+
+    <!-- 产品结果映射 -->
+    <resultMap id="ProductResultMap" type="com.it.yts_project.model.YaguangUvOilProduct">
+        <id property="id" column="id"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="supplierCode" column="supplier_code"/>
+        <result property="stockCode" column="stock_code"/>
+        <result property="materialName" column="material_name"/>
+        <result property="usage" column="usage"/>
+        <result property="category" column="category"/>
+        <result property="thickness" column="thickness"/>
+        <result property="size" column="size"/>
+        <result property="color" column="color"/>
+        <result property="shape" column="shape"/>
+        <result property="responsiblePerson" column="responsible_person"/>
+        <result property="minSheetSize" column="min_sheet_size"/>
+        <result property="maxSheetSize" column="max_sheet_size"/>
+        <result property="minDot" column="min_dot"/>
+        <result property="maxDot" column="max_dot"/>
+        <result property="minLine" column="min_line"/>
+        <result property="maxLine" column="max_line"/>
+        <result property="minSpacing" column="min_spacing"/>
+        <result property="maxSpacing" column="max_spacing"/>
+        <result property="minPatternArea" column="min_pattern_area"/>
+        <result property="maxPatternArea" column="max_pattern_area"/>
+        <result property="applicableProduct" column="applicable_product"/>
+        <result property="structureSingleSide" column="structure_single_side"/>
+        <result property="structureDoubleSide" column="structure_double_side"/>
+        <result property="structureCover" column="structure_cover"/>
+        <result property="structureSpine" column="structure_spine"/>
+        <result property="structureDeboss" column="structure_deboss"/>
+        <result property="structureInnerPage" column="structure_inner_page"/>
+        <result property="substrateThickness" column="substrate_thickness"/>
+        <result property="paperSurfaceApplicable" column="paper_surface_applicable"/>
+        <result property="paperSurfaceInapplicable" column="paper_surface_inapplicable"/>
+        <result property="inkSurfaceApplicable" column="ink_surface_applicable"/>
+        <result property="inkSurfaceInapplicable" column="ink_surface_inapplicable"/>
+        <result property="coatingSurfaceApplicable" column="coating_surface_applicable"/>
+        <result property="coatingSurfaceInapplicable" column="coating_surface_inapplicable"/>
+        <result property="writingStandardPen" column="writing_standard_pen"/>
+        <result property="writingCustomerPen" column="writing_customer_pen"/>
+        <result property="notes" column="notes"/>
+        <result property="isActive" column="is_active"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <!-- 兼容性结果映射 -->
+    <resultMap id="CompatibilityResultMap" type="com.it.yts_project.model.YaguangUvOilCompatibility">
+        <id property="id" column="id"/>
+        <result property="productId" column="product_id"/>
+        <result property="processCategory" column="process_category"/>
+        <result property="stepName" column="step_name"/>
+        <result property="compatibilityStatus" column="compatibility_status"/>
+        <result property="displayOrder" column="display_order"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="productName" column="product_name"/>
+    </resultMap>
+
+    <!-- ========== 产品管理 ========== -->
+
+    <select id="findAllProducts" resultMap="ProductResultMap">
+        SELECT * FROM yaguang_uv_oil_product ORDER BY material_code ASC, id ASC
+    </select>
+
+    <select id="findProductById" resultMap="ProductResultMap">
+        SELECT * FROM yaguang_uv_oil_product WHERE id = #{id}
+    </select>
+
+    <select id="searchProducts" resultMap="ProductResultMap">
+        SELECT * FROM yaguang_uv_oil_product
+        WHERE material_name LIKE CONCAT('%', #{keyword}, '%')
+           OR material_code LIKE CONCAT('%', #{keyword}, '%')
+           OR stock_code LIKE CONCAT('%', #{keyword}, '%')
+           OR notes LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY material_code ASC, id ASC
+    </select>
+
+    <insert id="insertProduct" parameterType="com.it.yts_project.model.YaguangUvOilProduct" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO yaguang_uv_oil_product (
+            material_code, supplier_code, stock_code, material_name, usage,
+            category, thickness, size, color, shape, responsible_person,
+            min_sheet_size, max_sheet_size, min_dot, max_dot, min_line, max_line,
+            min_spacing, max_spacing, min_pattern_area, max_pattern_area,
+            applicable_product,
+            structure_single_side, structure_double_side, structure_cover,
+            structure_spine, structure_deboss, structure_inner_page,
+            substrate_thickness,
+            paper_surface_applicable, paper_surface_inapplicable,
+            ink_surface_applicable, ink_surface_inapplicable,
+            coating_surface_applicable, coating_surface_inapplicable,
+            writing_standard_pen, writing_customer_pen,
+            notes, is_active
+        ) VALUES (
+            #{materialCode}, #{supplierCode}, #{stockCode}, #{materialName}, #{usage},
+            #{category}, #{thickness}, #{size}, #{color}, #{shape}, #{responsiblePerson},
+            #{minSheetSize}, #{maxSheetSize}, #{minDot}, #{maxDot}, #{minLine}, #{maxLine},
+            #{minSpacing}, #{maxSpacing}, #{minPatternArea}, #{maxPatternArea},
+            #{applicableProduct},
+            #{structureSingleSide}, #{structureDoubleSide}, #{structureCover},
+            #{structureSpine}, #{structureDeboss}, #{structureInnerPage},
+            #{substrateThickness},
+            #{paperSurfaceApplicable}, #{paperSurfaceInapplicable},
+            #{inkSurfaceApplicable}, #{inkSurfaceInapplicable},
+            #{coatingSurfaceApplicable}, #{coatingSurfaceInapplicable},
+            #{writingStandardPen}, #{writingCustomerPen},
+            #{notes}, #{isActive}
+        )
+    </insert>
+
+    <update id="updateProduct" parameterType="com.it.yts_project.model.YaguangUvOilProduct">
+        UPDATE yaguang_uv_oil_product SET
+            material_code = #{materialCode},
+            supplier_code = #{supplierCode},
+            stock_code = #{stockCode},
+            material_name = #{materialName},
+            usage = #{usage},
+            category = #{category},
+            thickness = #{thickness},
+            size = #{size},
+            color = #{color},
+            shape = #{shape},
+            responsible_person = #{responsiblePerson},
+            min_sheet_size = #{minSheetSize},
+            max_sheet_size = #{maxSheetSize},
+            min_dot = #{minDot},
+            max_dot = #{maxDot},
+            min_line = #{minLine},
+            max_line = #{maxLine},
+            min_spacing = #{minSpacing},
+            max_spacing = #{maxSpacing},
+            min_pattern_area = #{minPatternArea},
+            max_pattern_area = #{maxPatternArea},
+            applicable_product = #{applicableProduct},
+            structure_single_side = #{structureSingleSide},
+            structure_double_side = #{structureDoubleSide},
+            structure_cover = #{structureCover},
+            structure_spine = #{structureSpine},
+            structure_deboss = #{structureDeboss},
+            structure_inner_page = #{structureInnerPage},
+            substrate_thickness = #{substrateThickness},
+            paper_surface_applicable = #{paperSurfaceApplicable},
+            paper_surface_inapplicable = #{paperSurfaceInapplicable},
+            ink_surface_applicable = #{inkSurfaceApplicable},
+            ink_surface_inapplicable = #{inkSurfaceInapplicable},
+            coating_surface_applicable = #{coatingSurfaceApplicable},
+            coating_surface_inapplicable = #{coatingSurfaceInapplicable},
+            writing_standard_pen = #{writingStandardPen},
+            writing_customer_pen = #{writingCustomerPen},
+            notes = #{notes},
+            is_active = #{isActive},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteProductById">
+        DELETE FROM yaguang_uv_oil_product WHERE id = #{id}
+    </delete>
+
+    <!-- ========== 兼容性管理 ========== -->
+
+    <select id="findCompatibilitiesByProductId" resultMap="CompatibilityResultMap">
+        SELECT c.*, p.material_name AS product_name
+        FROM yaguang_uv_oil_compatibility c
+        LEFT JOIN yaguang_uv_oil_product p ON c.product_id = p.id
+        WHERE c.product_id = #{productId}
+        ORDER BY c.process_category ASC, c.display_order ASC, c.id ASC
+    </select>
+
+    <select id="findCompatibilityById" resultMap="CompatibilityResultMap">
+        SELECT c.*, p.material_name AS product_name
+        FROM yaguang_uv_oil_compatibility c
+        LEFT JOIN yaguang_uv_oil_product p ON c.product_id = p.id
+        WHERE c.id = #{id}
+    </select>
+
+    <insert id="insertCompatibility" parameterType="com.it.yts_project.model.YaguangUvOilCompatibility" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO yaguang_uv_oil_compatibility (product_id, process_category, step_name, compatibility_status, display_order)
+        VALUES (#{productId}, #{processCategory}, #{stepName}, #{compatibilityStatus}, #{displayOrder})
+    </insert>
+
+    <update id="updateCompatibility" parameterType="com.it.yts_project.model.YaguangUvOilCompatibility">
+        UPDATE yaguang_uv_oil_compatibility SET
+            product_id = #{productId},
+            process_category = #{processCategory},
+            step_name = #{stepName},
+            compatibility_status = #{compatibilityStatus},
+            display_order = #{displayOrder}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteCompatibilityById">
+        DELETE FROM yaguang_uv_oil_compatibility WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteCompatibilitiesByProductId">
+        DELETE FROM yaguang_uv_oil_compatibility WHERE product_id = #{productId}
+    </delete>
+
+    <insert id="batchInsertCompatibilities" parameterType="java.util.List">
+        INSERT INTO yaguang_uv_oil_compatibility (product_id, process_category, step_name, compatibility_status, display_order)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.productId}, #{item.processCategory}, #{item.stepName}, #{item.compatibilityStatus}, #{item.displayOrder})
+        </foreach>
+    </insert>
+
+    <select id="findCompatibilityByUniqueKey" resultMap="CompatibilityResultMap">
+        SELECT c.*, p.material_name AS product_name
+        FROM yaguang_uv_oil_compatibility c
+        LEFT JOIN yaguang_uv_oil_product p ON c.product_id = p.id
+        WHERE c.product_id = #{productId} AND c.step_name = #{stepName}
+    </select>
+
+</mapper>

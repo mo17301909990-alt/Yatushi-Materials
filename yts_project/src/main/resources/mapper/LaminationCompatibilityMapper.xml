@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.LaminationCompatibilityMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="LaminationCompatibilityResultMap" type="com.it.yts_project.model.LaminationCompatibility">
+        <id property="id" column="id"/>
+        <result property="foilSeries" column="foil_series"/>
+        <result property="interfaceTypeId" column="interface_type_id"/>
+        <result property="postProcessingStepId" column="post_processing_step_id"/>
+        <result property="laminationMaterialId" column="lamination_material_id"/>
+        <result property="compatibility" column="compatibility"/>
+        <result property="productType" column="product_type"/>
+        <result property="modelNumber" column="model_number"/>
+        <result property="isJiehuo" column="is_jiehuo"/>
+        <result property="noticeIds" column="notice_ids" typeHandler="com.it.yts_project.config.IntegerArrayTypeHandler"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="laminationMaterialName" column="lamination_material_name"/>
+        <result property="laminationMaterialDescription" column="lamination_material_description"/>
+        <result property="postProcessingStepName" column="post_processing_step_name"/>
+    </resultMap>
+
+    <!-- 查询所有过胶兼容性 -->
+    <select id="findAll" resultMap="LaminationCompatibilityResultMap">
+        SELECT 
+            lc.*,
+            lmo.material_name as lamination_material_name,
+            lmo.description as lamination_material_description,
+            ppo.step_name as post_processing_step_name
+        FROM lamination_compatibility lc
+        LEFT JOIN lamination_material_options lmo ON lc.lamination_material_id = lmo.id
+        LEFT JOIN post_processing_options ppo ON lc.post_processing_step_id = ppo.id
+        ORDER BY lc.id DESC
+    </select>
+
+    <!-- 基于DTO参数查询过胶兼容性（供智能兼容服务使用） -->
+    <select id="findLaminationCompatibility" resultMap="LaminationCompatibilityResultMap">
+        SELECT 
+            lc.*,
+            lmo.material_name as lamination_material_name,
+            lmo.description as lamination_material_description,
+            ppo.step_name as post_processing_step_name
+        FROM lamination_compatibility lc
+        LEFT JOIN lamination_material_options lmo ON lc.lamination_material_id = lmo.id
+        LEFT JOIN post_processing_options ppo ON lc.post_processing_step_id = ppo.id
+        <where>
+            <if test="foilSeries != null and foilSeries != ''">
+                AND lc.foil_series LIKE CONCAT('%', #{foilSeries}, '%')
+            </if>
+            <if test="postProcessingStepId != null">
+                AND lc.post_processing_step_id = #{postProcessingStepId}
+            </if>
+            <if test="laminationMaterialId != null">
+                AND lc.lamination_material_id = #{laminationMaterialId}
+            </if>
+            <if test="interfaceTypeId != null">
+                AND lc.interface_type_id = #{interfaceTypeId}
+            </if>
+            <if test="compatibility != null">
+                AND lc.compatibility = #{compatibility}
+            </if>
+            <if test="productType != null and productType != ''">
+                AND lc.product_type LIKE CONCAT('%', #{productType}, '%')
+            </if>
+            <if test="modelNumber != null and modelNumber != ''">
+                AND lc.model_number LIKE CONCAT('%', #{modelNumber}, '%')
+            </if>
+            <if test="search != null and search != ''">
+                AND (
+                    lc.foil_series LIKE CONCAT('%', #{search}, '%') OR
+                    lc.product_type LIKE CONCAT('%', #{search}, '%') OR
+                    lc.model_number LIKE CONCAT('%', #{search}, '%')
+                )
+            </if>
+        </where>
+        ORDER BY lc.id DESC
+    </select>
+
+    <!-- 兼容材料选项查询（仅返回兼容为'V'的） -->
+    <select id="findCompatibleMaterials" resultType="com.it.yts_project.model.LaminationMaterialOptions">
+        SELECT DISTINCT lmo.*
+        FROM lamination_compatibility lc
+        JOIN lamination_material_options lmo ON lc.lamination_material_id = lmo.id
+        WHERE lc.foil_series = #{foilSeries}
+          AND lc.post_processing_step_id = #{postProcessingStepId}
+          AND lc.interface_type_id = #{interfaceTypeId}
+          AND lc.compatibility IN ('V', '▷')
+        ORDER BY lmo.display_order ASC, lmo.id ASC
+    </select>
+
+    <!-- 兼容后加工步骤选项查询（仅返回兼容为'V'的） -->
+    <select id="findCompatiblePostProcessingSteps" resultType="com.it.yts_project.model.PostProcessingOptions">
+        SELECT DISTINCT ppo.*
+        FROM lamination_compatibility lc
+        JOIN post_processing_options ppo ON lc.post_processing_step_id = ppo.id
+        WHERE lc.foil_series = #{foilSeries}
+          AND lc.lamination_material_id = #{laminationMaterialId}
+          AND lc.interface_type_id = #{interfaceTypeId}
+          AND lc.compatibility IN ('V', '▷')
+        ORDER BY ppo.display_order ASC, ppo.id ASC
+    </select>
+
+    <!-- 获取所有过胶材料选项（激活优先） -->
+    <select id="getAllLaminationMaterials" resultType="com.it.yts_project.model.LaminationMaterialOptions">
+        SELECT * FROM lamination_material_options ORDER BY is_active DESC, display_order ASC, id ASC
+    </select>
+
+    <!-- 获取所有后加工步骤选项（激活优先） -->
+    <select id="getAllPostProcessingSteps" resultType="com.it.yts_project.model.PostProcessingOptions">
+        SELECT * FROM post_processing_options ORDER BY is_active DESC, display_order ASC, id ASC
+    </select>
+
+    <!-- 校验是否兼容，返回'V'或'X'（不存在记录视为'X'） -->
+    <select id="checkLaminationCompatibility" resultType="string">
+        SELECT COALESCE(MAX(compatibility), 'X')
+        FROM lamination_compatibility
+        WHERE foil_series = #{foilSeries}
+          AND post_processing_step_id = #{postProcessingStepId}
+          AND lamination_material_id = #{laminationMaterialId}
+          AND interface_type_id = #{interfaceTypeId}
+    </select>
+    <!-- 根据条件查询过胶兼容性（带分页） -->
+    <select id="findByCondition" resultMap="LaminationCompatibilityResultMap">
+        SELECT 
+            lc.*,
+            lmo.material_name as lamination_material_name,
+            lmo.description as lamination_material_description,
+            ppo.step_name as post_processing_step_name
+        FROM lamination_compatibility lc
+        LEFT JOIN lamination_material_options lmo ON lc.lamination_material_id = lmo.id
+        LEFT JOIN post_processing_options ppo ON lc.post_processing_step_id = ppo.id
+        <where>
+            <if test="foilSeries != null and foilSeries != ''">
+                AND lc.foil_series LIKE CONCAT('%', #{foilSeries}, '%')
+            </if>
+            <if test="productType != null and productType != ''">
+                AND lc.product_type LIKE CONCAT('%', #{productType}, '%')
+            </if>
+            <if test="modelNumber != null and modelNumber != ''">
+                AND lc.model_number LIKE CONCAT('%', #{modelNumber}, '%')
+            </if>
+            <if test="postProcessingStepId != null">
+                AND lc.post_processing_step_id = #{postProcessingStepId}
+            </if>
+            <if test="laminationMaterialId != null">
+                AND lc.lamination_material_id = #{laminationMaterialId}
+            </if>
+            <if test="compatibility != null and compatibility != ''">
+                AND lc.compatibility = #{compatibility}
+            </if>
+        </where>
+        ORDER BY lc.id DESC
+        <if test="offset != null and limit != null">
+            LIMIT #{limit} OFFSET #{offset}
+        </if>
+    </select>
+
+    <!-- 统计符合条件的记录数 -->
+    <select id="countByCondition" resultType="int">
+        SELECT COUNT(*)
+        FROM lamination_compatibility lc
+        <where>
+            <if test="foilSeries != null and foilSeries != ''">
+                AND lc.foil_series LIKE CONCAT('%', #{foilSeries}, '%')
+            </if>
+            <if test="productType != null and productType != ''">
+                AND lc.product_type LIKE CONCAT('%', #{productType}, '%')
+            </if>
+            <if test="modelNumber != null and modelNumber != ''">
+                AND lc.model_number LIKE CONCAT('%', #{modelNumber}, '%')
+            </if>
+            <if test="postProcessingStepId != null">
+                AND lc.post_processing_step_id = #{postProcessingStepId}
+            </if>
+            <if test="laminationMaterialId != null">
+                AND lc.lamination_material_id = #{laminationMaterialId}
+            </if>
+            <if test="compatibility != null and compatibility != ''">
+                AND lc.compatibility = #{compatibility}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据ID查询 -->
+    <select id="findById" resultMap="LaminationCompatibilityResultMap">
+        SELECT 
+            lc.*,
+            lmo.material_name as lamination_material_name,
+            lmo.description as lamination_material_description,
+            ppo.step_name as post_processing_step_name
+        FROM lamination_compatibility lc
+        LEFT JOIN lamination_material_options lmo ON lc.lamination_material_id = lmo.id
+        LEFT JOIN post_processing_options ppo ON lc.post_processing_step_id = ppo.id
+        WHERE lc.id = #{id}
+    </select>
+
+    <!-- 根据唯一键查询（旧版本，保留兼容性） -->
+    <select id="findByUniqueKey" resultMap="LaminationCompatibilityResultMap">
+        SELECT 
+            lc.*,
+            lmo.material_name as lamination_material_name,
+            lmo.description as lamination_material_description,
+            ppo.step_name as post_processing_step_name
+        FROM lamination_compatibility lc
+        LEFT JOIN lamination_material_options lmo ON lc.lamination_material_id = lmo.id
+        LEFT JOIN post_processing_options ppo ON lc.post_processing_step_id = ppo.id
+        WHERE lc.foil_series = #{foilSeries}
+          AND lc.interface_type_id = #{interfaceTypeId}
+          AND lc.post_processing_step_id = #{postProcessingStepId}
+          AND lc.lamination_material_id = #{laminationMaterialId}
+    </select>
+
+    <!-- 根据新的唯一键查询 -->
+    <select id="findByUniqueKeyNew" resultMap="LaminationCompatibilityResultMap">
+        SELECT 
+            lc.*,
+            lmo.material_name as lamination_material_name,
+            lmo.description as lamination_material_description,
+            ppo.step_name as post_processing_step_name
+        FROM lamination_compatibility lc
+        LEFT JOIN lamination_material_options lmo ON lc.lamination_material_id = lmo.id
+        LEFT JOIN post_processing_options ppo ON lc.post_processing_step_id = ppo.id
+        WHERE lc.foil_series = #{foilSeries}
+          AND lc.lamination_material_id = #{laminationMaterialId}
+        <choose>
+            <when test="modelNumber != null and modelNumber != ''">
+                AND (lc.model_number = #{modelNumber} OR (lc.model_number IS NULL AND #{modelNumber} = ''))
+            </when>
+            <otherwise>
+                AND lc.model_number IS NULL
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="productType != null and productType != ''">
+                AND (lc.product_type = #{productType} OR (lc.product_type IS NULL AND #{productType} = ''))
+            </when>
+            <otherwise>
+                AND lc.product_type IS NULL
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="postProcessingStepId != null">
+                AND (lc.post_processing_step_id = #{postProcessingStepId} OR (lc.post_processing_step_id IS NULL AND #{postProcessingStepId} = 0))
+            </when>
+            <otherwise>
+                AND lc.post_processing_step_id IS NULL
+            </otherwise>
+        </choose>
+        ORDER BY lc.id DESC
+        LIMIT 1
+    </select>
+
+    <!-- 批量更新兼容性状态 -->
+    <update id="batchUpdateStatus">
+        UPDATE lamination_compatibility
+        SET compatibility = #{compatibility},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!-- 插入过胶兼容性 -->
+    <insert id="insert" parameterType="com.it.yts_project.model.LaminationCompatibility" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO lamination_compatibility (
+            foil_series, interface_type_id, post_processing_step_id, lamination_material_id,
+            compatibility, product_type, model_number, is_jiehuo, notice_ids
+        ) VALUES (
+            #{foilSeries}, #{interfaceTypeId}, #{postProcessingStepId}, #{laminationMaterialId},
+            #{compatibility}, #{productType}, #{modelNumber}, #{isJiehuo}, 
+            #{noticeIds, typeHandler=com.it.yts_project.config.IntegerArrayTypeHandler}
+        )
+    </insert>
+
+    <!-- 更新过胶兼容性 -->
+    <update id="update" parameterType="com.it.yts_project.model.LaminationCompatibility">
+        UPDATE lamination_compatibility SET
+            foil_series = #{foilSeries},
+            interface_type_id = #{interfaceTypeId},
+            post_processing_step_id = #{postProcessingStepId},
+            lamination_material_id = #{laminationMaterialId},
+            compatibility = #{compatibility},
+            product_type = #{productType},
+            model_number = #{modelNumber},
+            is_jiehuo = #{isJiehuo},
+            notice_ids = #{noticeIds, typeHandler=com.it.yts_project.config.IntegerArrayTypeHandler},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据唯一键更新或插入 -->
+    <insert id="upsert" parameterType="com.it.yts_project.model.LaminationCompatibility">
+        INSERT INTO lamination_compatibility (
+            foil_series, interface_type_id, post_processing_step_id, lamination_material_id,
+            compatibility, product_type, model_number, is_jiehuo, notice_ids
+        ) VALUES (
+            #{foilSeries}, #{interfaceTypeId}, #{postProcessingStepId}, #{laminationMaterialId},
+            #{compatibility}, #{productType}, #{modelNumber}, #{isJiehuo},
+            #{noticeIds, typeHandler=com.it.yts_project.config.IntegerArrayTypeHandler}
+        )
+        ON CONFLICT (foil_series, lamination_material_id, model_number_key, post_processing_step_id, product_type)
+        DO UPDATE SET
+            interface_type_id = EXCLUDED.interface_type_id,
+            compatibility = EXCLUDED.compatibility,
+            product_type = EXCLUDED.product_type,
+            model_number = EXCLUDED.model_number,
+            is_jiehuo = EXCLUDED.is_jiehuo,
+            notice_ids = EXCLUDED.notice_ids,
+            updated_at = CURRENT_TIMESTAMP
+    </insert>
+
+    <!-- 批量保存过胶兼容性 -->
+    <insert id="batchSave" parameterType="java.util.List">
+        INSERT INTO lamination_compatibility (
+            foil_series, interface_type_id, post_processing_step_id, lamination_material_id,
+            compatibility, product_type, model_number, is_jiehuo
+        ) VALUES
+        <foreach collection="compatibilities" item="item" separator=",">
+            (
+                #{item.foilSeries}, #{item.interfaceTypeId}, #{item.postProcessingStepId}, #{item.laminationMaterialId},
+                #{item.compatibility}, #{item.productType}, #{item.modelNumber}, #{item.isJiehuo}
+            )
+        </foreach>
+        ON CONFLICT (foil_series, lamination_material_id, model_number_key, post_processing_step_id, product_type)
+        DO UPDATE SET
+            interface_type_id = EXCLUDED.interface_type_id,
+            compatibility = EXCLUDED.compatibility,
+            product_type = EXCLUDED.product_type,
+            model_number = EXCLUDED.model_number,
+            is_jiehuo = EXCLUDED.is_jiehuo,
+            updated_at = CURRENT_TIMESTAMP
+    </insert>
+
+    <!-- 删除过胶兼容性 -->
+    <delete id="deleteById">
+        DELETE FROM lamination_compatibility WHERE id = #{id}
+    </delete>
+
+    <!-- 批量删除过胶兼容性 -->
+    <delete id="batchDeleteByIds">
+        DELETE FROM lamination_compatibility WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 根据唯一键删除 -->
+    <delete id="deleteByUniqueKey">
+        DELETE FROM lamination_compatibility 
+        WHERE foil_series = #{foilSeries}
+          AND interface_type_id = #{interfaceTypeId}
+          AND post_processing_step_id = #{postProcessingStepId}
+          AND lamination_material_id = #{laminationMaterialId}
+    </delete>
+
+    <!-- 获取所有产品系列名称 -->
+    <select id="getAllFoilSeries" resultType="string">
+        SELECT DISTINCT foil_series FROM lamination_compatibility 
+        WHERE foil_series IS NOT NULL AND foil_series != '' 
+        ORDER BY foil_series
+    </select>
+
+    <!-- 获取所有产品类型 -->
+    <select id="getAllProductTypes" resultType="string">
+        SELECT DISTINCT product_type FROM lamination_compatibility 
+        WHERE product_type IS NOT NULL AND product_type != '' 
+        ORDER BY product_type
+    </select>
+
+    <!-- 获取所有型号 -->
+    <select id="getAllModelNumbers" resultType="string">
+        SELECT DISTINCT model_number FROM lamination_compatibility 
+        WHERE model_number IS NOT NULL AND model_number != '' 
+        ORDER BY model_number
+    </select>
+    
+    <!-- 根据条件获取注意事项ID列表 -->
+    <select id="getNoticeIdsByConditions" resultType="java.lang.Integer">
+        SELECT DISTINCT unnest(notice_ids)
+        FROM lamination_compatibility
+        WHERE notice_ids IS NOT NULL
+        AND array_length(notice_ids, 1) > 0
+        AND compatibility IN ('V', '▷')
+        <if test="postProcessingStepId != null">
+            AND post_processing_step_id = #{postProcessingStepId}
+        </if>
+        <if test="laminationMaterialId != null">
+            AND lamination_material_id = #{laminationMaterialId}
+        </if>
+    </select>
+    
+    <!-- 更新注意事项ID列表 -->
+    <update id="updateNoticeIds">
+        UPDATE lamination_compatibility
+        SET notice_ids = #{noticeIds, typeHandler=com.it.yts_project.config.IntegerArrayTypeHandler},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+</mapper>

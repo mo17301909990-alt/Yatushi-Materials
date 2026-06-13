@@ -1,0 +1,300 @@
+-- 填充烫金类型兼容性数据（修正版）
+-- 根据表格数据填充 hot_stamping_type_compatibility 表
+-- 包含33个产品系列和6个烫金类型的兼容性数据
+-- 移除product_name中的"系列"后缀，只保留编号
+
+-- 清空现有数据（可选，根据需要取消注释）
+-- DELETE FROM public.hot_stamping_type_compatibility;
+
+-- 插入烫金类型兼容性数据
+INSERT INTO public.hot_stamping_type_compatibility (
+    product_name,
+    hot_stamping_type_id,
+    compatibility_status,
+    paper_type,
+    created_at,
+    updated_at
+) VALUES
+
+-- 普通金紙系列 - 平面燙金 (id=1) - 兼容
+('SY1', 1, 'V', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SY6', 1, 'V', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SY6+', 1, 'V', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SSY6', 1, 'V', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('G1', 1, 'V', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SA', 1, 'V', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SB', 1, 'V', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('TA', 1, 'V', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('TB', 1, 'V', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('S19', 1, 'V', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('A19', 1, 'V', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('AF', 1, 'V', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SP', 1, 'V', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('KA', 1, 'V', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('KB', 1, 'V', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('L817/GB', 1, 'V', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('E8', 1, 'V', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+
+-- 普通耐磨系列 - 平面燙金 (id=1) - 兼容
+('ST', 1, 'V', '普通耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SST', 1, 'V', '普通耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('GN', 1, 'V', '普通耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('GN2', 1, 'V', '普通耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+
+-- 高耐磨系列 - 平面燙金 (id=1) - 兼容
+('TB815', 1, 'V', '高耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+
+-- 鐳射燙金紙系列 - 平面燙金 (id=1) - 兼容
+('LA', 1, 'V', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('LLW', 1, 'V', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('LLO', 1, 'V', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('KM', 1, 'V', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('G6', 1, 'V', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('API', 1, 'V', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+
+-- 色箔系列 - 平面燙金 (id=1) - 兼容
+('V', 1, 'V', '色箔', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('VB', 1, 'V', '色箔', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+
+-- 客人指定系列 - 平面燙金 (id=1) - 兼容
+('YZT 鐳射', 1, 'V', '客人指定', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('YZT 普通', 1, 'V', '客人指定', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+
+-- 所有系列 - 立體燙金 (id=4) - 不兼容
+('SY1', 4, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SY6', 4, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SY6+', 4, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SSY6', 4, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('G1', 4, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SA', 4, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SB', 4, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('TA', 4, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('TB', 4, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('S19', 4, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('A19', 4, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('AF', 4, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SP', 4, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('KA', 4, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('KB', 4, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('L817/GB', 4, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('E8', 4, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('ST', 4, 'X', '普通耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SST', 4, 'X', '普通耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('GN', 4, 'X', '普通耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('GN2', 4, 'X', '普通耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('TB815', 4, 'X', '高耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('LA', 4, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('LLW', 4, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('LLO', 4, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('KM', 4, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('G6', 4, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('API', 4, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('V', 4, 'X', '色箔', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('VB', 4, 'X', '色箔', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('YZT 鐳射', 4, 'X', '客人指定', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('YZT 普通', 4, 'X', '客人指定', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+
+-- 所有系列 - 折光燙金 (id=6) - 不兼容
+('SY1', 6, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SY6', 6, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SY6+', 6, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SSY6', 6, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('G1', 6, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SA', 6, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SB', 6, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('TA', 6, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('TB', 6, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('S19', 6, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('A19', 6, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('AF', 6, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SP', 6, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('KA', 6, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('KB', 6, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('L817/GB', 6, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('E8', 6, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('ST', 6, 'X', '普通耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SST', 6, 'X', '普通耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('GN', 6, 'X', '普通耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('GN2', 6, 'X', '普通耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('TB815', 6, 'X', '高耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('LA', 6, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('LLW', 6, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('LLO', 6, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('KM', 6, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('G6', 6, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('API', 6, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('V', 6, 'X', '色箔', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('VB', 6, 'X', '色箔', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('YZT 鐳射', 6, 'X', '客人指定', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('YZT 普通', 6, 'X', '客人指定', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+
+-- 所有系列 - 燙金+擊凸 (id=7) - 不兼容
+('SY1', 7, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SY6', 7, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SY6+', 7, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SSY6', 7, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('G1', 7, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SA', 7, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SB', 7, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('TA', 7, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('TB', 7, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('S19', 7, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('A19', 7, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('AF', 7, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SP', 7, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('KA', 7, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('KB', 7, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('L817/GB', 7, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('E8', 7, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('ST', 7, 'X', '普通耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SST', 7, 'X', '普通耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('GN', 7, 'X', '普通耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('GN2', 7, 'X', '普通耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('TB815', 7, 'X', '高耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('LA', 7, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('LLW', 7, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('LLO', 7, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('KM', 7, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('G6', 7, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('API', 7, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('V', 7, 'X', '色箔', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('VB', 7, 'X', '色箔', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('YZT 鐳射', 7, 'X', '客人指定', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('YZT 普通', 7, 'X', '客人指定', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+
+-- 所有系列 - 燙金+壓紋 (id=8) - 不兼容
+('SY1', 8, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SY6', 8, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SY6+', 8, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SSY6', 8, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('G1', 8, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SA', 8, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SB', 8, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('TA', 8, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('TB', 8, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('S19', 8, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('A19', 8, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('AF', 8, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SP', 8, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('KA', 8, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('KB', 8, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('L817/GB', 8, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('E8', 8, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('ST', 8, 'X', '普通耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SST', 8, 'X', '普通耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('GN', 8, 'X', '普通耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('GN2', 8, 'X', '普通耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('TB815', 8, 'X', '高耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('LA', 8, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('LLW', 8, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('LLO', 8, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('KM', 8, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('G6', 8, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('API', 8, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('V', 8, 'X', '色箔', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('VB', 8, 'X', '色箔', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('YZT 鐳射', 8, 'X', '客人指定', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('YZT 普通', 8, 'X', '客人指定', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+
+-- 所有系列 - 有紋燙金 (id=9) - 不兼容
+('SY1', 9, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SY6', 9, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SY6+', 9, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SSY6', 9, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('G1', 9, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SA', 9, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SB', 9, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('TA', 9, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('TB', 9, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('S19', 9, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('A19', 9, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('AF', 9, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SP', 9, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('KA', 9, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('KB', 9, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('L817/GB', 9, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('E8', 9, 'X', '普通金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('ST', 9, 'X', '普通耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('SST', 9, 'X', '普通耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('GN', 9, 'X', '普通耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('GN2', 9, 'X', '普通耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('TB815', 9, 'X', '高耐磨', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('LA', 9, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('LLW', 9, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('LLO', 9, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('KM', 9, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('G6', 9, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('API', 9, 'X', '鐳射燙金紙', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('V', 9, 'X', '色箔', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('VB', 9, 'X', '色箔', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('YZT 鐳射', 9, 'X', '客人指定', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('YZT 普通', 9, 'X', '客人指定', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+-- 数据验证查询
+-- 验证插入的记录数量
+SELECT 
+    '总记录数' as 统计项,
+    COUNT(*) as 数量
+FROM public.hot_stamping_type_compatibility;
+
+-- 验证每个烫金类型的记录数
+SELECT 
+    hot_stamping_type_id,
+    CASE 
+        WHEN hot_stamping_type_id = 1 THEN '平面燙金'
+        WHEN hot_stamping_type_id = 4 THEN '立體燙金'
+        WHEN hot_stamping_type_id = 6 THEN '折光燙金'
+        WHEN hot_stamping_type_id = 7 THEN '燙金+擊凸'
+        WHEN hot_stamping_type_id = 8 THEN '燙金+壓紋'
+        WHEN hot_stamping_type_id = 9 THEN '有紋燙金'
+    END as 烫金类型名称,
+    COUNT(*) as 记录数
+FROM public.hot_stamping_type_compatibility
+GROUP BY hot_stamping_type_id
+ORDER BY hot_stamping_type_id;
+
+-- 验证每个纸类型的记录数
+SELECT 
+    paper_type,
+    COUNT(*) as 记录数
+FROM public.hot_stamping_type_compatibility
+GROUP BY paper_type
+ORDER BY paper_type;
+
+-- 验证兼容性状态分布
+SELECT 
+    compatibility_status,
+    COUNT(*) as 记录数
+FROM public.hot_stamping_type_compatibility
+GROUP BY compatibility_status
+ORDER BY compatibility_status;
+
+-- 验证平面燙金的兼容性（应该全部为V）
+SELECT 
+    '平面燙金兼容性验证' as 验证项,
+    COUNT(*) as 总记录数,
+    SUM(CASE WHEN compatibility_status = 'V' THEN 1 ELSE 0 END) as 兼容记录数,
+    SUM(CASE WHEN compatibility_status = 'X' THEN 1 ELSE 0 END) as 不兼容记录数
+FROM public.hot_stamping_type_compatibility
+WHERE hot_stamping_type_id = 1;
+
+-- 验证其他烫金类型的兼容性（应该全部为X）
+SELECT 
+    '其他烫金类型兼容性验证' as 验证项,
+    COUNT(*) as 总记录数,
+    SUM(CASE WHEN compatibility_status = 'V' THEN 1 ELSE 0 END) as 兼容记录数,
+    SUM(CASE WHEN compatibility_status = 'X' THEN 1 ELSE 0 END) as 不兼容记录数
+FROM public.hot_stamping_type_compatibility
+WHERE hot_stamping_type_id IN (4, 6, 7, 8, 9);
+
+-- 验证燙金紙系列格式（应该不包含"系列"）
+SELECT 
+    '燙金紙系列格式验证' as 验证项,
+    COUNT(*) as 总记录数,
+    SUM(CASE WHEN product_name LIKE '%系列%' THEN 1 ELSE 0 END) as 包含系列后缀的记录数
+FROM public.hot_stamping_type_compatibility;
+
+
+
+
+

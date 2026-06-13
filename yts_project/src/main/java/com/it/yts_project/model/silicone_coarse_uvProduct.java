@@ -1,0 +1,107 @@
+package com.it.yts_project.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+/**
+ * 硅胶粗纹UV产品模型
+ * 对应 silicone_coarse_uv_product 表
+ */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class silicone_coarse_uvProduct {
+
+    private Integer id;
+
+    /**
+     * 物料编码
+     */
+    private String materialCode;
+
+    /**
+     * 供应商物料型号/编号
+     */
+    private String supplierCode;
+
+    /**
+     * 采购申请编号
+     */
+    private String stockCode;
+
+    /**
+     * 物料名称
+     */
+    private String materialName;
+
+    /**
+     * 物料用途
+     */
+    private String usageText;
+
+    /**
+     * 材质
+     */
+    private String category;
+
+    /**
+     * 颜色
+     */
+    private String color;
+
+    /**
+     * 测试员
+     */
+    private String responsiblePerson;
+
+    /**
+     * 用纸尺寸-最小(mm)
+     */
+    private String minSheetSize;
+
+    /**
+     * 用纸尺寸-最大(mm)
+     */
+    private String maxSheetSize;
+
+    /**
+     * 间距-最小(mm)
+     */
+    private String minSpacing;
+
+    /**
+     * 设计限制（点/线/间距/面积/结构应用）
+     */
+    private String designInfo;
+
+    /**
+     * 适用界面（纸张面/印刷油墨面/后加工涂层面）
+     */
+    private String applicableInterface;
+
+    /**
+     * 注意事项、限制的备注与说明
+     */
+    private String notes;
+
+    /**
+     * 是否激活
+     */
+    @Builder.Default
+    private Boolean isActive = true;
+
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createdAt;
+
+    /**
+     * 更新时间
+     */
+    private LocalDateTime updatedAt;
+}

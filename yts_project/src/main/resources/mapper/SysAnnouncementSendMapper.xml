@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.SysAnnouncementSendMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="SysAnnouncementSendResultMap" type="com.it.yts_project.model.SysAnnouncementSend">
+        <id property="id" column="id"/>
+        <result property="anntId" column="annt_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="readFlag" column="read_flag"/>
+        <result property="readTime" column="read_time"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <!-- 插入用户消息关联 -->
+    <insert id="insert" parameterType="com.it.yts_project.model.SysAnnouncementSend">
+        INSERT INTO sys_announcement_send (
+            id, annt_id, user_id, read_flag, read_time, create_time
+        ) VALUES (
+            #{id}, #{anntId}, #{userId},
+            COALESCE(#{readFlag}, 0),
+            #{readTime},
+            COALESCE(#{createTime}, CURRENT_TIMESTAMP)
+        )
+        ON CONFLICT (annt_id, user_id) DO NOTHING
+    </insert>
+
+    <!-- 批量插入用户消息关联 -->
+    <insert id="batchInsert" parameterType="list">
+        INSERT INTO sys_announcement_send (id, annt_id, user_id, read_flag, create_time)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id}, #{item.anntId}, #{item.userId},
+             COALESCE(#{item.readFlag}, 0),
+             CURRENT_TIMESTAMP)
+        </foreach>
+        ON CONFLICT (annt_id, user_id) DO NOTHING
+    </insert>
+
+    <!-- 根据消息ID和用户ID查询 -->
+    <select id="selectByAnntIdAndUserId" resultMap="SysAnnouncementSendResultMap">
+        SELECT * FROM sys_announcement_send
+        WHERE annt_id = #{anntId} AND user_id = #{userId}
+    </select>
+
+    <!-- 标记为已读 -->
+    <update id="markAsRead">
+        UPDATE sys_announcement_send
+        SET read_flag = 1, read_time = CURRENT_TIMESTAMP
+        WHERE annt_id = #{anntId} AND user_id = #{userId}
+    </update>
+
+    <!-- 批量标记为已读 -->
+    <update id="batchMarkAsRead">
+        UPDATE sys_announcement_send
+        SET read_flag = 1, read_time = CURRENT_TIMESTAMP
+        WHERE user_id = #{userId} AND annt_id IN
+        <foreach collection="anntIds" item="anntId" open="(" separator="," close=")">
+            #{anntId}
+        </foreach>
+    </update>
+
+    <!-- 删除用户消息关联 -->
+    <delete id="deleteByAnntIdAndUserId">
+        DELETE FROM sys_announcement_send
+        WHERE annt_id = #{anntId} AND user_id = #{userId}
+    </delete>
+
+    <!-- 统计用户未读消息数
+         统计所有消息类型（通知公告和系统消息）的未读数量
+    -->
+    <select id="countUnreadByUserId" resultType="int">
+        SELECT COUNT(*)
+        FROM sys_announcement a
+        INNER JOIN sys_announcement_send s ON a.id = s.annt_id AND s.user_id = #{userId}
+        WHERE a.send_status = 1
+          AND (a.start_time IS NULL OR a.start_time &lt;= CURRENT_TIMESTAMP)
+          AND (a.end_time IS NULL OR a.end_time &gt;= CURRENT_TIMESTAMP)
+          AND s.read_flag = 0
+    </select>
+
+    <!-- 根据消息ID删除所有关联记录 -->
+    <delete id="deleteByAnntId">
+        DELETE FROM sys_announcement_send WHERE annt_id = #{anntId}
+    </delete>
+
+</mapper>
+

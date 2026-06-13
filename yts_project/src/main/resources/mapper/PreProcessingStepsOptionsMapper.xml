@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.PreProcessingStepsOptionsMapper">
+    
+    <!-- 结果映射 -->
+    <resultMap id="PreProcessingStepsOptionsResultMap" type="com.it.yts_project.model.PreProcessingStepsOptions">
+        <id property="id" column="id"/>
+        <result property="preProcessingStepsName" column="pre_processing_steps_name"/>
+        <result property="displayOrder" column="display_order"/>
+        <result property="isActive" column="is_active"/>
+        <result property="description" column="description"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="steps" column="steps"/>
+        <result property="process" column="process"/>
+    </resultMap>
+    
+    <!-- 获取所有激活的前工序选项 -->
+    <select id="getAllActiveOptions" resultMap="PreProcessingStepsOptionsResultMap">
+        SELECT 
+            id,
+            pre_processing_steps_name,
+            display_order,
+            is_active,
+            description,
+            created_at,
+            updated_at,
+            steps,
+            process
+        FROM pre_processing_steps_options
+        WHERE is_active = true
+        ORDER BY display_order ASC, id ASC
+    </select>
+    
+    <!-- 根据ID获取前工序选项 -->
+    <select id="getById" parameterType="java.lang.Integer" resultMap="PreProcessingStepsOptionsResultMap">
+        SELECT 
+            id,
+            pre_processing_steps_name,
+            display_order,
+            is_active,
+            description,
+            created_at,
+            updated_at,
+            steps,
+            process
+        FROM pre_processing_steps_options
+        WHERE id = #{id}
+    </select>
+    
+    <!-- 获取所有前工序选项（包括未激活的） -->
+    <select id="getAllOptions" resultMap="PreProcessingStepsOptionsResultMap">
+        SELECT 
+            id,
+            pre_processing_steps_name,
+            display_order,
+            is_active,
+            description,
+            created_at,
+            updated_at,
+            steps,
+            process
+        FROM pre_processing_steps_options
+        ORDER BY display_order ASC, id ASC
+    </select>
+    
+    <!-- 创建前工序选项 -->
+    <insert id="insert" parameterType="com.it.yts_project.model.PreProcessingStepsOptions" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO pre_processing_steps_options (
+            pre_processing_steps_name,
+            display_order,
+            is_active,
+            description,
+            created_at,
+            updated_at,
+            steps,
+            process
+        ) VALUES (
+            #{preProcessingStepsName},
+            #{displayOrder},
+            #{isActive},
+            #{description},
+            #{createdAt},
+            #{updatedAt},
+            #{steps},
+            #{process}
+        )
+    </insert>
+    
+    <!-- 更新前工序选项 -->
+    <update id="update" parameterType="com.it.yts_project.model.PreProcessingStepsOptions">
+        UPDATE pre_processing_steps_options
+        SET 
+            pre_processing_steps_name = #{preProcessingStepsName},
+            display_order = #{displayOrder},
+            is_active = #{isActive},
+            description = #{description},
+            updated_at = #{updatedAt},
+            steps = #{steps},
+            process = #{process}
+        WHERE id = #{id}
+    </update>
+    
+    <!-- 删除前工序选项 -->
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        DELETE FROM pre_processing_steps_options WHERE id = #{id}
+    </delete>
+    
+    <!-- 批量更新状态 -->
+    <update id="batchUpdateStatus">
+        UPDATE pre_processing_steps_options
+        SET is_active = #{isActive}
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+    
+    <!-- 更新显示顺序 -->
+    <update id="updateDisplayOrder">
+        UPDATE pre_processing_steps_options
+        SET display_order = #{displayOrder}
+        WHERE id = #{id}
+    </update>
+    
+    <!-- 根据工艺类型查找前工序选项 -->
+    <select id="getByProcess" parameterType="java.lang.String" resultMap="PreProcessingStepsOptionsResultMap">
+        SELECT 
+            id,
+            pre_processing_steps_name,
+            display_order,
+            is_active,
+            description,
+            created_at,
+            updated_at,
+            steps,
+            process
+        FROM pre_processing_steps_options
+        WHERE process = #{process}
+        LIMIT 1
+    </select>
+    
+    <!-- 根据前工序名称查找前工序选项 -->
+    <select id="getByPreProcessingStepsName" parameterType="java.lang.String" resultMap="PreProcessingStepsOptionsResultMap">
+        SELECT 
+            id,
+            pre_processing_steps_name,
+            display_order,
+            is_active,
+            description,
+            created_at,
+            updated_at,
+            steps,
+            process
+        FROM pre_processing_steps_options
+        WHERE pre_processing_steps_name = #{preProcessingStepsName}
+        LIMIT 1
+    </select>
+    
+</mapper>
