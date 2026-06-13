@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.PostProcessingPrintMapper">
+
+    <!-- 获取所有印刷配置 -->
+    <select id="findAll" resultMap="PostProcessingPrintResultMap">
+        SELECT 
+            ppp.id,
+            ppp.product_name,
+            ppp.product_model_number,
+            ppp.color,
+            ppp.cloth_paper_type_id,
+            CONCAT(cpt.category, '.', cpt.type_name) as cloth_paper_type_name,
+            ppp.compatibility_status,
+            ppp.paper_type,
+            ppp.notice_ids,
+            ppp.created_at,
+            ppp.updated_at
+        FROM post_processing_print ppp
+        LEFT JOIN cloth_paper_types cpt ON ppp.cloth_paper_type_id = cpt.id
+        ORDER BY ppp.product_name, ppp.product_model_number
+    </select>
+    
+    <!-- 结果映射 -->
+    <resultMap id="PostProcessingPrintResultMap" type="com.it.yts_project.model.PostProcessingPrint">
+        <id column="id" property="id"/>
+        <result column="product_name" property="productName"/>
+        <result column="product_model_number" property="productModelNumber"/>
+        <result column="color" property="color"/>
+        <result column="cloth_paper_type_id" property="clothPaperTypeId"/>
+        <result column="cloth_paper_type_name" property="clothPaperTypeName"/>
+        <result column="compatibility_status" property="compatibilityStatus"/>
+        <result column="paper_type" property="paperType"/>
+        <result column="notice_ids" property="noticeIds" typeHandler="com.it.yts_project.config.IntegerArrayTypeHandler"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <!-- 分页获取印刷配置 -->
+    <select id="findWithPagination" resultMap="PostProcessingPrintResultMap">
+        SELECT 
+            ppp.id,
+            ppp.product_name,
+            ppp.product_model_number,
+            ppp.color,
+            ppp.cloth_paper_type_id,
+            CONCAT(cpt.category, '.', cpt.type_name) as cloth_paper_type_name,
+            ppp.compatibility_status,
+            ppp.paper_type,
+            ppp.notice_ids,
+            ppp.created_at,
+            ppp.updated_at
+        FROM post_processing_print ppp
+        LEFT JOIN cloth_paper_types cpt ON ppp.cloth_paper_type_id = cpt.id
+        ORDER BY ppp.product_name, ppp.product_model_number
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 获取总记录数 -->
+    <select id="getTotalCount" resultType="int">
+        SELECT COUNT(*) FROM post_processing_print
+    </select>
+
+    <!-- 根据ID获取印刷配置 -->
+    <select id="findById" resultMap="PostProcessingPrintResultMap">
+        SELECT 
+            ppp.id,
+            ppp.product_name,
+            ppp.product_model_number,
+            ppp.color,
+            ppp.cloth_paper_type_id,
+            CONCAT(cpt.category, '.', cpt.type_name) as cloth_paper_type_name,
+            ppp.compatibility_status,
+            ppp.paper_type,
+            ppp.notice_ids,
+            ppp.created_at,
+            ppp.updated_at
+        FROM post_processing_print ppp
+        LEFT JOIN cloth_paper_types cpt ON ppp.cloth_paper_type_id = cpt.id
+        WHERE ppp.id = #{id}
+    </select>
+
+    <!-- 插入印刷配置 -->
+    <insert id="insert" parameterType="com.it.yts_project.model.PostProcessingPrint" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO post_processing_print (
+            product_name,
+            product_model_number,
+            color,
+            cloth_paper_type_id,
+            compatibility_status,
+            paper_type,
+            notice_ids,
+            created_at,
+            updated_at
+        ) VALUES (
+            #{productName},
+            #{productModelNumber},
+            #{color},
+            #{clothPaperTypeId},
+            #{compatibilityStatus},
+            #{paperType},
+            #{noticeIds, typeHandler=com.it.yts_project.config.IntegerArrayTypeHandler},
+            #{createdAt},
+            #{updatedAt}
+        )
+    </insert>
+
+    <!-- 更新印刷配置 -->
+    <update id="update" parameterType="com.it.yts_project.model.PostProcessingPrint">
+        UPDATE post_processing_print
+        SET product_name = #{productName},
+            product_model_number = #{productModelNumber},
+            color = #{color},
+            cloth_paper_type_id = #{clothPaperTypeId},
+            compatibility_status = #{compatibilityStatus},
+            paper_type = #{paperType},
+            notice_ids = #{noticeIds, typeHandler=com.it.yts_project.config.IntegerArrayTypeHandler},
+            updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除印刷配置 -->
+    <delete id="deleteById">
+        DELETE FROM post_processing_print
+        WHERE id = #{id}
+    </delete>
+    
+    <!-- 批量删除印刷配置 -->
+    <delete id="batchDeleteByIds">
+        DELETE FROM post_processing_print WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 根据燙金紙系列搜索 -->
+    <select id="findByProductName" resultType="com.it.yts_project.model.PostProcessingPrint">
+        SELECT * FROM post_processing_print
+        WHERE product_name LIKE CONCAT('%', #{productName}, '%')
+        ORDER BY product_name, product_model_number
+    </select>
+
+    <!-- 根据产品型号搜索 -->
+    <select id="findByProductModelNumber" resultType="com.it.yts_project.model.PostProcessingPrint">
+        SELECT * FROM post_processing_print
+        WHERE product_model_number LIKE CONCAT('%', #{productModelNumber}, '%')
+        ORDER BY product_name, product_model_number
+    </select>
+
+    <!-- 根据颜色搜索 -->
+    <select id="findByColor" resultType="com.it.yts_project.model.PostProcessingPrint">
+        SELECT * FROM post_processing_print
+        WHERE color LIKE CONCAT('%', #{color}, '%')
+        ORDER BY product_name, product_model_number
+    </select>
+
+    <!-- 根据布面纸类型ID搜索 -->
+    <select id="findByClothPaperTypeId" resultType="com.it.yts_project.model.PostProcessingPrint">
+        SELECT * FROM post_processing_print
+        WHERE cloth_paper_type_id = #{clothPaperTypeId}
+        ORDER BY product_name, product_model_number
+    </select>
+
+    <!-- 获取所有可用的燙金紙系列 -->
+    <select id="getAllProductNames" resultType="string">
+        SELECT DISTINCT product_name 
+        FROM post_processing_print 
+        ORDER BY product_name
+    </select>
+
+    <!-- 获取所有可用的产品型号 -->
+    <select id="getAllProductModelNumbers" resultType="string">
+        SELECT DISTINCT product_model_number 
+        FROM post_processing_print 
+        ORDER BY product_model_number
+    </select>
+
+    <!-- 获取所有可用的颜色 -->
+    <select id="getAllColors" resultType="string">
+        SELECT DISTINCT color 
+        FROM post_processing_print 
+        ORDER BY color
+    </select>
+
+    <!-- 根据产品名称和型号获取颜色选项 -->
+    <select id="getColorsByProductAndModel" resultType="string">
+        SELECT DISTINCT s.color 
+        FROM products p
+        INNER JOIN specifications s ON p.id = s.project_id
+        WHERE p.name = #{productName} 
+        AND p.model_number = #{productModelNumber}
+        AND s.color IS NOT NULL 
+        AND s.color != ''
+        ORDER BY s.color
+    </select>
+
+    <!-- 根据产品名称获取颜色选项 -->
+    <select id="getColorsByProductName" resultType="string">
+        SELECT DISTINCT s.color 
+        FROM products p
+        INNER JOIN specifications s ON p.id = s.project_id
+        WHERE p.name = #{productName}
+        AND s.color IS NOT NULL 
+        AND s.color != ''
+        ORDER BY s.color
+    </select>
+
+    <!-- 根据产品型号获取颜色选项 -->
+    <select id="getColorsByProductModelNumber" resultType="string">
+        SELECT DISTINCT s.color 
+        FROM products p
+        INNER JOIN specifications s ON p.id = s.project_id
+        WHERE p.model_number = #{productModelNumber}
+        AND s.color IS NOT NULL 
+        AND s.color != ''
+        ORDER BY s.color
+    </select>
+
+    <!-- 根据唯一键查找记录 -->
+    <select id="findByUniqueKey" resultType="com.it.yts_project.model.PostProcessingPrint">
+        SELECT * FROM post_processing_print
+        WHERE product_name = #{productName}
+        <choose>
+            <when test="productModelNumber != null and productModelNumber != ''">
+                AND (product_model_number = #{productModelNumber} OR (product_model_number IS NULL AND #{productModelNumber} = ''))
+            </when>
+            <otherwise>
+                AND (product_model_number IS NULL OR product_model_number = '')
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="color != null and color != ''">
+                AND (color = #{color} OR (color IS NULL AND #{color} = ''))
+            </when>
+            <otherwise>
+                AND (color IS NULL OR color = '')
+            </otherwise>
+        </choose>
+        AND cloth_paper_type_id = #{clothPaperTypeId}
+        <choose>
+            <when test="paperType != null and paperType != ''">
+                AND (paper_type = #{paperType} OR (paper_type IS NULL AND #{paperType} = ''))
+            </when>
+            <otherwise>
+                AND paper_type IS NULL
+            </otherwise>
+        </choose>
+        ORDER BY id DESC
+        LIMIT 1
+    </select>
+
+    <!-- 批量更新兼容性状态 -->
+    <update id="batchUpdateStatus">
+        UPDATE post_processing_print
+        SET compatibility_status = #{compatibilityStatus},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!-- 验证颜色是否存在且属于指定的产品 -->
+    <select id="validateColor" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM products p
+        INNER JOIN specifications s ON p.id = s.project_id
+        WHERE s.color = #{color}
+        AND s.color IS NOT NULL
+        AND s.color != ''
+        <if test="productName != null and productName != ''">
+            AND p.name = #{productName}
+        </if>
+        <if test="productModelNumber != null and productModelNumber != ''">
+            AND p.model_number = #{productModelNumber}
+        </if>
+    </select>
+    
+    <!-- 根据条件获取注意事项ID列表 -->
+    <select id="getNoticeIdsByConditions" resultType="java.lang.Integer">
+        SELECT DISTINCT unnest(notice_ids)
+        FROM post_processing_print
+        WHERE notice_ids IS NOT NULL
+        AND array_length(notice_ids, 1) > 0
+        AND compatibility_status IN ('V', '▷')
+        <if test="clothPaperTypeId != null">
+            AND cloth_paper_type_id = #{clothPaperTypeId}
+        </if>
+        <if test="productModelNumber != null and productModelNumber != ''">
+            AND product_model_number = #{productModelNumber}
+        </if>
+        <if test="productName != null and productName != ''">
+            AND product_name = #{productName}
+        </if>
+    </select>
+    
+    <!-- 更新注意事项ID列表 -->
+    <update id="updateNoticeIds">
+        UPDATE post_processing_print
+        SET notice_ids = #{noticeIds, typeHandler=com.it.yts_project.config.IntegerArrayTypeHandler},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+</mapper>

@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.PostProcessingPrintUvMapper">
+    
+    <resultMap id="PostProcessingPrintUvResultMap" type="com.it.yts_project.model.PostProcessingPrintUv">
+        <id property="id" column="id"/>
+        <result property="productName" column="product_name"/>
+        <result property="productModelNumber" column="product_model_number"/>
+        <result property="companyNumber" column="company_number"/>
+        <result property="compatibilityStatus" column="compatibility_status"/>
+        <result property="paperType" column="paper_type"/>
+        <result property="noticeIds" column="notice_ids" typeHandler="com.it.yts_project.config.IntegerArrayTypeHandler"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+    
+    <!--
+    ========================================
+    检查印刷UV后加工兼容性 - 渐进式匹配
+    ========================================
+    匹配优先级（从高到低）：
+    1. product_model_number + company_number + paper_type
+    2. product_name + company_number + paper_type
+    ========================================
+    -->
+    <select id="checkPrintUvCompatibility" resultType="java.lang.Character">
+        SELECT compatibility_status
+        FROM post_processing_print_uv
+        WHERE company_number = #{companyNumber}
+        AND (paper_type IS NULL OR paper_type = '' OR paper_type = #{paperType})
+        AND (
+            -- 匹配1: product_model_number（优先级高）
+            (product_model_number = #{productModelNumber} 
+             AND product_model_number IS NOT NULL
+             AND product_model_number != '')
+            OR
+            -- 匹配2: product_name（优先级低）
+            (product_name = #{productName}
+             AND product_name IS NOT NULL
+             AND product_name != '')
+        )
+        ORDER BY 
+            -- 优先级排序：越精确的匹配越靠前
+            CASE
+                WHEN product_model_number = #{productModelNumber} 
+                     AND product_model_number IS NOT NULL 
+                     AND product_model_number != '' THEN 1
+                WHEN product_name = #{productName} 
+                     AND product_name IS NOT NULL 
+                     AND product_name != '' THEN 2
+                ELSE 3
+            END
+        LIMIT 1
+    </select>
+    
+    <!-- 查询所有印刷UV兼容性记录 -->
+    <select id="findAll" resultMap="PostProcessingPrintUvResultMap">
+        SELECT 
+            id,
+            product_name,
+            product_model_number,
+            company_number,
+            compatibility_status,
+            paper_type,
+            notice_ids,
+            created_at,
+            updated_at
+        FROM post_processing_print_uv
+        ORDER BY 
+            product_name,
+            product_model_number,
+            company_number
+    </select>
+    
+    <!-- 分页查询印刷UV兼容性记录 -->
+    <select id="findWithPagination" resultMap="PostProcessingPrintUvResultMap">
+        SELECT 
+            id,
+            product_name,
+            product_model_number,
+            company_number,
+            compatibility_status,
+            paper_type,
+            notice_ids,
+            created_at,
+            updated_at
+        FROM post_processing_print_uv
+        ORDER BY 
+            product_name,
+            product_model_number,
+            company_number
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+    
+    <!-- 获取总记录数 -->
+    <select id="getTotalCount" resultType="int">
+        SELECT COUNT(*) FROM post_processing_print_uv
+    </select>
+    
+    <!-- 根据条件查询印刷UV兼容性记录 -->
+    <select id="findByConditions" resultMap="PostProcessingPrintUvResultMap">
+        SELECT 
+            id,
+            product_name,
+            product_model_number,
+            company_number,
+            compatibility_status,
+            paper_type,
+            notice_ids,
+            created_at,
+            updated_at
+        FROM post_processing_print_uv
+        <where>
+            <if test="productName != null and productName != ''">
+                AND product_name = #{productName}
+            </if>
+            <if test="productModelNumber != null and productModelNumber != ''">
+                AND product_model_number = #{productModelNumber}
+            </if>
+            <if test="companyNumber != null and companyNumber != ''">
+                AND company_number = #{companyNumber}
+            </if>
+        </where>
+        ORDER BY 
+            product_name,
+            product_model_number,
+            company_number
+    </select>
+    
+    <!-- 插入记录 -->
+    <insert id="insert" parameterType="com.it.yts_project.model.PostProcessingPrintUv" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO post_processing_print_uv (
+            product_name,
+            product_model_number,
+            company_number,
+            compatibility_status,
+            paper_type,
+            notice_ids,
+            created_at,
+            updated_at
+        ) VALUES (
+            #{productName},
+            #{productModelNumber},
+            #{companyNumber},
+            #{compatibilityStatus},
+            #{paperType},
+            #{noticeIds, typeHandler=com.it.yts_project.config.IntegerArrayTypeHandler},
+            CURRENT_TIMESTAMP,
+            CURRENT_TIMESTAMP
+        )
+    </insert>
+    
+    <!-- 更新记录 -->
+    <update id="update" parameterType="com.it.yts_project.model.PostProcessingPrintUv">
+        UPDATE post_processing_print_uv
+        SET 
+            product_name = #{productName},
+            product_model_number = #{productModelNumber},
+            company_number = #{companyNumber},
+            compatibility_status = #{compatibilityStatus},
+            paper_type = #{paperType},
+            notice_ids = #{noticeIds, typeHandler=com.it.yts_project.config.IntegerArrayTypeHandler},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+    
+    <!-- 删除记录 -->
+    <delete id="deleteById">
+        DELETE FROM post_processing_print_uv
+        WHERE id = #{id}
+    </delete>
+    
+    <!-- 根据ID查询 -->
+    <select id="findById" resultMap="PostProcessingPrintUvResultMap">
+        SELECT 
+            id,
+            product_name,
+            product_model_number,
+            company_number,
+            compatibility_status,
+            paper_type,
+            notice_ids,
+            created_at,
+            updated_at
+        FROM post_processing_print_uv
+        WHERE id = #{id}
+    </select>
+    
+    <!-- 根据产品名称查询 -->
+    <select id="findByProductName" resultMap="PostProcessingPrintUvResultMap">
+        SELECT 
+            id,
+            product_name,
+            product_model_number,
+            company_number,
+            compatibility_status,
+            paper_type,
+            created_at,
+            updated_at
+        FROM post_processing_print_uv
+        WHERE product_name = #{productName}
+        ORDER BY product_model_number, company_number
+    </select>
+    
+    <!-- 根据产品型号查询 -->
+    <select id="findByProductModelNumber" resultMap="PostProcessingPrintUvResultMap">
+        SELECT 
+            id,
+            product_name,
+            product_model_number,
+            company_number,
+            compatibility_status,
+            paper_type,
+            created_at,
+            updated_at
+        FROM post_processing_print_uv
+        WHERE product_model_number = #{productModelNumber}
+        ORDER BY product_name, company_number
+    </select>
+    
+    <!-- 根据公司编号查询 -->
+    <select id="findByCompanyNumber" resultMap="PostProcessingPrintUvResultMap">
+        SELECT 
+            id,
+            product_name,
+            product_model_number,
+            company_number,
+            compatibility_status,
+            paper_type,
+            created_at,
+            updated_at
+        FROM post_processing_print_uv
+        WHERE company_number = #{companyNumber}
+        ORDER BY product_name, product_model_number
+    </select>
+    
+    <!-- 根据纸张类型查询 -->
+    <select id="findByPaperType" resultMap="PostProcessingPrintUvResultMap">
+        SELECT 
+            id,
+            product_name,
+            product_model_number,
+            company_number,
+            compatibility_status,
+            paper_type,
+            created_at,
+            updated_at
+        FROM post_processing_print_uv
+        WHERE paper_type = #{paperType}
+        ORDER BY product_name, product_model_number, company_number
+    </select>
+    
+    <!-- 获取所有产品名称 -->
+    <select id="getAllProductNames" resultType="string">
+        SELECT DISTINCT product_name 
+        FROM post_processing_print_uv 
+        WHERE product_name IS NOT NULL AND product_name != ''
+        ORDER BY product_name
+    </select>
+    
+    <!-- 获取所有产品型号 -->
+    <select id="getAllProductModelNumbers" resultType="string">
+        SELECT DISTINCT product_model_number 
+        FROM post_processing_print_uv 
+        WHERE product_model_number IS NOT NULL AND product_model_number != ''
+        ORDER BY product_model_number
+    </select>
+    
+    <!-- 获取所有公司编号 -->
+    <select id="getAllCompanyNumbers" resultType="string">
+        SELECT DISTINCT company_number 
+        FROM post_processing_print_uv 
+        WHERE company_number IS NOT NULL AND company_number != ''
+        ORDER BY company_number
+    </select>
+    
+    <!-- 获取所有纸张类型 -->
+    <select id="getAllPaperTypes" resultType="string">
+        SELECT DISTINCT paper_type 
+        FROM post_processing_print_uv 
+        WHERE paper_type IS NOT NULL AND paper_type != ''
+        ORDER BY paper_type
+    </select>
+    
+    <!-- 根据唯一键查找记录 -->
+    <!-- 注意：当 companyNumber 为 null 时，应该匹配所有可能的 companyNumber（包括 NULL、空字符串和实际值） -->
+    <!-- 因为 companyNumber 是自动获取的，可能在不同时间获取到不同的值 -->
+    <!-- 始终按 ID DESC 排序，确保返回最新的记录，避免更新旧记录导致重复数据 -->
+    <select id="findByUniqueKey" resultMap="PostProcessingPrintUvResultMap">
+        SELECT 
+            id,
+            product_name,
+            product_model_number,
+            company_number,
+            compatibility_status,
+            paper_type,
+            notice_ids,
+            created_at,
+            updated_at
+        FROM post_processing_print_uv
+        WHERE product_name = #{productName}
+        <choose>
+            <when test="companyNumber != null and companyNumber != ''">
+                AND company_number = #{companyNumber}
+            </when>
+            <otherwise>
+                <!-- 当 companyNumber 为 null 时，不限制 company_number，匹配所有可能的 company_number -->
+                <!-- 这样可以找到现有记录，即使它的 company_number 有值 -->
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="productModelNumber != null and productModelNumber != ''">
+                AND (
+                    (product_model_number = #{productModelNumber} 
+                     AND product_model_number IS NOT NULL 
+                     AND product_model_number != '')
+                )
+            </when>
+            <otherwise>
+                AND (product_model_number IS NULL OR product_model_number = '')
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="paperType != null and paperType != ''">
+                AND paper_type = #{paperType}
+            </when>
+            <otherwise>
+                AND (paper_type IS NULL OR paper_type = '')
+            </otherwise>
+        </choose>
+        <!-- 始终按 ID DESC 排序，确保返回最新的记录 -->
+        ORDER BY id DESC
+        LIMIT 1
+    </select>
+    
+    <!-- 批量更新兼容性状态 -->
+    <update id="batchUpdateStatus">
+        UPDATE post_processing_print_uv
+        SET compatibility_status = #{compatibilityStatus},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+    
+    <!-- 根据条件获取注意事项ID列表 -->
+    <select id="getNoticeIdsByConditions" resultType="java.lang.Integer">
+        SELECT DISTINCT unnest(notice_ids)
+        FROM post_processing_print_uv
+        WHERE notice_ids IS NOT NULL
+        AND array_length(notice_ids, 1) > 0
+        AND compatibility_status IN ('V', '▷')
+        <if test="companyNumber != null and companyNumber != ''">
+            AND company_number = #{companyNumber}
+        </if>
+    </select>
+    
+    <!-- 更新注意事项ID列表 -->
+    <update id="updateNoticeIds">
+        UPDATE post_processing_print_uv
+        SET notice_ids = #{noticeIds, typeHandler=com.it.yts_project.config.IntegerArrayTypeHandler},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+</mapper>

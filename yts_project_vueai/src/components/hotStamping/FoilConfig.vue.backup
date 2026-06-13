@@ -1,0 +1,1020 @@
+<script setup lang="ts">
+import { ref, computed } from 'vue';
+import { ElSelect, ElOption, ElCascader } from 'element-plus';
+
+// 查询参数
+const companyNumber = ref('');
+const gpNumber = ref('');
+const selectedProductType = ref('');
+const selectedPatternType = ref('');
+const selectedStampingType = ref('');
+const selectedPriceLevel = ref<number | null>(null);
+// 燙後加工选项 - 多选
+const selectedPostProcessing = ref<string[]>([]);
+
+// 过胶相关选项
+const selectedPostProcessingStep = ref('');
+const selectedLaminationMaterial = ref('');
+
+// 适用界面(前工序)参数
+const selectedInterfaceOption = ref('');
+const selectedApplicability = ref('');
+
+// 平面燙金位置选择参数
+const selectedStampingPosition = ref('');
+const showStampingPosition = ref(false);
+
+// 级联选择器参数
+const selectedStampingCascader = ref([]);
+const selectedPostProcessingCascader = ref([]);
+const selectedInterfaceCascader = ref([]);
+const selectedMaterialCascader = ref([]);
+const selectedStampingPatternCascader = ref([]);
+
+// 其他必要的变量
+const companyNumber = ref('');
+const gpNumber = ref('');
+const error = ref('');
+const selectedProductType = ref('');
+const selectedPatternType = ref('');
+const selectedStampingType = ref('');
+const selectedPriceLevel = ref(null);
+const selectedPostProcessing = ref([]);
+const selectedPostProcessingStep = ref('');
+const selectedLaminationMaterial = ref('');
+const selectedInterfaceOption = ref('');
+const selectedApplicability = ref('');
+const selectedMaterialOption = ref('');
+const selectedMaterialApplicability = ref('');
+const selectedStampingPatternOption = ref('');
+const selectedStampingPatternApplicability = ref('');
+
+// 材料适用界面参数（已在上方定义）
+
+// 状态
+const loading = ref(false);
+const error = ref<string | null>(null);
+
+// 适用界面选项列表 - 来自 NewTagMatching.vue
+const interfaceOptions = [
+  { value: 'oil6812Glossy33013440Du1m1', label: '掃金粉.青紅金粉' },
+  { value: 'oil6812Glossy33013440D2umb', label: '掃金粉.銀粉' },
+  { value: 'oil6812Glossy33013440D3umb', label: '掃金粉.珍珠粉' },    
+  { value: 'oil6812Glossy33013440Dum1', label: '印刷/过油面.普通油墨' },
+  { value: 'oil6812Glossy33013440Dumb', label: '印刷/过油面.LED UV墨' },
+  { value: 'oil6812Glossy33013440Dumb', label: '印刷/过油面.6812光水油3301/3440啞水油' },
+  { value: 'gvLedUvGlossMatte', label: '印刷/过油面.GP LED 光油/啞油' },
+  { value: 'gvLedUvGlossMatte', label: '印刷/过油面.去塑油' },
+  { value: 'oilBasedGlossMattePowderPaper', label: '印刷/过油面.油性 光油/啞油' },
+  { value: 'standardFuronghui22d', label: '哑胶面.普通-福融輝22D' },
+  { value: 'preCoatedHy120665', label: '哑胶面.預塗-HY1206/65' },
+  { value: 'highTackPreCoatedHy40', label: '哑胶面.超粘預塗HY40' },
+  { value: 'preCoatedEconomicalHighWearResistantYt008a', label: '哑胶面.預塗平價高耐磨YT008A' },
+  { value: 'preCoatedHighWearResistantTn008', label: '哑胶面.預塗高耐磨-TN008' },
+  { value: 'preCoatedStandardWearResistantKvmbF', label: '哑胶面.預塗普通耐磨-KVMB-F' },
+  { value: 'softTouchMatteLaminate6015a', label: '哑胶面.柔感啞膠-6015A' }
+];
+
+// 产品类型选项 - 与 NewTagMatching.vue 完全一致
+// 产品类型选择已在上面定义
+
+// 烫金图案类型选项 - 与 NewTagMatching.vue 完全一致
+// 烫金图案类型选择已在上面定义
+
+// 适用性选项
+const applicabilityOptions = [
+  { value: 'V', label: '适用' },
+  { value: 'X', label: '不适用' }
+];
+
+// 材料适用性选项
+const materialApplicabilityOptions = [
+  { value: 'V', label: '适用' },
+  { value: 'NA_Enum', label: '不确定' },
+  { value: '▷', label: '需要作「絲印打底處理」再烫金' }
+];
+
+// 材料适用界面选项列表 - 来自 NewTagMatching.vue
+const materialOptions = [
+  { value: '單粉咭', label: '單粉咭' },
+  { value: '雙粉咭', label: '雙粉咭' },
+  { value: '單粉紙', label: '單粉紙' },
+  { value: '啞粉紙', label: '啞粉紙' },
+  { value: '無粉咭', label: '單粉紙' },
+  { value: '書紙', label: '書紙' },
+  { value: 'plasticFilmNormalVET', label: '膠片.普通VET/VVC/AVET' },
+  { value: 'plasticFilmScratchResistantAVET', label: '膠片.防划AVET-防划面不可烫金' },
+  { value: 'waxPaperGTF', label: '牛油紙.GTF' },
+  { value: 'waxPaperZTF', label: '牛油紙.ZTF' },
+  { value: 'fabricPaperNylonJHT8001', label: '布面紙.尼龍絲JHT-8001' },
+  { value: 'fabricPaperNylonJHT8004', label: '布面紙.尼龍絲JHT-8004' },
+  { value: 'fabricPaperNylonJHT8013', label: '布面紙.尼龍絲JHT-8013' },
+  { value: 'fabricPaperPolyesterJHT8002', label: '布面紙.涤纶JHT-8002' },
+  { value: 'fabricPaperPolyesterJHT8010', label: '布面紙.涤纶JHT-8010' },
+  { value: 'fabricPaperPolyesterJHT8014', label: '布面紙.涤纶JHT-8014' },
+  { value: 'fabricPaperPolyesterJHT8015', label: '布面紙.涤纶JHT-8015' },
+  { value: 'fabricPaperPolyesterLTS8003', label: '布面紙.涤纶LTS-8003' },
+  { value: 'fabricPaperPolyesterESM', label: '布面紙.涤纶ESM' },
+  { value: 'fabricPaperImitationCottonJHT8003', label: '布面紙.仿棉JHT-8003' },
+  { value: 'fabricPaperImitationCottonJHT8017', label: '布面紙.仿棉JHT-8017' },
+  { value: 'fabricPaperPolyCottonJHT8006', label: '布面紙.涤棉JHT-8006' },
+  { value: 'fabricPaperPolyCottonJHT8008', label: '布面紙.涤棉JHT-8008' },
+  { value: 'fabricPaperPolyCottonJHT8011', label: '布面紙.涤棉JHT-8011' },
+  { value: 'fabricPaperPolyCottonJHT8016', label: '布面紙.涤棉JHT-8016' },
+  { value: 'fabricPaperPolyCottonJHT8018', label: '布面紙.涤棉JHT-8018' },
+  { value: 'fabricPaperPolyCottonJHT8019', label: '布面紙.涤棉JHT-8019' },
+  { value: 'fabricPaperPolyCottonJHT910', label: '布面紙.涤棉JHT-910' },
+  { value: 'fabricPaperHempCottonJHT8007', label: '布面紙.麻棉JHT-8007' },
+  { value: 'fabricPaperPureCottonJHT8009', label: '布面紙.纯棉JHT-8009' },
+  { value: 'fabricPaperPureCottonJHT8012', label: '布面紙.纯棉JHT-8012' },
+  { value: 'fabricPaperCottonJHT0001to0103', label: '布面紙.棉布JHT0001～0103' },
+  { value: 'fabricPaperMercerizedCottonJHT0104to0195', label: '布面紙.絲光棉JHT0104～0195' },
+  { value: 'fabricPaperMercerizedCottonJHT0199to0209', label: '布面紙.絲光棉JHT0199～0209' },
+  { value: 'fabricPaperMercerizedCottonJHT0211', label: '布面紙.絲光棉JHT0211' },
+  { value: 'fabricPaperMercerizedCottonJHT0213', label: '布面紙.絲光棉JHT0213' },
+  { value: 'fabricPaperSilkJHT0196to0198', label: '布面紙.絹布JHT0196～0198' },
+  { value: 'fabricPaperSilkJHT0265to0311', label: '布面紙.絹布JHT0265～0311' },
+  { value: 'fabricPaperFlashFabricJHT0216', label: '布面紙.闪光布JHT0216' },
+  { value: 'fabricPaperFlashFabricJHT0218', label: '布面紙.闪光布JHT0218' },
+  { value: 'fabricPaperFlashFabricJHT0312to0330', label: '布面紙.闪光布JHT0312～0330' },
+  { value: 'fabricPaperSilkFabricJHT0219to0264', label: '布面紙.絲綸布JHT0219～0264' },
+  { value: 'fabricPaperHempPressFabricJHT0334to0351', label: '布面紙.麻压布JHT0334～0351' },
+  { value: 'fabricPaperTexturedFabricJHT0352to0386', label: '布面紙.压紋布JHT0352～0386' },
+  { value: 'fabricPaperMercerizedHempFabricJHT0387to0407', label: '布面紙.絲光麻布JHT0387～0407' },
+  { value: 'fabricPaperCoarseFabricJHT0419to0429', label: '布面紙.粗布JHT0419～0429' }
+];
+
+// 烫金图案适用性选项
+const stampingPatternApplicabilityOptions = [
+  { value: 'V', label: '适用' },
+  { value: 'NA_Enum', label: '不确定' }
+];
+
+// 烫金图案选项列表 - 来自 NewTagMatching.vue
+const stampingPatternOptions = [
+  { value: 'gradientAndDots', label: '漸變、網點' },
+  { value: 'thinLinesAndLetters', label: '幼細線條、字母' },
+  { value: 'mediumSmallAreaThinLinesAndLetters', label: '中小面積細線條、字母' },
+  { value: 'mediumLargeAreaThinLinesAndLetters', label: '中大面積、細線條、字母' },
+  { value: 'extraLargeArea', label: '大面積' }
+];
+
+// 烫金类型适用性选项
+const stampingTypeApplicabilityOptions = [
+  { value: 'V', label: '适用' },
+  { value: 'X', label: '不适用' },
+  { value: 'NA_Enum', label: '不确定' }
+];
+
+// 烫金类型选项列表 - 来自 NewTagMatching.vue
+const stampingTypeOptions = [
+  { value: '平面燙金', label: '平面燙金' },
+  { value: '立體燙金', label: '立體燙金' },
+  { value: '磨砂燙金', label: '磨砂燙金' },
+  { value: '折光燙金', label: '折光燙金' },
+  { value: '燙金後擊凸', label: '燙金後擊凸' },
+  { value: '燙金後壓紋', label: '燙金後壓紋' },
+  { value: '有紋燙金', label: '有紋燙金' }
+];
+
+// 级联选择器数据
+const stampingCascaderOptions = [
+  {
+    value: '平面燙金',
+    label: '平面燙金',
+    children: [
+      { value: '默认', label: '默认' },
+      { value: '放中间', label: '放中间' },
+      { value: '放边位', label: '放边位' }
+    ]
+  },
+  {
+    value: '立體燙金',
+    label: '立體燙金',
+    children: []
+  },
+  {
+    value: '磨砂燙金',
+    label: '磨砂燙金',
+    children: []
+  },
+  {
+    value: '折光燙金',
+    label: '折光燙金',
+    children: []
+  },
+  {
+    value: '燙金後擊凸',
+    label: '燙金後擊凸',
+    children: []
+  },
+  {
+    value: '燙金後壓紋',
+    label: '燙金後壓紋',
+    children: []
+  },
+  {
+    value: '有紋燙金',
+    label: '有紋燙金',
+    children: []
+  }
+];
+
+// 级联选择器配置
+const cascaderProps = {
+  expandTrigger: 'hover' as const
+};
+
+// 燙後加工级联选择器数据
+const postProcessingCascaderOptions = [
+  {
+    value: 'laminating',
+    label: '过胶',
+    children: [
+      {
+        value: 'embossingDebossing',
+        label: '擊凹/凸',
+        children: [
+          { value: 'normalPreCoatedFilmGlossMatte', label: '普通预涂菲林-光/啞膠' },
+          { value: 'normalPreCoatedFilmEconomicalMatte', label: '普通预涂菲林-平价耐磨啞膠' },
+          { value: 'superTackPreCoatedFilmGlossMatte', label: '超粘预涂菲林-光/啞膠' },
+          { value: 'superTackPreCoatedFilmHighWearMatte', label: '超粘预涂菲林-高價耐磨啞膠' },
+          { value: 'waterBasedFilmGlossMatte', label: '水性菲林-光/啞膠' },
+          { value: 'specialFilmPreCoatedSoftTouch', label: '特殊菲林-預塗柔感膠(含預塗、水性)' },
+          { value: 'specialFilmAntiStaticGlossMatte', label: '特殊菲林-抗靜電光/啞膠(含預塗、水性)' }
+        ]
+      },
+      {
+        value: 'uvEmbossingDebossing',
+        label: '絲印UV+擊凹/凸',
+        children: [
+          { value: 'normalPreCoatedFilmGlossMatte', label: '普通预涂菲林-光/啞膠' },
+          { value: 'normalPreCoatedFilmEconomicalMatte', label: '普通预涂菲林-平价耐磨啞膠' },
+          { value: 'superTackPreCoatedFilmGlossMatte', label: '超粘预涂菲林-光/啞膠' },
+          { value: 'superTackPreCoatedFilmHighWearMatte', label: '超粘预涂菲林-高價耐磨啞膠' },
+          { value: 'waterBasedFilmGlossMatte', label: '水性菲林-光/啞膠' },
+          { value: 'specialFilmPreCoatedSoftTouch', label: '特殊菲林-預塗柔感膠(含預塗、水性)' },
+          { value: 'specialFilmAntiStaticGlossMatte', label: '特殊菲林-抗靜電光/啞膠(含預塗、水性)' }
+        ]
+      },
+      {
+        value: 'dieCutting',
+        label: '啤折/切',
+        children: [
+          { value: 'normalPreCoatedFilmGlossMatte', label: '普通预涂菲林-光/啞膠' },
+          { value: 'normalPreCoatedFilmEconomicalMatte', label: '普通预涂菲林-平价耐磨啞膠' },
+          { value: 'superTackPreCoatedFilmGlossMatte', label: '超粘预涂菲林-光/啞膠' },
+          { value: 'superTackPreCoatedFilmHighWearMatte', label: '超粘预涂菲林-高價耐磨啞膠' },
+          { value: 'waterBasedFilmGlossMatte', label: '水性菲林-光/啞膠' },
+          { value: 'specialFilmPreCoatedSoftTouch', label: '特殊菲林-預塗柔感膠(含預塗、水性)' },
+          { value: 'specialFilmAntiStaticGlossMatte', label: '特殊菲林-抗靜電光/啞膠(含預塗、水性)' }
+        ]
+      },
+      {
+        value: 'uvDieCutting',
+        label: '絲印UV+啤折/切',
+        children: [
+          { value: 'normalPreCoatedFilmGlossMatte', label: '普通预涂菲林-光/啞膠' },
+          { value: 'normalPreCoatedFilmEconomicalMatte', label: '普通预涂菲林-平价耐磨啞膠' },
+          { value: 'superTackPreCoatedFilmGlossMatte', label: '超粘预涂菲林-光/啞膠' },
+          { value: 'superTackPreCoatedFilmHighWearMatte', label: '超粘预涂菲林-高價耐磨啞膠' },
+          { value: 'waterBasedFilmGlossMatte', label: '水性菲林-光/啞膠' },
+          { value: 'specialFilmPreCoatedSoftTouch', label: '特殊菲林-預塗柔感膠(含預塗、水性)' },
+          { value: 'specialFilmAntiStaticGlossMatte', label: '特殊菲林-抗靜電光/啞膠(含預塗、水性)' }
+        ]
+      },
+      {
+        value: 'stepping',
+        label: '踩坑位',
+        children: [
+          { value: 'normalPreCoatedFilmGlossMatte', label: '普通预涂菲林-光/啞膠' },
+          { value: 'normalPreCoatedFilmEconomicalMatte', label: '普通预涂菲林-平价耐磨啞膠' },
+          { value: 'superTackPreCoatedFilmGlossMatte', label: '超粘预涂菲林-光/啞膠' },
+          { value: 'superTackPreCoatedFilmHighWearMatte', label: '超粘预涂菲林-高價耐磨啞膠' },
+          { value: 'waterBasedFilmGlossMatte', label: '水性菲林-光/啞膠' },
+          { value: 'specialFilmPreCoatedSoftTouch', label: '特殊菲林-預塗柔感膠(含預塗、水性)' },
+          { value: 'specialFilmAntiStaticGlossMatte', label: '特殊菲林-抗靜電光/啞膠(含預塗、水性)' }
+        ]
+      },
+      {
+        value: 'uvStepping',
+        label: '絲印UV+踩坑位',
+        children: [
+          { value: 'normalPreCoatedFilmGlossMatte', label: '普通预涂菲林-光/啞膠' },
+          { value: 'normalPreCoatedFilmEconomicalMatte', label: '普通预涂菲林-平价耐磨啞膠' },
+          { value: 'superTackPreCoatedFilmGlossMatte', label: '超粘预涂菲林-光/啞膠' },
+          { value: 'superTackPreCoatedFilmHighWearMatte', label: '超粘预涂菲林-高價耐磨啞膠' },
+          { value: 'waterBasedFilmGlossMatte', label: '水性菲林-光/啞膠' },
+          { value: 'specialFilmPreCoatedSoftTouch', label: '特殊菲林-預塗柔感膠(含預塗、水性)' },
+          { value: 'specialFilmAntiStaticGlossMatte', label: '特殊菲林-抗靜電光/啞膠(含預塗、水性)' }
+        ]
+      },
+      {
+        value: 'texturing',
+        label: '壓紋',
+        children: [
+          { value: 'normalPreCoatedFilmGlossMatte', label: '普通预涂菲林-光/啞膠' },
+          { value: 'normalPreCoatedFilmEconomicalMatte', label: '普通预涂菲林-平价耐磨啞膠' },
+          { value: 'superTackPreCoatedFilmGlossMatte', label: '超粘预涂菲林-光/啞膠' },
+          { value: 'superTackPreCoatedFilmHighWearMatte', label: '超粘预涂菲林-高價耐磨啞膠' },
+          { value: 'waterBasedFilmGlossMatte', label: '水性菲林-光/啞膠' },
+          { value: 'specialFilmPreCoatedSoftTouch', label: '特殊菲林-預塗柔感膠(含預塗、水性)' },
+          { value: 'specialFilmAntiStaticGlossMatte', label: '特殊菲林-抗靜電光/啞膠(含預塗、水性)' }
+        ]
+      }
+    ]
+  },
+  {
+    value: 'ledUvGlitter',
+    label: '絲印LED UV灑閃粉',
+    children: []
+  },
+  {
+    value: 'uvPrinting',
+    label: '印刷UV',
+    children: []
+  },
+  {
+    value: 'printing',
+    label: '印刷',
+    children: []
+  },
+  {
+    value: 'embossing',
+    label: '击凸',
+    children: []
+  }
+];
+
+// 適用界面级联选择器数据
+const interfaceCascaderOptions = [
+  {
+    value: 'coating',
+    label: '塗布',
+    children: [
+      { value: 'uvCoating', label: 'UV塗布' },
+      { value: 'waterBasedCoating', label: '水性塗布' },
+      { value: 'oilBasedCoating', label: '油性塗布' }
+    ]
+  },
+  {
+    value: 'printing',
+    label: '印刷',
+    children: [
+      { value: 'offsetPrinting', label: '膠印' },
+      { value: 'digitalPrinting', label: '數碼印刷' },
+      { value: 'screenPrinting', label: '絲印' }
+    ]
+  },
+  {
+    value: 'laminating',
+    label: '過膠',
+    children: [
+      { value: 'glossLaminating', label: '光膠' },
+      { value: 'matteLaminating', label: '啞膠' },
+      { value: 'softTouchLaminating', label: '柔感膠' }
+    ]
+  }
+];
+
+// 材料適用界面级联选择器数据
+const materialCascaderOptions = [
+  {
+    value: 'paper',
+    label: '紙張',
+    children: [
+      { value: 'coatedPaper', label: '塗布紙' },
+      { value: 'uncoatedPaper', label: '非塗布紙' },
+      { value: 'cardboard', label: '咭紙' }
+    ]
+  },
+  {
+    value: 'film',
+    label: '薄膜',
+    children: [
+      { value: 'petFilm', label: 'PET薄膜' },
+      { value: 'ppFilm', label: 'PP薄膜' },
+      { value: 'pvcFilm', label: 'PVC薄膜' }
+    ]
+  }
+];
+
+// 燙金圖案级联选择器数据
+const stampingPatternCascaderOptions = [
+  {
+    value: 'linePattern',
+    label: '線條圖案',
+    children: [
+      { value: 'thinLine', label: '細線條' },
+      { value: 'thickLine', label: '粗線條' },
+      { value: 'curvedLine', label: '曲線' }
+    ]
+  },
+  {
+    value: 'solidPattern',
+    label: '實地圖案',
+    children: [
+      { value: 'smallSolid', label: '小實地' },
+      { value: 'largeSolid', label: '大實地' },
+      { value: 'gradientSolid', label: '漸變實地' }
+    ]
+  },
+  {
+    value: 'mixedPattern',
+    label: '混合圖案',
+    children: [
+      { value: 'lineAndSolid', label: '線條+實地' },
+      { value: 'textAndPattern', label: '文字+圖案' },
+      { value: 'complexPattern', label: '複雜圖案' }
+    ]
+  }
+];
+
+// 价格优先度选项列表
+const priceLevelOptions = [
+  { value: 1, label: '1' },
+  { value: 2, label: '2' },
+  { value: 3, label: '3' },
+  { value: 4, label: '4' },
+  { value: 5, label: '5' },
+  { value: 6, label: '6' },
+  { value: 7, label: '7' },
+  { value: 8, label: '8' },
+  { value: 9, label: '9' },
+  { value: 10, label: '10' }
+];
+
+// 燙後加工选项列表
+const postProcessingOptions = [
+  { value: 'laminating', label: '过胶' },
+  { value: 'ledUvGlitter', label: '絲印LED UV灑閃粉' },
+  { value: 'uvPrinting', label: '印刷UV' },
+  { value: 'printing', label: '印刷' },
+  { value: 'embossing', label: '击凸' }
+];
+
+// 后加工步骤选项
+const postProcessingStepOptions = [
+  { value: 'embossingDebossing', label: '擊凹/凸' },
+  { value: 'uvEmbossingDebossing', label: '絲印UV+擊凹/凸' },
+  { value: 'dieCutting', label: '啤折/切' },
+  { value: 'uvDieCutting', label: '絲印UV+啤折/切' },
+  { value: 'stepping', label: '踩坑位' },
+  { value: 'uvStepping', label: '絲印UV+踩坑位' },
+  { value: 'texturing', label: '壓紋' }
+];
+
+// 过胶材质选项
+const laminationMaterialOptions = [
+  { value: 'normalPreCoatedFilmGlossMatte', label: '普通预涂菲林-光/啞膠' },
+  { value: 'normalPreCoatedFilmEconomicalMatte', label: '普通预涂菲林-平价耐磨啞膠' },
+  { value: 'superTackPreCoatedFilmGlossMatte', label: '超粘预涂菲林-光/啞膠' },
+  { value: 'superTackPreCoatedFilmHighWearMatte', label: '超粘预涂菲林-高價耐磨啞膠' },
+  { value: 'waterBasedFilmGlossMatte', label: '水性菲林-光/啞膠' },
+  { value: 'specialFilmPreCoatedSoftTouch', label: '特殊菲林-預塗柔感膠(含預塗、水性)' },
+  { value: 'specialFilmAntiStaticGlossMatte', label: '特殊菲林-抗靜電光/啞膠(含預塗、水性)' }
+];
+
+// 处理函数 - 按照 NewTagMatching.vue 的方式实现
+const handleProductTypeChange = () => {
+  console.log('产品类型选择:', selectedProductType.value);
+};
+
+const handlePatternTypeChange = () => {
+  console.log('烫金图案类型选择:', selectedPatternType.value);
+};
+
+const handleStampingTypeChange = () => {
+  console.log('烫金类型选择:', selectedStampingType.value);
+  // 如果选择了平面燙金，显示位置选择
+  showStampingPosition.value = selectedStampingType.value === '平面燙金';
+};
+
+// 级联选择器处理函数
+const handleStampingCascaderChange = (value: any) => {
+  console.log('级联选择器选择:', value);
+  if (value && value.length > 0) {
+    selectedStampingType.value = value[0];
+    if (value.length > 1) {
+      selectedStampingPosition.value = value[1];
+    } else {
+      selectedStampingPosition.value = '';
+    }
+  } else {
+    selectedStampingType.value = '';
+    selectedStampingPosition.value = '';
+  }
+};
+
+// 燙後加工级联选择器处理函数
+const handlePostProcessingCascaderChange = (value: any) => {
+  console.log('燙後加工级联选择器选择:', value);
+  // 处理多选结果
+  if (value && value.length > 0) {
+    // 提取所有选择的加工类型
+    const processingTypes = value.map((item: any) => item[0]).filter((type: string, index: number, arr: string[]) => arr.indexOf(type) === index);
+    selectedPostProcessing.value = processingTypes;
+    
+    // 处理过胶相关的子选项
+    const laminatingSelections = value.filter((item: any) => item[0] === 'laminating');
+    if (laminatingSelections.length > 0) {
+      // 提取后加工步骤（第二级）
+      const steps = laminatingSelections
+        .filter((item: any) => item.length >= 2)
+        .map((item: any) => item[1]);
+      if (steps.length > 0) {
+        selectedPostProcessingStep.value = steps[0]; // 取第一个选择
+      }
+      
+      // 提取过胶材质（第三级）
+      const materials = laminatingSelections
+        .filter((item: any) => item.length >= 3)
+        .map((item: any) => item[2]);
+      if (materials.length > 0) {
+        selectedLaminationMaterial.value = materials[0]; // 取第一个选择
+      }
+    }
+  } else {
+    selectedPostProcessing.value = [];
+    selectedPostProcessingStep.value = '';
+    selectedLaminationMaterial.value = '';
+  }
+};
+
+// 適用界面级联选择器处理函数
+const handleInterfaceCascaderChange = (value: any) => {
+  console.log('適用界面级联选择器选择:', value);
+  if (value && value.length > 0) {
+    selectedInterfaceOption.value = value[0];
+    if (value.length > 1) {
+      selectedApplicability.value = value[1];
+    } else {
+      selectedApplicability.value = '';
+    }
+  } else {
+    selectedInterfaceOption.value = '';
+    selectedApplicability.value = '';
+  }
+};
+
+// 材料適用界面级联选择器处理函数
+const handleMaterialCascaderChange = (value: any) => {
+  console.log('材料適用界面级联选择器选择:', value);
+  if (value && value.length > 0) {
+    selectedMaterialOption.value = value[0];
+    if (value.length > 1) {
+      selectedMaterialApplicability.value = value[1];
+    } else {
+      selectedMaterialApplicability.value = '';
+    }
+  } else {
+    selectedMaterialOption.value = '';
+    selectedMaterialApplicability.value = '';
+  }
+};
+
+// 燙金圖案级联选择器处理函数
+const handleStampingPatternCascaderChange = (value: any) => {
+  console.log('燙金圖案级联选择器选择:', value);
+  if (value && value.length > 0) {
+    selectedStampingPatternOption.value = value[0];
+    if (value.length > 1) {
+      selectedStampingPatternApplicability.value = value[1];
+    } else {
+      selectedStampingPatternApplicability.value = '';
+    }
+  } else {
+    selectedStampingPatternOption.value = '';
+    selectedStampingPatternApplicability.value = '';
+  }
+};
+
+const handleStampingPositionChange = () => {
+  console.log('平面燙金位置选择:', selectedStampingPosition.value);
+};
+
+// 其他必要的处理函数
+const handleProductTypeChange = () => {
+  console.log('产品类型选择:', selectedProductType.value);
+};
+
+const handlePatternTypeChange = () => {
+  console.log('图案类型选择:', selectedPatternType.value);
+};
+
+const handleStampingTypeChange = () => {
+  console.log('烫金类型选择:', selectedStampingType.value);
+};
+
+const handlePriceLevelChange = (priceLevel: number) => {
+  console.log('价格优先度选择:', priceLevel);
+};
+
+const handlePostProcessingChange = () => {
+  console.log('后加工选择:', selectedPostProcessing.value);
+};
+
+const handlePostProcessingStepChange = () => {
+  console.log('后加工步骤选择:', selectedPostProcessingStep.value);
+};
+
+const handleLaminationMaterialChange = () => {
+  console.log('过胶材质选择:', selectedLaminationMaterial.value);
+};
+
+const handleInterfaceOptionChange = () => {
+  console.log('界面选项选择:', selectedInterfaceOption.value);
+};
+
+const handleMaterialOptionChange = () => {
+  console.log('材料选项选择:', selectedMaterialOption.value);
+};
+
+const handleStampingPatternOptionChange = () => {
+  console.log('烫金图案选项选择:', selectedStampingPatternOption.value);
+};
+
+const handlePostProcessingChange = () => {
+  console.log('燙後加工选择:', selectedPostProcessing.value);
+};
+
+const handlePostProcessingStepChange = (stepId: string) => {
+  console.log('后加工步骤选择:', stepId);
+};
+
+const handleLaminationMaterialChange = (materialId: string) => {
+  console.log('过胶材质选择:', materialId);
+};
+
+const handleInterfaceOptionChange = () => {
+  console.log('适用界面选择:', selectedInterfaceOption.value, selectedApplicability.value);
+};
+
+const handleMaterialOptionChange = () => {
+  console.log('材料适用界面选择:', selectedMaterialOption.value, selectedMaterialApplicability.value);
+};
+
+const handleStampingPatternOptionChange = () => {
+  console.log('烫金图案选择:', selectedStampingPatternOption.value, selectedStampingPatternApplicability.value);
+};
+
+// 清空函数 - 按照 NewTagMatching.vue 的方式实现
+const clearProductType = () => {
+  selectedProductType.value = '';
+};
+
+const clearPatternType = () => {
+  selectedPatternType.value = '';
+};
+
+const clearStampingType = () => {
+  selectedStampingType.value = '';
+  selectedStampingPosition.value = '';
+  showStampingPosition.value = false;
+  selectedStampingCascader.value = [];
+};
+
+const clearPriceLevel = () => {
+  selectedPriceLevel.value = null;
+};
+
+const clearPostProcessing = () => {
+  selectedPostProcessing.value = [];
+  selectedPostProcessingStep.value = '';
+  selectedLaminationMaterial.value = '';
+  selectedPostProcessingCascader.value = [];
+};
+
+const clearPostProcessingStep = () => {
+  selectedPostProcessingStep.value = '';
+};
+
+const clearLaminationMaterial = () => {
+  selectedLaminationMaterial.value = '';
+};
+
+const clearInterfaceOption = () => {
+  selectedInterfaceOption.value = '';
+  selectedApplicability.value = '';
+  selectedInterfaceCascader.value = [];
+};
+
+const clearMaterialOption = () => {
+  selectedMaterialOption.value = '';
+  selectedMaterialApplicability.value = '';
+  selectedMaterialCascader.value = [];
+};
+
+const clearStampingPattern = () => {
+  selectedStampingPatternOption.value = '';
+  selectedStampingPatternApplicability.value = '';
+  selectedStampingPatternCascader.value = [];
+};
+
+// 其他清空函数
+const clearProductType = () => {
+  selectedProductType.value = '';
+};
+
+const clearPatternType = () => {
+  selectedPatternType.value = '';
+};
+
+const clearStampingType = () => {
+  selectedStampingType.value = '';
+  selectedStampingPosition.value = '';
+  selectedStampingCascader.value = [];
+};
+
+const clearPriceLevel = () => {
+  selectedPriceLevel.value = null;
+};
+
+const clearPostProcessingStep = () => {
+  selectedPostProcessingStep.value = '';
+};
+
+const clearLaminationMaterial = () => {
+  selectedLaminationMaterial.value = '';
+};
+
+const clearGpNumberOnly = () => {
+  gpNumber.value = '';
+  error.value = '';
+};
+
+// 查询函数 - 静态处理
+const searchByCompanyNumber = () => {
+  if (!companyNumber.value) {
+    error.value = '請輸入公司編號';
+    return;
+  }
+  // 模拟查询逻辑
+  console.log('查询公司编号:', companyNumber.value);
+};
+
+const searchByGpNumber = () => {
+  if (!gpNumber.value) {
+    error.value = '請輸入GP編號';
+    return;
+  }
+  // 模拟查询逻辑
+  console.log('查询GP编号:', gpNumber.value);
+};
+
+const clearCompanyNumberOnly = () => {
+  companyNumber.value = '';
+  error.value = '';
+};
+
+const clearGpNumberOnly = () => {
+  gpNumber.value = '';
+  error.value = null;
+};
+
+const clearCompanyNumber = () => {
+  companyNumber.value = '';
+  gpNumber.value = '';
+  error.value = null;
+  selectedProductType.value = '';
+  selectedPatternType.value = '';
+  selectedStampingType.value = '';
+  selectedStampingPosition.value = '';
+  showStampingPosition.value = false;
+  selectedPriceLevel.value = null;
+  selectedPostProcessing.value = [];
+  selectedPostProcessingStep.value = '';
+  selectedLaminationMaterial.value = '';
+  selectedInterfaceOption.value = '';
+  selectedApplicability.value = '';
+  selectedMaterialOption.value = '';
+  selectedMaterialApplicability.value = '';
+  selectedStampingPatternOption.value = '';
+  selectedStampingPatternApplicability.value = '';
+};
+
+// 暴露方法给父组件
+defineExpose({
+  clearCompanyNumber
+});
+</script>
+
+<template>
+  <div class="space-y-6">
+
+    <!-- 公司编号查询 -->
+    <div class="mb-6 bg-blue-50 p-4 rounded-lg border border-blue-200">
+      <h3 class="text-md font-medium text-blue-700 mb-3">1.根據公司編號或客戶編號查詢</h3>
+      <div class="flex space-x-2">
+        <div class="relative flex-1">
+          <input v-model="companyNumber" placeholder="請輸入公司編號或客戶編號並按回車鍵"
+            class="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+            @keyup.enter="searchByCompanyNumber" />
+          <button v-if="companyNumber" @click="clearCompanyNumberOnly"
+            class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div v-if="error" class="mt-2 text-sm text-red-600">{{ error }}</div>
+    </div>
+
+    <!-- 客户编号查询 -->
+    <div class="mb-6 bg-green-50 p-4 rounded-lg border border-green-200">
+      <h3 class="text-md font-medium text-green-700 mb-3">2.根據燙金紙型號查詢</h3>
+      <div class="flex space-x-2">
+        <div class="relative flex-1">
+          <input v-model="gpNumber" placeholder="請輸入燙金紙型號並按回車鍵"
+            class="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+            @keyup.enter="searchByGpNumber" />
+          <button v-if="gpNumber" @click="clearGpNumberOnly"
+            class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div v-if="error" class="mt-2 text-sm text-red-600">{{ error }}</div>
+    </div>
+
+    <!-- 适用界面(前工序) - 多级下拉框 -->
+    <div class="mb-4">
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="text-md font-medium text-gray-700">3. 適用界面(前工序)</h3>
+        <button v-if="selectedInterfaceCascader.length > 0" @click="clearInterfaceOption"
+          class="flex items-center gap-1 px-2 py-1 text-xs bg-red-100 text-red-600 rounded hover:bg-red-200 transition-colors">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+          清空
+        </button>
+      </div>
+      
+      <!-- 多级下拉框 - 使用级联选择器 -->
+      <el-cascader
+        v-model="selectedInterfaceCascader"
+        :options="interfaceCascaderOptions"
+        placeholder="請選擇適用界面和具體類型"
+        class="w-full"
+        @change="handleInterfaceCascaderChange"
+        :props="cascaderProps"
+        clearable
+      ></el-cascader>
+    </div>
+
+    <!-- 产品类型选择 -->
+    <div class="mb-4">
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="text-md font-medium text-gray-700">4. 產品類型</h3>
+        <button v-if="selectedProductType" @click="clearProductType"
+          class="flex items-center gap-1 px-2 py-1 text-xs bg-red-100 text-red-600 rounded hover:bg-red-200 transition-colors">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+          清空
+        </button>
+      </div>
+      <el-select v-model="selectedProductType" placeholder="請選擇產品類型" class="w-full" @change="handleProductTypeChange">
+        <el-option label="精平裝/咭書" value="精平裝/咭書"></el-option>
+        <el-option label="賀咭/紙袋" value="賀咭/紙袋"></el-option>
+        <el-option label="包裝" value="包裝"></el-option>
+      </el-select>
+    </div>
+
+    <!-- 烫金图案类型 -->
+    <div class="mb-4">
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="text-md font-medium text-gray-700">5. 6.燙金圖案(X)(耐磨燙金紙選用)</h3>
+        <button v-if="selectedPatternType" @click="clearPatternType"
+          class="flex items-center gap-1 px-2 py-1 text-xs bg-red-100 text-red-600 rounded hover:bg-red-200 transition-colors">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+          清空
+        </button>
+      </div>
+      <el-select v-model="selectedPatternType" placeholder="請選擇燙金圖案類型" class="w-full" @change="handlePatternTypeChange">
+        <el-option label="淨線條/字母≤0.5mm" value="淨線條/字母≤0.5mm"></el-option>
+        <el-option label="淨線條/字母0.5mm<X≤5mm" value="淨線條/字母0.5mm<X≤5mm"></el-option>
+        <el-option label="淨線條/字母5mm<X≤10mm" value="淨線條/字母5mm<X≤10mm"></el-option>
+        <el-option label="淨實地10mm<X≤20mm" value="淨實地10mm<X≤20mm"></el-option>
+        <el-option label="混合圖案≤0.5mm線條+實地" value="混合圖案≤0.5mm線條+實地"></el-option>
+        <el-option label="混合圖案>0.5mm線條+≤20mm 實地" value="混合圖案>0.5mm線條+≤20mm 實地"></el-option>
+        <el-option label="淨實地>10mm" value="淨實地>10mm"></el-option>
+        <el-option label="混合圖案>0.5mm線條+實地" value="混合圖案>0.5mm線條+實地"></el-option>
+        <el-option label="淨實地>20mm" value="淨實地>20mm"></el-option>
+        <el-option label="混合圖案>0.5mm線條+≤20mm 實地" value="混合圖案>0.5mm線條+≤20mm 實地"></el-option>
+        <el-option label="不作區分" value="不作區分"></el-option>
+      </el-select>
+    </div>
+
+    <!-- 烫金类型 -->
+    <div class="mb-4">
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="text-md font-medium text-gray-700">6. 燙金類型</h3>
+        <button v-if="selectedStampingType" @click="clearStampingType"
+          class="flex items-center gap-1 px-2 py-1 text-xs bg-red-100 text-red-600 rounded hover:bg-red-200 transition-colors">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+          清空
+        </button>
+      </div>
+      <!-- 多级下拉框 - 使用级联选择器 -->
+      <el-cascader
+        v-model="selectedStampingCascader"
+        :options="stampingCascaderOptions"
+        placeholder="請選擇燙金類型和位置"
+        class="w-full"
+        @change="handleStampingCascaderChange"
+        :props="cascaderProps"
+        clearable
+      ></el-cascader>
+    </div>
+
+    <!-- 适用界面 - 多级下拉框 -->
+    <div class="mb-4">
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="text-md font-medium text-gray-700">8. 適用界面</h3>
+        <button v-if="selectedMaterialCascader.length > 0" @click="clearMaterialOption"
+          class="flex items-center gap-1 px-2 py-1 text-xs bg-red-100 text-red-600 rounded hover:bg-red-200 transition-colors">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+          清空
+        </button>
+      </div>
+      
+      <!-- 多级下拉框 - 使用级联选择器 -->
+      <el-cascader
+        v-model="selectedMaterialCascader"
+        :options="materialCascaderOptions"
+        placeholder="請選擇材料適用界面和具體類型"
+        class="w-full"
+        @change="handleMaterialCascaderChange"
+        :props="cascaderProps"
+        clearable
+      ></el-cascader>
+    </div>
+
+    <!-- 烫金图案 - 多级下拉框 -->
+    <div class="mb-4">
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="text-md font-medium text-gray-700">8. 燙金圖案</h3>
+        <button v-if="selectedStampingPatternCascader.length > 0" @click="clearStampingPattern"
+          class="flex items-center gap-1 px-2 py-1 text-xs bg-red-100 text-red-600 rounded hover:bg-red-200 transition-colors">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+          清空
+        </button>
+      </div>
+      
+      <!-- 多级下拉框 - 使用级联选择器 -->
+      <el-cascader
+        v-model="selectedStampingPatternCascader"
+        :options="stampingPatternCascaderOptions"
+        placeholder="請選擇燙金圖案類型和具體樣式"
+        class="w-full"
+        @change="handleStampingPatternCascaderChange"
+        :props="cascaderProps"
+        clearable
+      ></el-cascader>
+    </div>
+
+
+    <!-- 燙後加工选项 - 多级下拉框 -->
+    <div class="mb-4">
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="text-md font-medium text-gray-700">9. 燙後加工選項</h3>
+        <button v-if="selectedPostProcessingCascader.length > 0" @click="clearPostProcessing"
+          class="flex items-center gap-1 px-2 py-1 text-xs bg-red-100 text-red-600 rounded hover:bg-red-200 transition-colors">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+          清空
+        </button>
+      </div>
+      
+      <!-- 多级下拉框 - 使用级联选择器 -->
+      <el-cascader
+        v-model="selectedPostProcessingCascader"
+        :options="postProcessingCascaderOptions"
+        placeholder="請選擇燙後加工選項和具體步驟"
+        class="w-full"
+        @change="handlePostProcessingCascaderChange"
+        :props="cascaderProps"
+        clearable
+        multiple
+        collapse-tags
+        collapse-tags-tooltip
+      ></el-cascader>
+    </div>
+
+
+
+  </div>
+</template>

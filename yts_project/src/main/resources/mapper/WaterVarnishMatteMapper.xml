@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.WaterVarnishMatteMapper">
+
+    <!-- 产品结果映射 -->
+    <resultMap id="ProductResultMap" type="com.it.yts_project.model.WaterVarnishMatteProduct">
+        <id property="id" column="id"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="supplierCode" column="supplier_code"/>
+        <result property="stockCode" column="stock_code"/>
+        <result property="materialName" column="material_name"/>
+        <result property="usage" column="usage"/>
+        <result property="materialType" column="material_type"/>
+        <result property="color" column="color"/>
+        <result property="responsiblePerson" column="responsible_person"/>
+        <result property="minSheetSize" column="min_sheet_size"/>
+        <result property="maxSheetSize" column="max_sheet_size"/>
+        <result property="minPoint" column="min_point"/>
+        <result property="maxPoint" column="max_point"/>
+        <result property="minLine" column="min_line"/>
+        <result property="maxLine" column="max_line"/>
+        <result property="minSpacing" column="min_spacing"/>
+        <result property="maxSpacing" column="max_spacing"/>
+        <result property="minArea" column="min_area"/>
+        <result property="maxArea" column="max_area"/>
+        <result property="structureApplication" column="structure_application"/>
+        <result property="applicableInterface" column="applicable_interface"/>
+        <result property="notes" column="notes"/>
+        <result property="gloss" column="gloss"/>
+        <result property="writingFunction" column="writing_function"/>
+        <result property="isActive" column="is_active"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <!-- 兼容性结果映射 -->
+    <resultMap id="CompatibilityResultMap" type="com.it.yts_project.model.WaterVarnishMatteCompatibility">
+        <id property="id" column="id"/>
+        <result property="productId" column="product_id"/>
+        <result property="postProcessingStep" column="post_processing_step"/>
+        <result property="compatibilityStatus" column="compatibility_status"/>
+        <result property="displayOrder" column="display_order"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <!-- ========== 产品SQL ========== -->
+
+    <!-- 查询所有产品 -->
+    <select id="findAllProducts" resultMap="ProductResultMap">
+        SELECT * FROM water_varnish_matte_product ORDER BY id ASC
+    </select>
+
+    <!-- 查询激活的产品 -->
+    <select id="findActiveProducts" resultMap="ProductResultMap">
+        SELECT * FROM water_varnish_matte_product WHERE is_active = true ORDER BY id ASC
+    </select>
+
+    <!-- 根据ID查询产品 -->
+    <select id="findProductById" resultMap="ProductResultMap">
+        SELECT * FROM water_varnish_matte_product WHERE id = #{id}
+    </select>
+
+    <!-- 根据物料编码查询产品 -->
+    <select id="findProductByMaterialCode" resultMap="ProductResultMap">
+        SELECT * FROM water_varnish_matte_product WHERE material_code = #{materialCode}
+    </select>
+
+    <!-- 搜索产品 -->
+    <select id="searchProducts" resultMap="ProductResultMap">
+        SELECT * FROM water_varnish_matte_product
+        WHERE material_name LIKE CONCAT('%', #{keyword}, '%')
+           OR material_code LIKE CONCAT('%', #{keyword}, '%')
+           OR stock_code LIKE CONCAT('%', #{keyword}, '%')
+           OR usage LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY id ASC
+    </select>
+
+    <!-- 插入产品 -->
+    <insert id="insertProduct" parameterType="com.it.yts_project.model.WaterVarnishMatteProduct" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO water_varnish_matte_product (
+            material_code, supplier_code, stock_code, material_name, `usage`,
+            material_type, color, responsible_person,
+            min_sheet_size, max_sheet_size, min_point, max_point,
+            min_line, max_line, min_spacing, max_spacing,
+            min_area, max_area, structure_application, applicable_interface,
+            notes, gloss, writing_function, is_active
+        ) VALUES (
+            #{materialCode}, #{supplierCode}, #{stockCode}, #{materialName}, #{usage},
+            #{materialType}, #{color}, #{responsiblePerson},
+            #{minSheetSize}, #{maxSheetSize}, #{minPoint}, #{maxPoint},
+            #{minLine}, #{maxLine}, #{minSpacing}, #{maxSpacing},
+            #{minArea}, #{maxArea}, #{structureApplication}, #{applicableInterface},
+            #{notes}, #{gloss}, #{writingFunction}, #{isActive}
+        )
+    </insert>
+
+    <!-- 更新产品 -->
+    <update id="updateProduct" parameterType="com.it.yts_project.model.WaterVarnishMatteProduct">
+        UPDATE water_varnish_matte_product SET
+            material_code = #{materialCode},
+            supplier_code = #{supplierCode},
+            stock_code = #{stockCode},
+            material_name = #{materialName},
+            `usage` = #{usage},
+            material_type = #{materialType},
+            color = #{color},
+            responsible_person = #{responsiblePerson},
+            min_sheet_size = #{minSheetSize},
+            max_sheet_size = #{maxSheetSize},
+            min_point = #{minPoint},
+            max_point = #{maxPoint},
+            min_line = #{minLine},
+            max_line = #{maxLine},
+            min_spacing = #{minSpacing},
+            max_spacing = #{maxSpacing},
+            min_area = #{minArea},
+            max_area = #{maxArea},
+            structure_application = #{structureApplication},
+            applicable_interface = #{applicableInterface},
+            notes = #{notes},
+            gloss = #{gloss},
+            writing_function = #{writingFunction},
+            is_active = #{isActive},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除产品 -->
+    <delete id="deleteProductById">
+        DELETE FROM water_varnish_matte_product WHERE id = #{id}
+    </delete>
+
+    <!-- ========== 兼容性SQL ========== -->
+
+    <!-- 根据产品ID查询兼容性列表 -->
+    <select id="findCompatibilitiesByProductId" resultMap="CompatibilityResultMap">
+        SELECT * FROM water_varnish_matte_compatibility
+        WHERE product_id = #{productId}
+        ORDER BY display_order ASC, id ASC
+    </select>
+
+    <!-- 查询所有兼容性记录 -->
+    <select id="findAllCompatibilities" resultMap="CompatibilityResultMap">
+        SELECT * FROM water_varnish_matte_compatibility ORDER BY product_id ASC, display_order ASC
+    </select>
+
+    <!-- 根据ID查询兼容性 -->
+    <select id="findCompatibilityById" resultMap="CompatibilityResultMap">
+        SELECT * FROM water_varnish_matte_compatibility WHERE id = #{id}
+    </select>
+
+    <!-- 根据产品和工序查找兼容性 -->
+    <select id="findCompatibilityByProductAndStep" resultMap="CompatibilityResultMap">
+        SELECT * FROM water_varnish_matte_compatibility
+        WHERE product_id = #{productId} AND post_processing_step = #{postProcessingStep}
+    </select>
+
+    <!-- 插入兼容性 -->
+    <insert id="insertCompatibility" parameterType="com.it.yts_project.model.WaterVarnishMatteCompatibility" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO water_varnish_matte_compatibility (product_id, post_processing_step, compatibility_status, display_order)
+        VALUES (#{productId}, #{postProcessingStep}, #{compatibilityStatus}, #{displayOrder})
+    </insert>
+
+    <!-- 批量插入兼容性 -->
+    <insert id="batchInsertCompatibility" parameterType="java.util.List">
+        INSERT INTO water_varnish_matte_compatibility (product_id, post_processing_step, compatibility_status, display_order)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.productId}, #{item.postProcessingStep}, #{item.compatibilityStatus}, #{item.displayOrder})
+        </foreach>
+    </insert>
+
+    <!-- 更新兼容性 -->
+    <update id="updateCompatibility" parameterType="com.it.yts_project.model.WaterVarnishMatteCompatibility">
+        UPDATE water_varnish_matte_compatibility SET
+            product_id = #{productId},
+            post_processing_step = #{postProcessingStep},
+            compatibility_status = #{compatibilityStatus},
+            display_order = #{displayOrder}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除兼容性 -->
+    <delete id="deleteCompatibilityById">
+        DELETE FROM water_varnish_matte_compatibility WHERE id = #{id}
+    </delete>
+
+    <!-- 根据产品ID删除兼容性 -->
+    <delete id="deleteCompatibilityByProductId">
+        DELETE FROM water_varnish_matte_compatibility WHERE product_id = #{productId}
+    </delete>
+
+    <!-- 获取所有后加工工序步骤名称（去重） -->
+    <select id="getAllPostProcessingSteps" resultType="java.lang.String">
+        SELECT DISTINCT post_processing_step FROM water_varnish_matte_compatibility ORDER BY post_processing_step ASC
+    </select>
+
+</mapper>

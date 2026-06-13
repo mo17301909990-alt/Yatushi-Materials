@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.HotStampingPatternAreaCompatibilityMapper">
+
+    <!-- 获取所有兼容性配置 -->
+    <select id="findAll" resultType="com.it.yts_project.model.HotStampingPatternAreaCompatibility">
+        SELECT 
+            cpc.*,
+            hpao.pattern_type as patternType,
+            hpao.option_name as optionName
+        FROM hot_stamping_patternx_area_compatibility cpc
+        LEFT JOIN hot_stamping_patternx_area_options hpao ON cpc.hot_stamping_patternx_area_id = hpao.id
+        ORDER BY hpao.option_name, cpc.product_name
+    </select>
+    
+    <!-- 根据图案区域ID获取兼容性配置 -->
+    <select id="findByPatternAreaId" resultType="com.it.yts_project.model.HotStampingPatternAreaCompatibility">
+        SELECT 
+            cpc.*,
+            hpao.pattern_type as patternType,
+            hpao.option_name as optionName
+        FROM hot_stamping_patternx_area_compatibility cpc
+        LEFT JOIN hot_stamping_patternx_area_options hpao ON cpc.hot_stamping_patternx_area_id = hpao.id
+        WHERE cpc.hot_stamping_patternx_area_id = #{patternAreaId}
+        ORDER BY cpc.product_name
+    </select>
+
+    <!-- 根据ID获取兼容性配置 -->
+    <select id="findById" resultType="com.it.yts_project.model.HotStampingPatternAreaCompatibility">
+        SELECT * FROM hot_stamping_patternx_area_compatibility
+        WHERE id = #{id}
+    </select>
+
+    <!-- 插入兼容性配置 -->
+    <insert id="insert" parameterType="com.it.yts_project.model.HotStampingPatternAreaCompatibility" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO hot_stamping_patternx_area_compatibility (
+            product_name,
+            hot_stamping_patternx_area_id,
+            compatibility_status,
+            paper_type,
+            created_at,
+            updated_at
+        ) VALUES (
+            #{productName},
+            #{hotStampingPatternxAreaId},
+            #{compatibilityStatus},
+            #{paperType},
+            #{createdAt},
+            #{updatedAt}
+        )
+    </insert>
+
+    <!-- 更新兼容性配置 -->
+    <update id="update" parameterType="com.it.yts_project.model.HotStampingPatternAreaCompatibility">
+        UPDATE hot_stamping_patternx_area_compatibility
+        SET product_name = #{productName},
+            hot_stamping_patternx_area_id = #{hotStampingPatternxAreaId},
+            compatibility_status = #{compatibilityStatus},
+            paper_type = #{paperType},
+            updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除兼容性配置 -->
+    <delete id="deleteById">
+        DELETE FROM hot_stamping_patternx_area_compatibility
+        WHERE id = #{id}
+    </delete>
+
+    <!-- 根据图案区域ID删除所有兼容性配置 -->
+    <delete id="deleteByPatternAreaId">
+        DELETE FROM hot_stamping_patternx_area_compatibility
+        WHERE hot_stamping_patternx_area_id = #{patternAreaId}
+    </delete>
+
+    <!-- 获取所有可用的燙金紙系列 -->
+    <select id="getAllProductNames" resultType="string">
+        SELECT DISTINCT product_name 
+        FROM hot_stamping_patternx_area_compatibility 
+        ORDER BY product_name
+    </select>
+
+    <!-- 检查燙金紙系列和图案区域ID的组合是否已存在 -->
+    <select id="countByProductNameAndPatternAreaId" resultType="int">
+        SELECT COUNT(*) 
+        FROM hot_stamping_patternx_area_compatibility
+        WHERE product_name = #{productName} 
+        AND hot_stamping_patternx_area_id = #{patternAreaId}
+    </select>
+
+    <!-- 根据燙金紙系列和图案区域ID获取兼容性配置 -->
+    <select id="findByProductNameAndPatternAreaId" resultType="com.it.yts_project.model.HotStampingPatternAreaCompatibility">
+        SELECT * FROM hot_stamping_patternx_area_compatibility
+        WHERE product_name = #{productName} 
+        AND hot_stamping_patternx_area_id = #{patternAreaId}
+        LIMIT 1
+    </select>
+    
+    <!-- 根据燙金紙系列、图案区域ID和燙金紙性能類型获取兼容性配置 -->
+    <select id="findByProductNameAndPatternAreaIdAndPaperType" resultType="com.it.yts_project.model.HotStampingPatternAreaCompatibility">
+        SELECT * FROM hot_stamping_patternx_area_compatibility
+        WHERE product_name = #{productName} 
+        AND hot_stamping_patternx_area_id = #{patternAreaId}
+        <choose>
+            <when test="paperType != null and paperType != ''">
+              AND paper_type = #{paperType}
+            </when>
+            <otherwise>
+              AND (paper_type IS NULL OR paper_type = '')
+            </otherwise>
+        </choose>
+        LIMIT 1
+    </select>
+    
+    <!-- 根据条件获取注意事项ID列表 -->
+    <select id="getNoticeIdsByConditions" resultType="java.lang.Integer">
+        SELECT DISTINCT unnest(notice_ids)
+        FROM hot_stamping_patternx_area_compatibility
+        WHERE notice_ids IS NOT NULL
+        AND array_length(notice_ids, 1) > 0
+        AND compatibility IN ('V', '▷')
+        <if test="patternAreaOptionId != null">
+            AND pattern_area_option_id = #{patternAreaOptionId}
+        </if>
+    </select>
+
+</mapper>

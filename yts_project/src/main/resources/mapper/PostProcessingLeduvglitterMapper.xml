@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.PostProcessingLeduvglitterMapper">
+    
+    <resultMap id="PostProcessingLeduvglitterResultMap" type="com.it.yts_project.model.PostProcessingLeduvglitter">
+        <id property="id" column="id"/>
+        <result property="productName" column="product_name"/>
+        <result property="productModelNumber" column="product_model_number"/>
+        <result property="clothPaperTypeId" column="cloth_paper_type_id"/>
+        <result property="clothPaperTypeName" column="cloth_paper_type_name"/>
+        <result property="compatibilityStatus" column="compatibility_status"/>
+        <result property="paperType" column="paper_type"/>
+        <result property="noticeIds" column="notice_ids" typeHandler="com.it.yts_project.config.IntegerArrayTypeHandler"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+    
+    <!--
+    ========================================
+    检查絲印LED UV灑閃粉后加工兼容性 - 渐进式匹配
+    ========================================
+    匹配优先级（从高到低）：
+    1. product_model_number + cloth_paper_type_id + paper_type
+    2. product_name + cloth_paper_type_id + paper_type
+    ========================================
+    -->
+    <select id="checkLeduvglitterCompatibility" resultType="java.lang.Character">
+        SELECT compatibility_status
+        FROM post_processing_leduvglitter
+        WHERE cloth_paper_type_id = #{clothPaperTypeId}
+        AND (paper_type IS NULL OR paper_type = '' OR paper_type = #{paperType})
+        AND (
+            -- 匹配1: product_model_number（优先级高）
+            (product_model_number = #{productModelNumber} 
+             AND product_model_number IS NOT NULL
+             AND product_model_number != '')
+            OR
+            -- 匹配2: product_name（优先级低）
+            (product_name = #{productName}
+             AND product_name IS NOT NULL
+             AND product_name != '')
+        )
+        ORDER BY 
+            -- 优先级排序：越精确的匹配越靠前
+            CASE
+                WHEN product_model_number = #{productModelNumber} 
+                     AND product_model_number IS NOT NULL 
+                     AND product_model_number != '' THEN 1
+                WHEN product_name = #{productName} 
+                     AND product_name IS NOT NULL 
+                     AND product_name != '' THEN 2
+                ELSE 3
+            END
+        LIMIT 1
+    </select>
+    
+    <!-- 查询所有絲印LED UV灑閃粉兼容性记录 -->
+    <select id="findAll" resultMap="PostProcessingLeduvglitterResultMap">
+        SELECT 
+            ppl.id,
+            ppl.product_name,
+            ppl.product_model_number,
+            ppl.cloth_paper_type_id,
+            CONCAT(cpt.category, '.', cpt.type_name) as cloth_paper_type_name,
+            ppl.compatibility_status,
+            ppl.paper_type,
+            ppl.notice_ids,
+            ppl.created_at,
+            ppl.updated_at
+        FROM post_processing_leduvglitter ppl
+        LEFT JOIN cloth_paper_types cpt ON ppl.cloth_paper_type_id = cpt.id
+        ORDER BY 
+            ppl.product_name,
+            ppl.product_model_number,
+            cpt.category,
+            cpt.type_name
+    </select>
+    
+    <!-- 分页查询絲印LED UV灑閃粉兼容性记录 -->
+    <select id="findWithPagination" resultMap="PostProcessingLeduvglitterResultMap">
+        SELECT 
+            ppl.id,
+            ppl.product_name,
+            ppl.product_model_number,
+            ppl.cloth_paper_type_id,
+            CONCAT(cpt.category, '.', cpt.type_name) as cloth_paper_type_name,
+            ppl.compatibility_status,
+            ppl.paper_type,
+            ppl.notice_ids,
+            ppl.created_at,
+            ppl.updated_at
+        FROM post_processing_leduvglitter ppl
+        LEFT JOIN cloth_paper_types cpt ON ppl.cloth_paper_type_id = cpt.id
+        ORDER BY 
+            ppl.product_name,
+            ppl.product_model_number,
+            cpt.category,
+            cpt.type_name
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+    
+    <!-- 获取总记录数 -->
+    <select id="getTotalCount" resultType="int">
+        SELECT COUNT(*)
+        FROM post_processing_leduvglitter
+    </select>
+    
+    <!-- 根据条件查询絲印LED UV灑閃粉兼容性记录 -->
+    <select id="findByConditions" resultMap="PostProcessingLeduvglitterResultMap">
+        SELECT 
+            id,
+            product_name,
+            product_model_number,
+            cloth_paper_type_id,
+            compatibility_status,
+            paper_type,
+            notice_ids,
+            created_at,
+            updated_at
+        FROM post_processing_leduvglitter
+        <where>
+            <if test="productName != null and productName != ''">
+                AND product_name = #{productName}
+            </if>
+            <if test="productModelNumber != null and productModelNumber != ''">
+                AND product_model_number = #{productModelNumber}
+            </if>
+            <if test="clothPaperTypeId != null">
+                AND cloth_paper_type_id = #{clothPaperTypeId}
+            </if>
+        </where>
+        ORDER BY 
+            product_name,
+            product_model_number,
+            cloth_paper_type_id
+    </select>
+    
+    <!-- 插入记录 -->
+    <insert id="insert" parameterType="com.it.yts_project.model.PostProcessingLeduvglitter" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO post_processing_leduvglitter (
+            product_name,
+            product_model_number,
+            cloth_paper_type_id,
+            compatibility_status,
+            paper_type,
+            notice_ids,
+            created_at,
+            updated_at
+        ) VALUES (
+            #{productName},
+            #{productModelNumber},
+            #{clothPaperTypeId},
+            #{compatibilityStatus},
+            #{paperType},
+            #{noticeIds, typeHandler=com.it.yts_project.config.IntegerArrayTypeHandler},
+            CURRENT_TIMESTAMP,
+            CURRENT_TIMESTAMP
+        )
+    </insert>
+    
+    <!-- 更新记录 -->
+    <update id="update" parameterType="com.it.yts_project.model.PostProcessingLeduvglitter">
+        UPDATE post_processing_leduvglitter
+        SET 
+            product_name = #{productName},
+            product_model_number = #{productModelNumber},
+            cloth_paper_type_id = #{clothPaperTypeId},
+            compatibility_status = #{compatibilityStatus},
+            paper_type = #{paperType},
+            notice_ids = #{noticeIds, typeHandler=com.it.yts_project.config.IntegerArrayTypeHandler},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+    
+    <!-- 删除记录 -->
+    <delete id="deleteById">
+        DELETE FROM post_processing_leduvglitter
+        WHERE id = #{id}
+    </delete>
+    
+    <!-- 根据ID查询 -->
+    <select id="findById" resultMap="PostProcessingLeduvglitterResultMap">
+        SELECT 
+            ppl.id,
+            ppl.product_name,
+            ppl.product_model_number,
+            ppl.cloth_paper_type_id,
+            CONCAT(cpt.category, '.', cpt.type_name) as cloth_paper_type_name,
+            ppl.compatibility_status,
+            ppl.paper_type,
+            ppl.notice_ids,
+            ppl.created_at,
+            ppl.updated_at
+        FROM post_processing_leduvglitter ppl
+        LEFT JOIN cloth_paper_types cpt ON ppl.cloth_paper_type_id = cpt.id
+        WHERE ppl.id = #{id}
+    </select>
+    
+    <!-- 根据唯一键查找记录 -->
+    <select id="findByUniqueKey" resultMap="PostProcessingLeduvglitterResultMap">
+        SELECT 
+            id,
+            product_name,
+            product_model_number,
+            cloth_paper_type_id,
+            compatibility_status,
+            paper_type,
+            created_at,
+            updated_at
+        FROM post_processing_leduvglitter
+        WHERE product_name = #{productName}
+        AND cloth_paper_type_id = #{clothPaperTypeId}
+        <choose>
+            <when test="productModelNumber != null and productModelNumber != ''">
+                AND (
+                    (product_model_number = #{productModelNumber} 
+                     AND product_model_number IS NOT NULL 
+                     AND product_model_number != '')
+                )
+            </when>
+            <otherwise>
+                AND (product_model_number IS NULL OR product_model_number = '')
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="paperType != null and paperType != ''">
+                AND paper_type = #{paperType}
+            </when>
+            <otherwise>
+                AND (paper_type IS NULL OR paper_type = '')
+            </otherwise>
+        </choose>
+        LIMIT 1
+    </select>
+    
+    <!-- 批量更新兼容性状态 -->
+    <update id="batchUpdateStatus">
+        UPDATE post_processing_leduvglitter
+        SET compatibility_status = #{compatibilityStatus},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+    
+    <!-- 获取所有可用的燙金紙系列 -->
+    <select id="getAllProductNames" resultType="string">
+        SELECT DISTINCT product_name 
+        FROM post_processing_leduvglitter 
+        WHERE product_name IS NOT NULL AND product_name != ''
+        ORDER BY product_name
+    </select>
+    
+    <!-- 获取所有可用的产品型号 -->
+    <select id="getAllProductModelNumbers" resultType="string">
+        SELECT DISTINCT product_model_number 
+        FROM post_processing_leduvglitter 
+        WHERE product_model_number IS NOT NULL AND product_model_number != ''
+        ORDER BY product_model_number
+    </select>
+    
+    <!-- 获取所有可用的布面纸类型ID -->
+    <select id="getAllClothPaperTypeIds" resultType="int">
+        SELECT DISTINCT cloth_paper_type_id 
+        FROM post_processing_leduvglitter 
+        WHERE cloth_paper_type_id IS NOT NULL
+        ORDER BY cloth_paper_type_id
+    </select>
+    
+    <!-- 获取所有可用的纸张类型 -->
+    <select id="getAllPaperTypes" resultType="string">
+        SELECT DISTINCT paper_type 
+        FROM post_processing_leduvglitter 
+        WHERE paper_type IS NOT NULL AND paper_type != ''
+        ORDER BY paper_type
+    </select>
+    
+    <!-- 根据条件获取注意事项ID列表 -->
+    <select id="getNoticeIdsByConditions" resultType="java.lang.Integer">
+        SELECT DISTINCT unnest(notice_ids)
+        FROM post_processing_leduvglitter
+        WHERE notice_ids IS NOT NULL
+        AND array_length(notice_ids, 1) > 0
+        AND compatibility_status IN ('V', '▷')
+        <if test="clothPaperTypeId != null">
+            AND cloth_paper_type_id = #{clothPaperTypeId}
+        </if>
+        <if test="productModelNumber != null and productModelNumber != ''">
+            AND product_model_number = #{productModelNumber}
+        </if>
+        <if test="productName != null and productName != ''">
+            AND product_name = #{productName}
+        </if>
+    </select>
+    
+    <!-- 更新注意事项ID列表 -->
+    <update id="updateNoticeIds">
+        UPDATE post_processing_leduvglitter
+        SET notice_ids = #{noticeIds, typeHandler=com.it.yts_project.config.IntegerArrayTypeHandler},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+</mapper>

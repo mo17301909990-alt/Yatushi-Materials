@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.WearResistantGoldPaperMappingMapper">
+
+    <!-- 获取所有映射 -->
+    <select id="findAll" resultType="com.it.yts_project.model.WearResistantGoldPaperMapping">
+        SELECT 
+            id,
+            product_name as productName,
+            product_model_number as productModelNumber,
+            hot_stamping_type as hotStampingType,
+            gold_paper_type as goldPaperType,
+            compatibility_status as compatibilityStatus,
+            remarks,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM wear_resistant_gold_paper_mapping
+        ORDER BY product_name, product_model_number, gold_paper_type
+    </select>
+
+    <!-- 分页获取映射 -->
+    <select id="findWithPagination" resultType="com.it.yts_project.model.WearResistantGoldPaperMapping">
+        SELECT 
+            id,
+            product_name as productName,
+            product_model_number as productModelNumber,
+            hot_stamping_type as hotStampingType,
+            gold_paper_type as goldPaperType,
+            compatibility_status as compatibilityStatus,
+            remarks,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM wear_resistant_gold_paper_mapping
+        ORDER BY product_name, product_model_number, gold_paper_type
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 获取总记录数 -->
+    <select id="getTotalCount" resultType="int">
+        SELECT COUNT(*) FROM wear_resistant_gold_paper_mapping
+    </select>
+
+    <!-- 根据ID获取映射 -->
+    <select id="findById" resultType="com.it.yts_project.model.WearResistantGoldPaperMapping">
+        SELECT 
+            id,
+            product_name as productName,
+            product_model_number as productModelNumber,
+            hot_stamping_type as hotStampingType,
+            gold_paper_type as goldPaperType,
+            compatibility_status as compatibilityStatus,
+            remarks,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM wear_resistant_gold_paper_mapping
+        WHERE id = #{id}
+    </select>
+
+    <!-- 插入映射 -->
+    <insert id="insert" parameterType="com.it.yts_project.model.WearResistantGoldPaperMapping" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO wear_resistant_gold_paper_mapping (
+            product_name,
+            product_model_number,
+            hot_stamping_type,
+            gold_paper_type,
+            compatibility_status,
+            remarks,
+            created_at,
+            updated_at
+        ) VALUES (
+            #{productName},
+            #{productModelNumber},
+            COALESCE(#{hotStampingType}, '燙金後擊凸'),
+            #{goldPaperType},
+            #{compatibilityStatus},
+            #{remarks},
+            #{createdAt},
+            #{updatedAt}
+        )
+    </insert>
+
+    <!-- 更新映射 -->
+    <update id="update" parameterType="com.it.yts_project.model.WearResistantGoldPaperMapping">
+        UPDATE wear_resistant_gold_paper_mapping
+        SET product_name = #{productName},
+            product_model_number = #{productModelNumber},
+            hot_stamping_type = COALESCE(#{hotStampingType}, '燙金後擊凸'),
+            gold_paper_type = #{goldPaperType},
+            compatibility_status = #{compatibilityStatus},
+            remarks = #{remarks},
+            updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除映射 -->
+    <delete id="deleteById">
+        DELETE FROM wear_resistant_gold_paper_mapping
+        WHERE id = #{id}
+    </delete>
+    
+    <!-- 批量删除映射 -->
+    <delete id="batchDeleteByIds">
+        DELETE FROM wear_resistant_gold_paper_mapping WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 根据燙金紙系列搜索 -->
+    <select id="findByProductName" resultType="com.it.yts_project.model.WearResistantGoldPaperMapping">
+        SELECT 
+            id,
+            product_name as productName,
+            product_model_number as productModelNumber,
+            hot_stamping_type as hotStampingType,
+            gold_paper_type as goldPaperType,
+            compatibility_status as compatibilityStatus,
+            remarks,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM wear_resistant_gold_paper_mapping
+        WHERE product_name LIKE CONCAT('%', #{productName}, '%')
+        ORDER BY product_name, product_model_number, gold_paper_type
+    </select>
+
+    <!-- 根据产品型号搜索 -->
+    <select id="findByProductModelNumber" resultType="com.it.yts_project.model.WearResistantGoldPaperMapping">
+        SELECT 
+            id,
+            product_name as productName,
+            product_model_number as productModelNumber,
+            hot_stamping_type as hotStampingType,
+            gold_paper_type as goldPaperType,
+            compatibility_status as compatibilityStatus,
+            remarks,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM wear_resistant_gold_paper_mapping
+        WHERE product_model_number LIKE CONCAT('%', #{productModelNumber}, '%')
+        ORDER BY product_name, product_model_number, gold_paper_type
+    </select>
+
+    <!-- 根据耐磨金纸类型搜索 -->
+    <select id="findByGoldPaperType" resultType="com.it.yts_project.model.WearResistantGoldPaperMapping">
+        SELECT 
+            id,
+            product_name as productName,
+            product_model_number as productModelNumber,
+            hot_stamping_type as hotStampingType,
+            gold_paper_type as goldPaperType,
+            compatibility_status as compatibilityStatus,
+            remarks,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM wear_resistant_gold_paper_mapping
+        WHERE gold_paper_type LIKE CONCAT('%', #{goldPaperType}, '%')
+        ORDER BY product_name, product_model_number, gold_paper_type
+    </select>
+
+    <!-- 根据唯一键查找记录 -->
+    <!-- 唯一键：productName + productModelNumber + goldPaperType -->
+    <!-- 注意：productModelNumber 可以为空，空字符串应视为 NULL -->
+    <select id="findByUniqueKey" resultType="com.it.yts_project.model.WearResistantGoldPaperMapping">
+        SELECT 
+            id,
+            product_name as productName,
+            product_model_number as productModelNumber,
+            hot_stamping_type as hotStampingType,
+            gold_paper_type as goldPaperType,
+            compatibility_status as compatibilityStatus,
+            remarks,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM wear_resistant_gold_paper_mapping
+        WHERE product_name = #{productName}
+        AND gold_paper_type = #{goldPaperType}
+        <choose>
+            <when test="productModelNumber != null and productModelNumber != ''">
+                AND (product_model_number = #{productModelNumber} OR (product_model_number IS NULL AND #{productModelNumber} = ''))
+            </when>
+            <otherwise>
+                AND (product_model_number IS NULL OR product_model_number = '')
+            </otherwise>
+        </choose>
+        ORDER BY id DESC
+        LIMIT 1
+    </select>
+
+    <!-- 批量更新兼容性状态 -->
+    <update id="batchUpdateStatus">
+        UPDATE wear_resistant_gold_paper_mapping
+        SET compatibility_status = #{compatibilityStatus},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!-- 搜索（支持多条件） -->
+    <select id="search" resultType="com.it.yts_project.model.WearResistantGoldPaperMapping">
+        SELECT 
+            id,
+            product_name as productName,
+            product_model_number as productModelNumber,
+            hot_stamping_type as hotStampingType,
+            gold_paper_type as goldPaperType,
+            compatibility_status as compatibilityStatus,
+            remarks,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM wear_resistant_gold_paper_mapping
+        <where>
+            <if test="productName != null and productName != ''">
+                AND product_name LIKE CONCAT('%', #{productName}, '%')
+            </if>
+            <if test="productModelNumber != null and productModelNumber != ''">
+                AND product_model_number LIKE CONCAT('%', #{productModelNumber}, '%')
+            </if>
+            <if test="goldPaperType != null and goldPaperType != ''">
+                AND gold_paper_type LIKE CONCAT('%', #{goldPaperType}, '%')
+            </if>
+        </where>
+        ORDER BY product_name, product_model_number, gold_paper_type
+    </select>
+
+    <!-- 获取所有可用的耐磨金纸类型 -->
+    <select id="getAllGoldPaperTypes" resultType="string">
+        SELECT DISTINCT gold_paper_type 
+        FROM wear_resistant_gold_paper_mapping 
+        WHERE gold_paper_type IS NOT NULL 
+        AND gold_paper_type != ''
+        ORDER BY gold_paper_type
+    </select>
+
+</mapper>
+
+

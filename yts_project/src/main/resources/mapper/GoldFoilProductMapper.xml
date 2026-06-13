@@ -1,0 +1,696 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.GoldFoilProductMapper">
+    <resultMap id="goldFoilProductDTOMap" type="com.it.yts_project.dto.GoldFoilProductDTO">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="modelNumber" column="model_number"/>
+        <result property="materialNumber" column="material_number"/>
+        <result property="color" column="color"/>
+        <result property="size" column="size"/>
+        <result property="tightness" column="tightness"/>
+        <result property="temperatureRange" column="temperature_range"/>
+        <result property="performance" column="performance"/>
+        <result property="flatHotStamping" column="flat_hot_stamping"/>
+        <result property="embossedGoldStamping" column="embossed_gold_stamping"/>
+        <result property="refractiveHolographicPatternedTexturedHotStamping" column="refractive_holographic_patterned_textured_hot_stamping"/>
+        <result property="postHotStampingEmbossingDebossing" column="post_hot_stamping_embossing_debossing"/>
+        <result property="price" column="price"/>
+        <result property="companyNumber" column="company_number"/>
+        <result property="gpNo" column="gp_no"/>
+        <result property="uvPrinting" column="uv_printing"/>
+        <result property="ledUvGlitter" column="silk_screen_led_uv_sparkle_powder"/>
+        <result property="stampingPrinting" column="printing"/>
+        <result property="usageCount" column="usage_count"/>
+        <result property="descirption" column="descirption"/>
+        <result property="fengdu" column="fengdu"/>
+        <result property="gaishu" column="gaishu"/>
+        <result property="danwei" column="danwei"/>
+        <result property="hotStampingPaperType" column="hot_stamping_paper_type"/>
+        <result property="isJiehuo" column="is_jiehuo"/>
+        <result property="isChangyong" column="is_changyong"/>
+    </resultMap>
+
+    <!-- 每产品只取一行：多表 LEFT JOIN 易产生笛卡尔积，数据量大时易超时/500；PostgreSQL DISTINCT ON 去重 -->
+    <select id="getAllGoldFoilProducts" resultMap="goldFoilProductDTOMap">
+        SELECT DISTINCT ON (p.id)
+            p.id,
+            p.name,
+            p.model_number,
+            p.material_number,
+            p.descirption,
+            p.fengdu,
+            p.gaishu,
+            p.danwei,
+            p.hot_stamping_paper_type,
+            p.is_jiehuo,
+            p.is_changyong,
+            p.usage_count,
+            s.color,
+            s.size,
+            s.tightness,
+            s.temperature_range,
+            s.performance,
+            g.flat_hot_stamping,
+            g.embossed_gold_stamping,
+            g.refractive_holographic_patterned_textured_hot_stamping,
+            g.post_hot_stamping_embossing_debossing,
+            pr.price,
+            l.company_number,
+            l.gp_no
+        FROM products p
+                 LEFT JOIN specifications s ON p.id = s.project_id
+                 LEFT JOIN gold_foil_type g ON p.id = g.project_id
+                 LEFT JOIN pricing pr ON p.id = pr.project_id
+                 LEFT JOIN leo_gp_numbers l ON p.id = l.project_id
+        WHERE (p.status IS NULL OR p.status = '可用')
+        ORDER BY p.id, s.id NULLS LAST, l.id NULLS LAST, pr.id NULLS LAST, g.id NULLS LAST
+    </select>
+
+    <select id="getProducts" resultMap="goldFoilProductDTOMap">
+        <!--
+        ========================================
+        性能优化版本：拆分OR条件为UNION查询
+        ========================================
+        关键优化：当有前工序参数时，使用UNION避免OR导致的索引失效
+        预期提升：70-90%
+        ========================================
+        -->
+        <choose>
+            <!-- 情况1：有前工序参数 - 使用优化的UNION查询 -->
+            <when test="params.preProcessingStepsOptionId != null">
+                <!-- 查询1：通过series_name匹配 -->
+                SELECT DISTINCT
+                p.id,
+                p.name,
+                p.model_number,
+                p.material_number,
+                p.descirption,
+                p.hot_stamping_paper_type,
+                p.fengdu,
+                p.gaishu,
+                p.danwei,
+                p.is_jiehuo,
+                p.is_changyong,
+                p.paizi,
+                p.usage_count,
+                s.color,
+                s.color_num,
+                s.size,
+                s.tightness,
+                s.temperature_range,
+                s.performance,
+                pr.price,
+                l.company_number,
+                l.gp_no
+                FROM products p
+                INNER JOIN pre_processing_steps pps ON (
+                    pps.series_name = p.name
+                    AND (
+                        (pps.product_id IS NOT NULL AND pps.product_id = p.id)
+                        OR (pps.product_id IS NULL)
+                    )
+                )
+                AND pps.is_active = true
+                AND pps.paper_type = p.hot_stamping_paper_type
+                AND pps.step_id = #{params.preProcessingStepsOptionId}
+                AND pps.status = 'V'
+                AND (p.status IS NULL OR p.status = '可用')
+                LEFT JOIN specifications s ON p.id = s.project_id
+                LEFT JOIN pricing pr ON p.id = pr.project_id
+                LEFT JOIN leo_gp_numbers l ON p.id = l.project_id
+                <!-- 过胶兼容性JOIN -->
+                <if test="params.postProcessingStepId != null and params.laminationMaterialId != null">
+                LEFT JOIN lamination_compatibility lc ON (
+                    <include refid="laminationJoinCondition"/>
+                )
+                </if>
+                <!-- 只在选择了印刷选项时才 JOIN post_processing_print 表 -->
+                <if test="params.printing != null and params.printing != ''">
+                LEFT JOIN post_processing_print ppp ON (
+                    (ppp.product_model_number IS NOT NULL AND ppp.product_model_number = p.model_number)
+                    OR (ppp.product_name IS NOT NULL AND ppp.product_name = p.name)
+                )
+                AND (ppp.color IS NULL OR ppp.color = '' OR ppp.color = s.color)
+                AND (ppp.paper_type IS NULL OR ppp.paper_type = '' OR ppp.paper_type = p.hot_stamping_paper_type)
+                </if>
+                <!-- 只在选了絲印LED UV且未按适用界面过滤时才 JOIN（按适用界面时用 EXISTS 过滤） -->
+                <if test="params.silk_screen_led_uv_sparkle_powder != null and params.silk_screen_led_uv_sparkle_powder != '' and params.clothPaperTypeId == null">
+                LEFT JOIN post_processing_leduvglitter ppl ON (
+                    (ppl.product_model_number IS NOT NULL AND ppl.product_model_number = p.model_number)
+                    OR (ppl.product_name IS NOT NULL AND ppl.product_name = p.name)
+                )
+                AND (ppl.paper_type IS NULL OR ppl.paper_type = '' OR ppl.paper_type = p.hot_stamping_paper_type)
+                </if>
+                <!-- 印刷UV 已改为仅用 EXISTS 过滤，此处不再 JOIN -->
+                <if test="false">
+                LEFT JOIN post_processing_print_uv pppu ON (
+                    (pppu.product_model_number IS NOT NULL AND pppu.product_model_number = p.model_number)
+                    OR (pppu.product_name IS NOT NULL AND pppu.product_name = p.name)
+                )
+                AND (
+                    -- company_number 或 gp_no 任一与 UV 配置中的公司编号/客户GP号匹配即可
+                    (l.company_number IS NULL OR l.company_number = '' OR pppu.company_number = l.company_number)
+                    OR (l.gp_no IS NULL OR l.gp_no = '' OR pppu.company_number = l.gp_no)
+                )
+                AND (pppu.paper_type IS NULL OR pppu.paper_type = '' OR pppu.paper_type = p.hot_stamping_paper_type)
+                </if>
+                <where>
+                    <include refid="commonFilters"/>
+                </where>
+            </when>
+
+            <!-- 情况2：无前工序参数 - 使用统一查询 -->
+            <otherwise>
+                <include refid="selectFields"/>
+                FROM products p
+                <include refid="commonJoins"/>
+                <!-- 过胶兼容性JOIN - 根据参数决定使用INNER还是LEFT JOIN -->
+                <choose>
+                    <when test="params.postProcessingStepId != null and params.laminationMaterialId != null">
+                        INNER JOIN lamination_compatibility lc ON (
+                            <include refid="laminationJoinCondition"/>
+                        )
+                    </when>
+                    <otherwise>
+                        <!-- 无过胶参数时，不JOIN lamination_compatibility表 -->
+                    </otherwise>
+                </choose>
+                <!-- 只在选择了印刷选项时才 JOIN post_processing_print 表 -->
+                <if test="params.printing != null and params.printing != ''">
+                LEFT JOIN post_processing_print ppp ON (
+                    (ppp.product_model_number IS NOT NULL  AND ppp.product_model_number = p.model_number)
+                    OR (ppp.product_name IS NOT NULL AND ppp.product_name = p.name)
+                )
+                AND (ppp.color IS NULL OR ppp.color = '' OR ppp.color = s.color)
+                AND (ppp.paper_type IS NULL OR ppp.paper_type = '' OR ppp.paper_type = p.hot_stamping_paper_type)
+                </if>
+                <!-- 只在选了絲印LED UV且未按适用界面过滤时才 JOIN（按适用界面时用 EXISTS 过滤） -->
+                <if test="params.silk_screen_led_uv_sparkle_powder != null and params.silk_screen_led_uv_sparkle_powder != '' and params.clothPaperTypeId == null">
+                LEFT JOIN post_processing_leduvglitter ppl ON (
+                    (ppl.product_model_number IS NOT NULL AND ppl.product_model_number = p.model_number)
+                    OR (ppl.product_name IS NOT NULL AND ppl.product_name = p.name)
+                )
+                AND (ppl.paper_type IS NULL OR ppl.paper_type = '' OR ppl.paper_type = p.hot_stamping_paper_type)
+                </if>
+                <!-- 印刷UV 已改为仅用 EXISTS 过滤，此处不再 JOIN -->
+                <if test="false">
+                LEFT JOIN post_processing_print_uv pppu ON (
+                    (pppu.product_model_number IS NOT NULL AND pppu.product_model_number = p.model_number)
+                    OR (pppu.product_name IS NOT NULL AND pppu.product_name = p.name)
+                )
+                AND (
+                    (l.company_number IS NULL OR l.company_number = '' OR pppu.company_number = l.company_number)
+                    OR (l.gp_no IS NULL OR l.gp_no = '' OR pppu.company_number = l.gp_no)
+                )
+                AND (pppu.paper_type IS NULL OR pppu.paper_type = '' OR pppu.paper_type = p.hot_stamping_paper_type)
+                </if>
+                <where>
+                    <include refid="commonFilters"/>
+                </where>
+            </otherwise>
+        </choose>
+        <!-- 动态排序：根据sortBy和sortOrder参数 -->
+        <choose>
+            <when test="params.sortBy != null and params.sortBy == 'price'">
+                ORDER BY pr.price
+                <choose>
+                    <when test="params.sortOrder != null and params.sortOrder == 'desc'">
+                        DESC NULLS LAST
+                        <!-- 降序：价格从高到低，NULL价格在最后 -->
+                    </when>
+                    <otherwise>
+                        ASC NULLS LAST
+                        <!-- 升序：价格从低到高，NULL价格在最后 -->
+                    </otherwise>
+                </choose>
+            </when>
+            <otherwise>
+                <!-- 默认：按价格升序，NULL价格在最后 -->
+                ORDER BY pr.price ASC NULLS LAST
+            </otherwise>
+        </choose>
+        <!-- 分页优化：添加LIMIT和OFFSET -->
+        <if test="params.pageSize != null and params.pageSize > 0">
+            LIMIT #{params.pageSize}
+            <if test="params.offset != null and params.offset >= 0">
+                OFFSET #{params.offset}
+            </if>
+        </if>
+    </select>
+
+    <select id="getDistinctCompanyNumbers" resultType="java.lang.String">
+        SELECT DISTINCT l.company_number FROM leo_gp_numbers l
+        JOIN products p ON p.id = l.project_id
+        WHERE l.company_number IS NOT NULL AND l.company_number != ''
+          AND (p.status IS NULL OR p.status = '可用')
+        ORDER BY l.company_number
+    </select>
+
+    <select id="getDistinctGpNumbers" resultType="java.lang.String">
+        SELECT DISTINCT l.gp_no FROM leo_gp_numbers l
+        JOIN products p ON p.id = l.project_id
+        WHERE l.gp_no IS NOT NULL AND l.gp_no != ''
+          AND (p.status IS NULL OR p.status = '可用')
+        ORDER BY l.gp_no
+    </select>
+
+    <!-- 获取匹配查询的总记录数（用于分页） -->
+    <select id="countProducts" resultType="java.lang.Long">
+        <choose>
+            <!-- 情况1：有前工序参数 -->
+            <when test="params.preProcessingStepsOptionId != null">
+                SELECT COUNT(DISTINCT p.id)
+                FROM products p
+                INNER JOIN pre_processing_steps pps ON (
+                    pps.series_name = p.name
+                    AND pps.is_active = true
+                    AND pps.paper_type = p.hot_stamping_paper_type
+                    AND pps.step_id = #{params.preProcessingStepsOptionId}
+                    AND pps.status = 'V'
+                    AND (pps.product_id IS NULL OR pps.product_id = p.id)
+                    AND (p.status IS NULL OR p.status = '可用')
+                )
+                LEFT JOIN specifications s ON p.id = s.project_id
+                LEFT JOIN pricing pr ON p.id = pr.project_id
+                LEFT JOIN leo_gp_numbers l ON p.id = l.project_id
+                <!-- 性能优化：hot_stamping_compatibility 和 cloth_paper_compatibility 不在这里JOIN
+                     而是在WHERE条件中使用EXISTS子查询，避免产生笛卡尔积导致数据爆炸 -->
+                <if test="params.postProcessingStepId != null and params.laminationMaterialId != null">
+                LEFT JOIN lamination_compatibility lc ON (
+                    <include refid="laminationJoinCondition"/>
+                )
+                </if>
+                <if test="params.printing != null and params.printing != ''">
+                LEFT JOIN post_processing_print ppp ON (
+                    (ppp.product_model_number IS NOT NULL AND ppp.product_model_number = p.model_number)
+                    OR (ppp.product_name IS NOT NULL AND ppp.product_name = p.name)
+                )
+                AND (ppp.color IS NULL OR ppp.color = '' OR ppp.color = s.color)
+                AND (ppp.paper_type IS NULL OR ppp.paper_type = '' OR ppp.paper_type = p.hot_stamping_paper_type)
+                </if>
+                <if test="params.silk_screen_led_uv_sparkle_powder != null and params.silk_screen_led_uv_sparkle_powder != '' and params.clothPaperTypeId == null">
+                LEFT JOIN post_processing_leduvglitter ppl ON (
+                    (ppl.product_model_number IS NOT NULL AND ppl.product_model_number = p.model_number)
+                    OR (ppl.product_name IS NOT NULL AND ppl.product_name = p.name)
+                )
+                AND (ppl.paper_type IS NULL OR ppl.paper_type = '' OR ppl.paper_type = p.hot_stamping_paper_type)
+                </if>
+                <if test="false">
+                LEFT JOIN post_processing_print_uv pppu ON (
+                    (pppu.product_model_number IS NOT NULL AND pppu.product_model_number = p.model_number)
+                    OR (pppu.product_name IS NOT NULL AND pppu.product_name = p.name)
+                )
+                AND (
+                    (l.company_number IS NULL OR l.company_number = '' OR pppu.company_number = l.company_number)
+                    OR (l.gp_no IS NULL OR l.gp_no = '' OR pppu.company_number = l.gp_no)
+                )
+                AND (pppu.paper_type IS NULL OR pppu.paper_type = '' OR pppu.paper_type = p.hot_stamping_paper_type)
+                </if>
+                <where>
+                    <include refid="commonFilters"/>
+                </where>
+            </when>
+            <!-- 情况2：无前工序参数 -->
+            <otherwise>
+                SELECT COUNT(DISTINCT p.id)
+                FROM products p
+                <include refid="commonJoins"/>
+                <choose>
+                    <when test="params.postProcessingStepId != null and params.laminationMaterialId != null">
+                        INNER JOIN lamination_compatibility lc ON (
+                            <include refid="laminationJoinCondition"/>
+                        )
+                    </when>
+                </choose>
+                <if test="params.printing != null and params.printing != ''">
+                LEFT JOIN post_processing_print ppp ON (
+                    (ppp.product_model_number IS NOT NULL  AND ppp.product_model_number = p.model_number)
+                    OR (ppp.product_name IS NOT NULL AND ppp.product_name = p.name)
+                )
+                AND (ppp.color IS NULL OR ppp.color = '' OR ppp.color = s.color)
+                AND (ppp.paper_type IS NULL OR ppp.paper_type = '' OR ppp.paper_type = p.hot_stamping_paper_type)
+                </if>
+                <if test="params.silk_screen_led_uv_sparkle_powder != null and params.silk_screen_led_uv_sparkle_powder != '' and params.clothPaperTypeId == null">
+                LEFT JOIN post_processing_leduvglitter ppl ON (
+                    (ppl.product_model_number IS NOT NULL AND ppl.product_model_number = p.model_number)
+                    OR (ppl.product_name IS NOT NULL AND ppl.product_name = p.name)
+                )
+                AND (ppl.paper_type IS NULL OR ppl.paper_type = '' OR ppl.paper_type = p.hot_stamping_paper_type)
+                </if>
+                <if test="false">
+                LEFT JOIN post_processing_print_uv pppu ON (
+                    (pppu.product_model_number IS NOT NULL AND pppu.product_model_number = p.model_number)
+                    OR (pppu.product_name IS NOT NULL AND pppu.product_name = p.name)
+                )
+                AND (
+                    (l.company_number IS NULL OR l.company_number = '' OR pppu.company_number = l.company_number)
+                    OR (l.gp_no IS NULL OR l.gp_no = '' OR pppu.company_number = l.gp_no)
+                )
+                AND (pppu.paper_type IS NULL OR pppu.paper_type = '' OR pppu.paper_type = p.hot_stamping_paper_type)
+                </if>
+                <where>
+                    <include refid="commonFilters"/>
+                </where>
+            </otherwise>
+        </choose>
+    </select>
+
+    <!--
+    ========================================
+    可重用的SQL片段
+    ========================================
+    -->
+
+    <!-- 查询字段 -->
+    <sql id="selectFields">
+        SELECT DISTINCT
+        p.id,
+        p.name,
+        p.model_number,
+        p.material_number,
+        p.descirption,
+        p.fengdu,
+        p.gaishu,
+        p.hot_stamping_paper_type,
+        p.danwei,
+        p.is_jiehuo,
+        p.is_changyong,
+        p.paizi,
+        p.usage_count,
+        s.color,
+        s.color_num,
+        s.size,
+        s.tightness,
+        s.temperature_range,
+        s.performance,
+        pr.price,
+        l.company_number,
+        l.gp_no
+    </sql>
+
+    <!-- 通用JOIN条件 -->
+    <sql id="commonJoins">
+        LEFT JOIN specifications s ON p.id = s.project_id
+        LEFT JOIN pricing pr ON p.id = pr.project_id
+        LEFT JOIN leo_gp_numbers l ON p.id = l.project_id
+        <!-- 注意：hot_stamping_compatibility 和 cloth_paper_compatibility 不在这里JOIN
+             而是在WHERE条件中使用EXISTS子查询，避免产生笛卡尔积导致数据爆炸 -->
+    </sql>
+
+    <!-- 过胶兼容性JOIN条件 -->
+    <sql id="laminationJoinCondition">
+        (
+            (lc.model_number IS NOT NULL AND lc.model_number != '' AND lc.model_number = p.model_number)
+            OR ((lc.model_number IS  NULL OR lc.model_number = ''  ) AND lc.foil_series = p.name)
+        )
+        AND lc.post_processing_step_id = #{params.postProcessingStepId}
+        AND lc.lamination_material_id = #{params.laminationMaterialId}
+        AND lc.compatibility IN ('V', '▷')
+        AND (lc.product_type IS NULL OR lc.product_type = '' OR lc.product_type = p.hot_stamping_paper_type)
+    </sql>
+
+    <!--
+    ========================================
+    统一的公共过滤条件
+    ========================================
+    适用于所有查询路径：有前工序的UNION查询和无前工序的单表查询
+    ========================================
+    -->
+    <sql id="commonFilters">
+        <!--0.物料状态过滤：只查询可用状态的物料 -->
+        AND (p.status IS NULL OR p.status = '可用')
+        <!--1.公司编号/客户编号：大小写不敏感的精确匹配（不使用通配符） -->
+        <if test="params.companyNumber!=null and params.companyNumber!=''">
+            AND (l.company_number ILIKE #{params.companyNumber}
+            OR l.gp_no ILIKE #{params.companyNumber})
+        </if>
+        <!--1.1.客户编号 - 修改为根据descirption字段模糊查询 -->
+        <if test="params.gpNo!=null and params.gpNo!=''">
+            AND p.descirption LIKE CONCAT('%', #{params.gpNo}, '%')
+        </if>
+
+        <!--4.产品类型ID过滤 - 基于hot_stamping_compatibility表-->
+        <if test="params.productTypeId != null">
+            AND EXISTS (
+                SELECT 1 FROM hot_stamping_compatibility hsc
+                WHERE hsc.paper_performance = p.hot_stamping_paper_type
+            AND hsc.product_type_id = #{params.productTypeId}
+            AND hsc.compatibility = 'V'
+            )
+        </if>
+
+        <!--5.图案类型ID过滤 - 基于hot_stamping_compatibility表-->
+        <if test="params.patternId != null">
+            AND EXISTS (
+                SELECT 1 FROM hot_stamping_compatibility hsc
+                WHERE hsc.paper_performance = p.hot_stamping_paper_type
+            AND hsc.pattern_characteristic_id = #{params.patternId}
+            AND hsc.compatibility = 'V'
+            )
+        </if>
+
+        <!--4. 产品类型 &amp; 烫金图案(X)类型 -->
+        <if test="params.hotStampingPaperTypes != null and params.hotStampingPaperTypes.size() > 0">
+            AND p.hot_stamping_paper_type IN
+            <foreach collection="params.hotStampingPaperTypes" open="(" close=")" separator="," item="hotStampingPaperType">
+                #{hotStampingPaperType}
+            </foreach>
+        </if>
+        <!--9.布料纸类型匹配逻辑 - 基于cloth_paper_compatibility表 -->
+        <!-- 性能优化：使用EXISTS替代JOIN，避免产生笛卡尔积 -->
+        <if test="params.clothPaperTypeId != null">
+            AND EXISTS (
+                SELECT 1 FROM cloth_paper_compatibility cpc
+                WHERE cpc.product_name = p.name
+            AND cpc.cloth_paper_type_id = #{params.clothPaperTypeId}
+            AND cpc.compatibility_status = #{params.clothPaperCompatibilityStatus}
+            AND (cpc.paper_type IS NULL OR cpc.paper_type = p.hot_stamping_paper_type)
+            )
+        </if>
+        <!--9.价格优先度 -->
+        <if test="params.priceLevel != null">
+            AND pr.price = #{params.priceLevel}
+        </if>
+
+        <!--13.烫後加工.烫金+印刷 -->
+        <if test="params.printing != null and params.printing != ''">
+            <!-- AND pi.printing = #{params.printing}::special_char_new -->
+            <!-- 当选择了印刷选项时，检查印刷兼容性映射 -->
+            <choose>
+                <!-- 如果选择了布料纸类型ID（适用界面），则进行匹配 -->
+                <when test="params.clothPaperTypeId != null">
+                    AND (
+                        ppp.cloth_paper_type_id = #{params.clothPaperTypeId}
+                        AND ppp.compatibility_status IN ('V', '▷')
+                    )
+                </when>
+                <!-- 如果没有选择布料纸类型ID，不进行过滤（由前端或业务层提示用户选择） -->
+            </choose>
+        </if>
+
+        <!--14.烫後加工.絲印LED UV灑閃粉：选了就按配置过滤；传了适用界面(布面纸类型)则必须存在该类型的V配置，否则要求至少有一条V配置 -->
+        <if test="params.silk_screen_led_uv_sparkle_powder != null and params.silk_screen_led_uv_sparkle_powder != ''">
+            AND EXISTS (
+                SELECT 1 FROM post_processing_leduvglitter ppl_led
+                WHERE (ppl_led.product_model_number IS NOT NULL AND ppl_led.product_model_number = p.model_number
+                       OR ppl_led.product_name IS NOT NULL AND ppl_led.product_name = p.name)
+                AND (ppl_led.paper_type IS NULL OR ppl_led.paper_type = '' OR ppl_led.paper_type = p.hot_stamping_paper_type)
+                AND ppl_led.compatibility_status IN ('V', '▷')
+                <if test="params.clothPaperTypeId != null">
+                AND ppl_led.cloth_paper_type_id = #{params.clothPaperTypeId}
+                </if>
+            )
+        </if>
+
+        <!--15.烫後加工.印刷UV：选了印刷UV就按配置过滤；未填公司编号时忽略公司编号，只要求存在一条V配置
+             匹配规则（按填写情况分三类）：
+             1）只填燙金紙系列（product_name 有值、product_model_number 为空）→ 只按系列匹配；
+             2）只填产品型号（product_model_number 有值、product_name 为空）→ 只按型号匹配；
+             3）系列 + 型号都填了 → 系列和型号都要同时匹配。 -->
+        <if test="params.uvPrinting != null and params.uvPrinting != ''">
+            <!-- 若所选布面纸类型被配置為「禁止與印刷UV聯用」，則直接不返回任何結果 -->
+            <if test="params.clothPaperTypeId != null">
+                AND NOT EXISTS (
+                    SELECT 1 FROM cloth_paper_types cpt_for_uv
+                    WHERE cpt_for_uv.id = #{params.clothPaperTypeId}
+                      AND cpt_for_uv.disallow_uv_print_with_type = TRUE
+                )
+            </if>
+            AND EXISTS (
+                SELECT 1 FROM post_processing_print_uv pppu_uv
+                WHERE
+                    (
+                        -- 情况1：仅配置系列
+                        pppu_uv.product_name IS NOT NULL
+                        AND pppu_uv.product_name != ''
+                        AND (pppu_uv.product_model_number IS NULL OR pppu_uv.product_model_number = '')
+                        AND pppu_uv.product_name = p.name
+                    )
+                    OR
+                    (
+                        -- 情况2：仅配置型号
+                        pppu_uv.product_model_number IS NOT NULL
+                        AND pppu_uv.product_model_number != ''
+                        AND (pppu_uv.product_name IS NULL OR pppu_uv.product_name = '')
+                        AND pppu_uv.product_model_number = p.model_number
+                    )
+                    OR
+                    (
+                        -- 情况3：系列 + 型号都配置 → 两者都需匹配
+                        pppu_uv.product_model_number IS NOT NULL
+                        AND pppu_uv.product_model_number != ''
+                        AND pppu_uv.product_name IS NOT NULL
+                        AND pppu_uv.product_name != ''
+                        AND pppu_uv.product_model_number = p.model_number
+                        AND pppu_uv.product_name = p.name
+                    )
+                AND (pppu_uv.paper_type IS NULL OR pppu_uv.paper_type = '' OR pppu_uv.paper_type = p.hot_stamping_paper_type)
+                AND pppu_uv.compatibility_status IN ('V', '▷')
+                <if test="params.companyNumber != null and params.companyNumber != ''">
+                AND pppu_uv.company_number = #{params.companyNumber}
+                </if>
+            )
+        </if>
+
+        <!--16.烫後加工.过胶兼容性 -->
+        <if test="params.postProcessingStepId != null and params.laminationMaterialId != null">
+            <!-- 当选择了过胶选项时，通过lamination_compatibility表进行过滤 -->
+            AND lc.id IS NOT NULL
+        </if>
+
+        <!--17.烫後加工.擊凸兼容性（固定到“燙金後擊凸 & position_type IS NULL”的规则） -->
+        <if test="params.embossing != null and params.embossing != ''">
+            <!-- hot_stamping_compatibility 条件（存在才要求） -->
+            AND (
+                (
+                    EXISTS (
+                        SELECT 1 FROM hot_stamping_compatibility h_exist_emb
+                        WHERE h_exist_emb.hot_stamping_type_id = (
+                            SELECT hsto_emb.id FROM hot_stamping_type_options hsto_emb
+                            WHERE hsto_emb.stamping_type = '燙金後擊凸'
+                              AND hsto_emb.position_type IS NULL
+                        )
+                        AND h_exist_emb.compatibility IN ('V', '▷')
+                    )
+                    AND EXISTS (
+                        SELECT 1 FROM hot_stamping_compatibility hsc_emb
+                        WHERE hsc_emb.hot_stamping_type_id = (
+                            SELECT hsto_emb2.id FROM hot_stamping_type_options hsto_emb2
+                            WHERE hsto_emb2.stamping_type = '燙金後擊凸'
+                              AND hsto_emb2.position_type IS NULL
+                        )
+                        AND hsc_emb.compatibility IN ('V', '▷')
+                        AND hsc_emb.paper_performance = p.hot_stamping_paper_type
+                    )
+                )
+                OR NOT EXISTS (
+                    SELECT 1 FROM hot_stamping_compatibility h_absent_emb
+                    WHERE h_absent_emb.hot_stamping_type_id = (
+                        SELECT hsto_emb3.id FROM hot_stamping_type_options hsto_emb3
+                        WHERE hsto_emb3.stamping_type = '燙金後擊凸'
+                          AND hsto_emb3.position_type IS NULL
+                    )
+                    AND h_absent_emb.compatibility IN ('V', '▷')
+                )
+            )
+
+            <!-- hot_stamping_type_compatibility 条件（存在才要求） -->
+            AND (
+                (
+                    EXISTS (
+                        SELECT 1
+                        FROM hot_stamping_type_options hstoX_emb
+                        INNER JOIN hot_stamping_type_options hsto_defaultX_emb
+                            ON hsto_defaultX_emb.stamping_type = hstoX_emb.stamping_type
+                           AND hsto_defaultX_emb.position_type IS NULL
+                        INNER JOIN hot_stamping_type_compatibility hstcX_emb
+                            ON hstcX_emb.hot_stamping_type_id = hsto_defaultX_emb.id
+                        WHERE hstoX_emb.stamping_type = '燙金後擊凸'
+                          AND hstoX_emb.position_type IS NULL
+                        AND hstcX_emb.compatibility_status IN ('V', '▷')
+                    )
+                    AND EXISTS (
+                        SELECT 1 FROM hot_stamping_type_compatibility hstc_emb
+                        INNER JOIN hot_stamping_type_options hsto_emb ON hsto_emb.stamping_type = '燙金後擊凸'
+                            AND hsto_emb.position_type IS NULL
+                        INNER JOIN hot_stamping_type_options hsto_default_emb ON hsto_default_emb.stamping_type = hsto_emb.stamping_type
+                            AND hsto_default_emb.position_type IS NULL
+                        WHERE hstc_emb.hot_stamping_type_id = hsto_default_emb.id
+                        AND hstc_emb.compatibility_status IN ('V', '▷')
+                        AND hstc_emb.product_name = p.name
+                        AND (hstc_emb.paper_type IS NULL OR hstc_emb.paper_type = p.hot_stamping_paper_type)
+                    )
+                )
+                OR NOT EXISTS (
+                    SELECT 1
+                    FROM hot_stamping_type_options hstoX_emb2
+                    INNER JOIN hot_stamping_type_options hsto_defaultX_emb2
+                        ON hsto_defaultX_emb2.stamping_type = hstoX_emb2.stamping_type
+                       AND hsto_defaultX_emb2.position_type IS NULL
+                    INNER JOIN hot_stamping_type_compatibility hstcX_emb2
+                        ON hstcX_emb2.hot_stamping_type_id = hsto_defaultX_emb2.id
+                    WHERE hstoX_emb2.stamping_type = '燙金後擊凸'
+                      AND hstoX_emb2.position_type IS NULL
+                    AND hstcX_emb2.compatibility_status IN ('V', '▷')
+                )
+            )
+        </if>
+
+        <!--8.烫金类型 - 烫金类型选项逻辑 -->
+        <if test="params.hotStampingTypeOptionId != null">
+            <!--
+            规则说明：
+            1. 如果耐磨映射存在：Java层已通过getPaperPerformanceByMultipleIds算出纸型列表并设置到hotStampingPaperTypes，
+               SQL层通过IN条件使用该列表（见417-423行），同时如果常用界面映射也存在，则通过EXISTS取交集
+            2. 如果只有常用界面映射：不设置hotStampingPaperTypes，SQL层只使用常用界面映射的EXISTS条件
+            3. 如果两种映射都不存在：Java层已返回空结果，不会执行到这里
+            -->
+
+            <!-- 常用界面映射（存在才要求） -->
+            <if test="params.hasCommonMapping != null and params.hasCommonMapping == true">
+                    AND EXISTS (
+                        SELECT 1 FROM hot_stamping_type_compatibility hstc
+                        INNER JOIN hot_stamping_type_options hsto ON hsto.id = #{params.hotStampingTypeOptionId}
+                        INNER JOIN hot_stamping_type_options hsto_default ON hsto_default.stamping_type = hsto.stamping_type
+                            AND hsto_default.position_type IS NULL
+                        WHERE hstc.hot_stamping_type_id = hsto_default.id
+                        AND hstc.compatibility_status IN ('V', '▷')
+                        AND hstc.product_name = p.name
+                        AND (hstc.paper_type IS NULL OR hstc.paper_type = p.hot_stamping_paper_type)
+                    )
+            </if>
+        </if>
+
+        <!--8.x 烫金图案区域选项匹配：固定筛选适用(V) -->
+        <if test="params.patternAreaOptionId != null">
+            AND EXISTS (
+            SELECT 1 FROM hot_stamping_patternx_area_compatibility hspac
+            WHERE hspac.hot_stamping_patternx_area_id = #{params.patternAreaOptionId}
+            AND hspac.compatibility_status IN ('V', '▷')
+            AND hspac.product_name = p.name
+            AND (hspac.paper_type IS NULL OR hspac.paper_type = p.hot_stamping_paper_type)
+            )
+        </if>
+
+        <!-- 综合筛选：牌子筛选 - 使用前缀匹配走索引 -->
+        <if test="params.paizi != null and params.paizi != ''">
+            AND p.paizi = #{params.paizi}
+        </if>
+
+        <!-- 综合筛选：颜色编码筛选 - 使用前缀匹配走索引 -->
+        <if test="params.colorNum != null and params.colorNum != ''">
+            AND s.color_num = #{params.colorNum}
+        </if>
+    </sql>
+
+    <!-- 批量更新产品的usage_count（每次被筛选出来时+1） -->
+    <update id="incrementUsageCountBatch">
+        UPDATE products
+        SET usage_count = usage_count + 1
+        WHERE id IN
+        <foreach collection="productIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.LaminationMaterialOptionMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="LaminationMaterialOptionResultMap" type="com.it.yts_project.model.LaminationMaterialOption">
+        <id property="id" column="id"/>
+        <result property="materialName" column="material_name"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="displayOrder" column="display_order"/>
+        <result property="isActive" column="is_active"/>
+        <result property="description" column="description"/>
+        <result property="pid" column="pid"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <!-- 查询所有过胶材料选项 -->
+    <select id="findAll" resultMap="LaminationMaterialOptionResultMap">
+        SELECT * FROM lamination_material_options ORDER BY display_order ASC, id ASC
+    </select>
+
+    <!-- 查询激活的过胶材料选项 -->
+    <select id="findActive" resultMap="LaminationMaterialOptionResultMap">
+        SELECT * FROM lamination_material_options WHERE is_active = true ORDER BY display_order ASC, id ASC
+    </select>
+
+    <!-- 根据ID查询 -->
+    <select id="findById" resultMap="LaminationMaterialOptionResultMap">
+        SELECT * FROM lamination_material_options WHERE id = #{id}
+    </select>
+
+    <!-- 根据材料编码查询 -->
+    <select id="findByMaterialCode" resultMap="LaminationMaterialOptionResultMap">
+        SELECT * FROM lamination_material_options WHERE material_code = #{materialCode}
+    </select>
+
+    <!-- 搜索过胶材料选项 -->
+    <select id="search" resultMap="LaminationMaterialOptionResultMap">
+        SELECT * FROM lamination_material_options 
+        WHERE material_name LIKE CONCAT('%', #{keyword}, '%') 
+           OR material_code LIKE CONCAT('%', #{keyword}, '%')
+           OR description LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY display_order ASC, id ASC
+    </select>
+
+    <!-- 插入过胶材料选项 -->
+    <insert id="insert" parameterType="com.it.yts_project.model.LaminationMaterialOption" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO lamination_material_options (material_name, material_code, display_order, is_active, description, pid)
+        VALUES (#{materialName}, #{materialCode}, #{displayOrder}, #{isActive}, #{description}, #{pid})
+    </insert>
+
+    <!-- 更新过胶材料选项 -->
+    <update id="update" parameterType="com.it.yts_project.model.LaminationMaterialOption">
+        UPDATE lamination_material_options SET
+            material_name = #{materialName},
+            material_code = #{materialCode},
+            display_order = #{displayOrder},
+            is_active = #{isActive},
+            description = #{description},
+            pid = #{pid},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除过胶材料选项 -->
+    <delete id="deleteById">
+        DELETE FROM lamination_material_options WHERE id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 备份文件：原始版本 - 备份于优化前 -->
+<mapper namespace="com.it.yts_project.mapper.GoldFoilProductMapper">
+    <!-- 此文件为备份，如需回滚请将内容复制回GoldFoilProductMapper.xml -->
+</mapper>
+

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.silicone_sandblast_uvMapper">
+
+    <!-- 产品结果映射 -->
+    <resultMap id="ProductResultMap" type="com.it.yts_project.model.silicone_sandblast_uvProduct">
+        <id property="id" column="id"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="supplierCode" column="supplier_code"/>
+        <result property="stockCode" column="stock_code"/>
+        <result property="materialName" column="material_name"/>
+        <result property="usage" column="usage"/>
+        <result property="category" column="category"/>
+        <result property="color" column="color"/>
+        <result property="responsiblePerson" column="responsible_person"/>
+        <result property="minSheetSize" column="min_sheet_size"/>
+        <result property="maxSheetSize" column="max_sheet_size"/>
+        <result property="minSpacing" column="min_spacing"/>
+        <result property="designInfo" column="design_info"/>
+        <result property="applicableInterface" column="applicable_interface"/>
+        <result property="notes" column="notes"/>
+        <result property="isActive" column="is_active"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <!-- 兼容性结果映射 -->
+    <resultMap id="CompatibilityResultMap" type="com.it.yts_project.model.silicone_sandblast_uvCompatibility">
+        <id property="id" column="id"/>
+        <result property="productId" column="product_id"/>
+        <result property="postProcessingStep" column="post_processing_step"/>
+        <result property="compatibilityStatus" column="compatibility_status"/>
+        <result property="displayOrder" column="display_order"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <!-- ========== 产品SQL ========== -->
+
+    <select id="findAllProducts" resultMap="ProductResultMap">
+        SELECT * FROM silicone_sandblast_uv_product ORDER BY id ASC
+    </select>
+
+    <select id="findActiveProducts" resultMap="ProductResultMap">
+        SELECT * FROM silicone_sandblast_uv_product WHERE is_active = true ORDER BY id ASC
+    </select>
+
+    <select id="findProductById" resultMap="ProductResultMap">
+        SELECT * FROM silicone_sandblast_uv_product WHERE id = #{id}
+    </select>
+
+    <select id="searchProducts" resultMap="ProductResultMap">
+        SELECT * FROM silicone_sandblast_uv_product
+        WHERE material_name LIKE CONCAT('%', #{keyword}, '%')
+           OR material_code LIKE CONCAT('%', #{keyword}, '%')
+           OR stock_code LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY id ASC
+    </select>
+
+    <insert id="insertProduct" parameterType="com.it.yts_project.model.silicone_sandblast_uvProduct" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO silicone_sandblast_uv_product (
+            material_code, supplier_code, stock_code, material_name, usage,
+            category, color, responsible_person, min_sheet_size, max_sheet_size,
+            min_spacing, design_info, applicable_interface, notes, is_active
+        ) VALUES (
+            #{materialCode}, #{supplierCode}, #{stockCode}, #{materialName}, #{usage},
+            #{category}, #{color}, #{responsiblePerson}, #{minSheetSize}, #{maxSheetSize},
+            #{minSpacing}, #{designInfo}, #{applicableInterface}, #{notes}, #{isActive}
+        )
+    </insert>
+
+    <update id="updateProduct" parameterType="com.it.yts_project.model.silicone_sandblast_uvProduct">
+        UPDATE silicone_sandblast_uv_product SET
+            material_code = #{materialCode},
+            supplier_code = #{supplierCode},
+            stock_code = #{stockCode},
+            material_name = #{materialName},
+            usage = #{usage},
+            category = #{category},
+            color = #{color},
+            responsible_person = #{responsiblePerson},
+            min_sheet_size = #{minSheetSize},
+            max_sheet_size = #{maxSheetSize},
+            min_spacing = #{minSpacing},
+            design_info = #{designInfo},
+            applicable_interface = #{applicableInterface},
+            notes = #{notes},
+            is_active = #{isActive},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteProductById">
+        DELETE FROM silicone_sandblast_uv_product WHERE id = #{id}
+    </delete>
+
+    <!-- ========== 兼容性SQL ========== -->
+
+    <select id="findCompatibilitiesByProductId" resultMap="CompatibilityResultMap">
+        SELECT * FROM silicone_sandblast_uv_compatibility
+        WHERE product_id = #{productId}
+        ORDER BY display_order ASC, id ASC
+    </select>
+
+    <select id="findAllCompatibilities" resultMap="CompatibilityResultMap">
+        SELECT * FROM silicone_sandblast_uv_compatibility
+        ORDER BY product_id ASC, display_order ASC, id ASC
+    </select>
+
+    <select id="findCompatibilityById" resultMap="CompatibilityResultMap">
+        SELECT * FROM silicone_sandblast_uv_compatibility WHERE id = #{id}
+    </select>
+
+    <insert id="insertCompatibility" parameterType="com.it.yts_project.model.silicone_sandblast_uvCompatibility" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO silicone_sandblast_uv_compatibility (product_id, post_processing_step, compatibility_status, display_order)
+        VALUES (#{productId}, #{postProcessingStep}, #{compatibilityStatus}, #{displayOrder})
+    </insert>
+
+    <update id="updateCompatibility" parameterType="com.it.yts_project.model.silicone_sandblast_uvCompatibility">
+        UPDATE silicone_sandblast_uv_compatibility SET
+            product_id = #{productId},
+            post_processing_step = #{postProcessingStep},
+            compatibility_status = #{compatibilityStatus},
+            display_order = #{displayOrder}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteCompatibilityById">
+        DELETE FROM silicone_sandblast_uv_compatibility WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteCompatibilitiesByProductId">
+        DELETE FROM silicone_sandblast_uv_compatibility WHERE product_id = #{productId}
+    </delete>
+
+    <insert id="batchInsertCompatibilities" parameterType="java.util.List">
+        INSERT INTO silicone_sandblast_uv_compatibility (product_id, post_processing_step, compatibility_status, display_order)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.productId}, #{item.postProcessingStep}, #{item.compatibilityStatus}, #{item.displayOrder})
+        </foreach>
+    </insert>
+
+</mapper>

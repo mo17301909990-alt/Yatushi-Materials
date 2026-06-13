@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.LeoGpNumberMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="LeoGpNumberResultMap" type="com.it.yts_project.model.LeoGpNumber">
+        <id property="id" column="id"/>
+        <result property="project_id" column="project_id"/>
+        <result property="company_number" column="company_number"/>
+        <result property="gp_no" column="gp_no"/>
+    </resultMap>
+
+    <!-- 根据项目ID查询Leo GP Number -->
+    <select id="findByProjectId" resultMap="LeoGpNumberResultMap">
+        SELECT id, project_id, company_number, gp_no
+        FROM leo_gp_numbers
+        WHERE project_id = #{projectId}
+    </select>
+
+    <!-- 插入Leo GP Number -->
+    <insert id="insert" parameterType="com.it.yts_project.model.LeoGpNumber" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO leo_gp_numbers (project_id, company_number, gp_no)
+        VALUES (#{project_id}, #{company_number}, #{gp_no})
+    </insert>
+
+    <!-- 更新Leo GP Number -->
+    <update id="update" parameterType="com.it.yts_project.model.LeoGpNumber">
+        UPDATE leo_gp_numbers
+        SET project_id = #{project_id},
+            company_number = #{company_number},
+            gp_no = #{gp_no}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据ID删除Leo GP Number -->
+    <delete id="deleteById">
+        DELETE FROM leo_gp_numbers WHERE id = #{id}
+    </delete>
+
+    <!-- 根据项目ID删除Leo GP Number -->
+    <delete id="deleteByProjectId">
+        DELETE FROM leo_gp_numbers WHERE project_id = #{projectId}
+    </delete>
+    
+    <!-- 根据产品系列名称获取所有公司编号/客户GP号 -->
+    <select id="getCompanyNumbersByProductName" resultType="string">
+        SELECT DISTINCT lgn.company_number AS identifier
+        FROM leo_gp_numbers lgn
+        INNER JOIN products p ON lgn.project_id = p.id
+        WHERE p.name = #{productName}
+          AND lgn.company_number IS NOT NULL
+          AND lgn.company_number != ''
+        
+        UNION
+        
+        SELECT DISTINCT lgn.gp_no AS identifier
+        FROM leo_gp_numbers lgn
+        INNER JOIN products p ON lgn.project_id = p.id
+        WHERE p.name = #{productName}
+          AND lgn.gp_no IS NOT NULL
+          AND lgn.gp_no != ''
+        ORDER BY identifier
+    </select>
+    
+    <!-- 根据产品型号和名称获取公司编号/客户GP号 -->
+    <select id="getCompanyNumbersByProductModelNumberAndName" resultType="string">
+        SELECT DISTINCT lgn.company_number AS identifier
+        FROM leo_gp_numbers lgn
+        INNER JOIN products p ON lgn.project_id = p.id
+        WHERE p.model_number = #{productModelNumber}
+          AND p.name = #{productName}
+          AND lgn.company_number IS NOT NULL
+          AND lgn.company_number != ''
+        
+        UNION
+        
+        SELECT DISTINCT lgn.gp_no AS identifier
+        FROM leo_gp_numbers lgn
+        INNER JOIN products p ON lgn.project_id = p.id
+        WHERE p.model_number = #{productModelNumber}
+          AND p.name = #{productName}
+          AND lgn.gp_no IS NOT NULL
+          AND lgn.gp_no != ''
+        ORDER BY identifier
+    </select>
+
+</mapper>

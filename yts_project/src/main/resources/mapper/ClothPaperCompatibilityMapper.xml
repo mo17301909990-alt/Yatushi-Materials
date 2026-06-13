@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.ClothPaperCompatibilityMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="CompatibilityResultMap" type="com.it.yts_project.dto.ClothPaperCompatibilityDTO">
+        <id column="id" property="id"/>
+        <result column="product_name" property="productName"/>
+        <result column="cloth_paper_type_id" property="clothPaperTypeId"/>
+        <result column="compatibility_status" property="compatibilityStatus"/>
+        <result column="paper_type" property="paperType"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="cloth_paper_type_name" property="clothPaperTypeName"/>
+        <result column="cloth_paper_category" property="clothPaperCategory"/>
+        <result column="notice_ids" property="noticeIds" typeHandler="com.it.yts_project.config.IntegerArrayTypeHandler"/>
+    </resultMap>
+
+    <!-- 获取所有兼容性记录 -->
+    <select id="getAllCompatibility" resultMap="CompatibilityResultMap">
+        SELECT 
+            cpc.id,
+            cpc.product_name,
+            cpc.cloth_paper_type_id,
+            cpc.compatibility_status,
+            cpc.paper_type,
+            cpc.created_at,
+            cpc.updated_at,
+            cpc.notice_ids,
+            cpt.type_name as cloth_paper_type_name,
+            cpt.category as cloth_paper_category
+        FROM cloth_paper_compatibility cpc
+        LEFT JOIN cloth_paper_types cpt ON cpc.cloth_paper_type_id = cpt.id
+        ORDER BY cpc.product_name, cpt.category, cpt.type_name
+    </select>
+
+    <!-- 根据燙金紙系列获取兼容性记录 -->
+    <select id="getByProjectId" resultMap="CompatibilityResultMap">
+        SELECT 
+            cpc.id,
+            cpc.product_name,
+            cpc.cloth_paper_type_id,
+            cpc.compatibility_status,
+            cpc.paper_type,
+            cpc.created_at,
+            cpc.updated_at,
+            cpc.notice_ids,
+            cpt.type_name as cloth_paper_type_name,
+            cpt.category as cloth_paper_category
+        FROM cloth_paper_compatibility cpc
+        LEFT JOIN cloth_paper_types cpt ON cpc.cloth_paper_type_id = cpt.id
+        WHERE cpc.product_name = #{projectId}
+        ORDER BY cpt.category, cpt.type_name
+    </select>
+
+    <!-- 根据布面纸类型ID获取兼容性记录 -->
+    <select id="getByClothPaperTypeId" resultMap="CompatibilityResultMap">
+        SELECT 
+            cpc.id,
+            cpc.product_name,
+            cpc.cloth_paper_type_id,
+            cpc.compatibility_status,
+            cpc.paper_type,
+            cpc.created_at,
+            cpc.updated_at,
+            cpc.notice_ids,
+            cpt.type_name as cloth_paper_type_name,
+            cpt.category as cloth_paper_category
+        FROM cloth_paper_compatibility cpc
+        LEFT JOIN cloth_paper_types cpt ON cpc.cloth_paper_type_id = cpt.id
+        WHERE cpc.cloth_paper_type_id = #{clothPaperTypeId}
+        ORDER BY cpc.product_name
+    </select>
+
+    <!-- 根据燙金紙系列和布面纸类型ID获取兼容性记录 -->
+    <select id="getByProjectAndType" resultMap="CompatibilityResultMap">
+        SELECT 
+            cpc.id,
+            cpc.product_name,
+            cpc.cloth_paper_type_id,
+            cpc.compatibility_status,
+            cpc.paper_type,
+            cpc.created_at,
+            cpc.updated_at,
+            cpc.notice_ids,
+            cpt.type_name as cloth_paper_type_name,
+            cpt.category as cloth_paper_category
+        FROM cloth_paper_compatibility cpc
+        LEFT JOIN cloth_paper_types cpt ON cpc.cloth_paper_type_id = cpt.id
+        WHERE cpc.product_name = #{projectId} AND cpc.cloth_paper_type_id = #{clothPaperTypeId}
+    </select>
+    
+    <!-- 根据燙金紙系列、布面纸类型ID和燙金紙性能類型获取兼容性记录 -->
+    <select id="getByProjectAndTypeAndPaperType" resultMap="CompatibilityResultMap">
+        SELECT 
+            cpc.id,
+            cpc.product_name,
+            cpc.cloth_paper_type_id,
+            cpc.compatibility_status,
+            cpc.paper_type,
+            cpc.created_at,
+            cpc.updated_at,
+            cpc.notice_ids,
+            cpt.type_name as cloth_paper_type_name,
+            cpt.category as cloth_paper_category
+        FROM cloth_paper_compatibility cpc
+        LEFT JOIN cloth_paper_types cpt ON cpc.cloth_paper_type_id = cpt.id
+        WHERE cpc.product_name = #{projectId} 
+          AND cpc.cloth_paper_type_id = #{clothPaperTypeId}
+          <choose>
+            <when test="paperType != null and paperType != ''">
+              AND cpc.paper_type = #{paperType}
+            </when>
+            <otherwise>
+              AND (cpc.paper_type IS NULL OR cpc.paper_type = '')
+            </otherwise>
+          </choose>
+        LIMIT 1
+    </select>
+
+    <!-- 插入兼容性记录 -->
+    <insert id="insert" parameterType="com.it.yts_project.dto.ClothPaperCompatibilityDTO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cloth_paper_compatibility (
+            product_name,
+            cloth_paper_type_id,
+            compatibility_status,
+            paper_type,
+            notice_ids,
+            created_at,
+            updated_at
+        ) VALUES (
+            #{productName},
+            #{clothPaperTypeId},
+            #{compatibilityStatus},
+            #{paperType},
+            #{noticeIds, typeHandler=com.it.yts_project.config.IntegerArrayTypeHandler},
+            #{createdAt},
+            #{updatedAt}
+        )
+    </insert>
+
+    <!-- 更新兼容性记录 -->
+    <update id="update" parameterType="com.it.yts_project.dto.ClothPaperCompatibilityDTO">
+        UPDATE cloth_paper_compatibility
+        SET 
+            product_name = #{productName},
+            compatibility_status = #{compatibilityStatus},
+            paper_type = #{paperType},
+            notice_ids = #{noticeIds, typeHandler=com.it.yts_project.config.IntegerArrayTypeHandler},
+            updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据ID删除兼容性记录 -->
+    <delete id="deleteById">
+        DELETE FROM cloth_paper_compatibility WHERE id = #{id}
+    </delete>
+
+    <!-- 根据燙金紙系列和布面纸类型ID删除兼容性记录 -->
+    <delete id="deleteByProjectAndType">
+        DELETE FROM cloth_paper_compatibility 
+        WHERE product_name = #{projectId} AND cloth_paper_type_id = #{clothPaperTypeId}
+    </delete>
+
+    <!-- 批量插入兼容性记录 -->
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO cloth_paper_compatibility (
+            product_name,
+            cloth_paper_type_id,
+            compatibility_status,
+            paper_type,
+            created_at,
+            updated_at
+        ) VALUES
+        <foreach collection="compatibilities" item="item" separator=",">
+            (
+                #{item.productName},
+                #{item.clothPaperTypeId},
+                #{item.compatibilityStatus},
+                #{item.paperType},
+                #{item.createdAt},
+                #{item.updatedAt}
+            )
+        </foreach>
+    </insert>
+
+    <!-- 批量更新兼容性状态 -->
+    <update id="batchUpdateByProject">
+        <foreach collection="compatibilities" item="item" separator=";">
+            UPDATE cloth_paper_compatibility
+            SET 
+                compatibility_status = #{item.compatibilityStatus},
+                updated_at = #{item.updatedAt}
+            WHERE product_name = #{projectId} AND cloth_paper_type_id = #{item.clothPaperTypeId}
+        </foreach>
+    </update>
+
+    <!-- 获取所有燙金紙系列 -->
+    <select id="getAllProductNames" resultType="java.lang.String">
+        SELECT DISTINCT product_name
+        FROM cloth_paper_compatibility
+        ORDER BY product_name
+    </select>
+
+    <!-- 根据燙金紙系列获取产品ID -->
+    <select id="getProjectIdByName" resultType="java.lang.String">
+        SELECT DISTINCT product_name
+        FROM cloth_paper_compatibility
+        WHERE product_name = #{productName}
+        LIMIT 1
+    </select>
+    
+    <!-- 根据条件获取注意事项ID列表 -->
+    <select id="getNoticeIdsByConditions" resultType="java.lang.Integer">
+        SELECT DISTINCT unnest(notice_ids)
+        FROM cloth_paper_compatibility
+        WHERE notice_ids IS NOT NULL
+        AND array_length(notice_ids, 1) > 0
+        AND compatibility_status IN ('V', '▷')
+        <if test="clothPaperTypeId != null">
+            AND cloth_paper_type_id = #{clothPaperTypeId}
+        </if>
+    </select>
+    
+    <!-- 根据ID获取兼容性记录 -->
+    <select id="getById" resultMap="CompatibilityResultMap">
+        SELECT 
+            cpc.id,
+            cpc.product_name,
+            cpc.cloth_paper_type_id,
+            cpc.compatibility_status,
+            cpc.paper_type,
+            cpc.created_at,
+            cpc.updated_at,
+            cpc.notice_ids,
+            cpt.type_name as cloth_paper_type_name,
+            cpt.category as cloth_paper_category
+        FROM cloth_paper_compatibility cpc
+        LEFT JOIN cloth_paper_types cpt ON cpc.cloth_paper_type_id = cpt.id
+        WHERE cpc.id = #{id}
+    </select>
+    
+    <!-- 更新注意事项ID列表 -->
+    <update id="updateNoticeIds">
+        UPDATE cloth_paper_compatibility
+        SET notice_ids = #{noticeIds, typeHandler=com.it.yts_project.config.IntegerArrayTypeHandler},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+</mapper>

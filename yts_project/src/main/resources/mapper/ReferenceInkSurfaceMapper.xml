@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.ReferenceInkSurfaceMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="ReferenceInkSurfaceResultMap" type="com.it.yts_project.model.ReferenceInkSurface">
+        <id column="id" property="id"/>
+        <result column="category" property="category"/>
+        <result column="detail_name" property="detailName"/>
+        <result column="display_order" property="displayOrder"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <!-- 查询所有 -->
+    <select id="findAll" resultMap="ReferenceInkSurfaceResultMap">
+        SELECT id, category, detail_name, display_order, created_at, updated_at
+        FROM reference_ink_surface
+        ORDER BY display_order ASC, id ASC
+    </select>
+
+    <!-- 根据ID查询 -->
+    <select id="findById" resultMap="ReferenceInkSurfaceResultMap">
+        SELECT id, category, detail_name, display_order, created_at, updated_at
+        FROM reference_ink_surface
+        WHERE id = #{id}
+    </select>
+
+    <!-- 根据分类查询 -->
+    <select id="findByCategory" resultMap="ReferenceInkSurfaceResultMap">
+        SELECT id, category, detail_name, display_order, created_at, updated_at
+        FROM reference_ink_surface
+        WHERE category = #{category}
+        ORDER BY display_order ASC, id ASC
+    </select>
+
+    <!-- 插入 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO reference_ink_surface (
+            category, detail_name, display_order, created_at, updated_at
+        ) VALUES (
+            #{category}, #{detailName}, #{displayOrder}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!-- 更新 -->
+    <update id="update">
+        UPDATE reference_ink_surface
+        SET category = #{category},
+            detail_name = #{detailName},
+            display_order = #{displayOrder},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除 -->
+    <delete id="deleteById">
+        DELETE FROM reference_ink_surface WHERE id = #{id}
+    </delete>
+
+</mapper>

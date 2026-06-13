@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.it.yts_project.mapper.AdminChangeMapper">
+
+    <!-- ========== 快照 ========== -->
+
+    <insert id="insertSnapshot" parameterType="com.it.yts_project.model.AdminChangeSnapshot" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO admin_change_snapshots (entity_type, entity_id, before_data, after_data, checksum, created_at, created_by)
+        VALUES (#{entityType}, #{entityId}, #{beforeData}::jsonb, #{afterData}::jsonb, #{checksum}, NOW(), #{createdBy})
+    </insert>
+
+    <select id="findSnapshotById" resultType="com.it.yts_project.model.AdminChangeSnapshot">
+        SELECT id, entity_type AS entityType, entity_id AS entityId,
+               before_data::text AS beforeData, after_data::text AS afterData,
+               checksum, created_at AS createdAt, created_by AS createdBy
+        FROM admin_change_snapshots WHERE id = #{id}
+    </select>
+
+    <select id="findSnapshotsByRecordId" resultType="com.it.yts_project.model.AdminChangeSnapshot">
+        SELECT s.id, s.entity_type AS entityType, s.entity_id AS entityId,
+               s.before_data::text AS beforeData, s.after_data::text AS afterData,
+               s.checksum, s.created_at AS createdAt, s.created_by AS createdBy
+        FROM admin_change_snapshots s
+        JOIN admin_change_records r ON r.id = #{recordId}
+        WHERE s.id = ANY(STRING_TO_ARRAY(r.snapshot_ids, ',')::bigint[])
+        ORDER BY s.id
+    </select>
+
+    <update id="updateSnapshotAfterData">
+        UPDATE admin_change_snapshots SET after_data = #{afterData}::jsonb WHERE id = #{id}
+    </update>
+
+    <!-- ========== 变更记录 ========== -->
+
+    <insert id="insertRecord" parameterType="com.it.yts_project.model.AdminChangeRecord" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO admin_change_records
+            (entity_type, entity_id, change_set, snapshot_ids, operator_id, operator_name, risk, reason, status, created_at)
+        VALUES (#{entityType}, #{entityId}, #{changeSet}::jsonb, #{snapshotIds}, #{operatorId},
+                #{operatorName}, #{risk}, #{reason}, 'pending', NOW())
+    </insert>
+
+    <select id="findRecordById" resultType="com.it.yts_project.model.AdminChangeRecord">
+        SELECT id, entity_type AS entityType, entity_id AS entityId,
+               change_set::text AS changeSet, snapshot_ids AS snapshotIds,
+               operator_id AS operatorId, operator_name AS operatorName,
+               risk, reason, status,
+               created_at AS createdAt, committed_at AS committedAt,
+               rolled_back_at AS rolledBackAt, rollback_record_id AS rollbackRecordId,
+               error_message AS errorMessage
+        FROM admin_change_records WHERE id = #{id}
+    </select>
+
+    <select id="findRecordsByEntity" resultType="com.it.yts_project.model.AdminChangeRecord">
+        SELECT id, entity_type AS entityType, entity_id AS entityId,
+               change_set::text AS changeSet, snapshot_ids AS snapshotIds,
+               operator_id AS operatorId, operator_name AS operatorName,
+               risk, reason, status,
+               created_at AS createdAt, committed_at AS committedAt,
+               rolled_back_at AS rolledBackAt, rollback_record_id AS rollbackRecordId,
+               error_message AS errorMessage
+        FROM admin_change_records
+        WHERE entity_type = #{entityType} AND entity_id = #{entityId}
+        ORDER BY created_at DESC
+    </select>
+
+    <select id="findRecords" resultType="com.it.yts_project.model.AdminChangeRecord">
+        SELECT id, entity_type AS entityType, entity_id AS entityId,
+               change_set::text AS changeSet, snapshot_ids AS snapshotIds,
+               operator_id AS operatorId, operator_name AS operatorName,
+               risk, reason, status,
+               created_at AS createdAt, committed_at AS committedAt,
+               rolled_back_at AS rolledBackAt, rollback_record_id AS rollbackRecordId,
+               error_message AS errorMessage
+        FROM admin_change_records
+        <where>
+            <if test="operatorId != null">AND operator_id = #{operatorId}</if>
+            <if test="entityType != null and entityType != ''">AND entity_type = #{entityType}</if>
+            <if test="status != null and status != ''">AND status = #{status}</if>
+        </where>
+        ORDER BY created_at DESC LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countRecords" resultType="int">
+        SELECT COUNT(*) FROM admin_change_records
+        <where>
+            <if test="operatorId != null">AND operator_id = #{operatorId}</if>
+            <if test="entityType != null and entityType != ''">AND entity_type = #{entityType}</if>
+            <if test="status != null and status != ''">AND status = #{status}</if>
+        </where>
+    </select>
+
+    <update id="updateRecordStatus">
+        UPDATE admin_change_records
+        SET status = #{status},
+            committed_at = CASE WHEN #{status} = 'committed' THEN NOW() ELSE committed_at END,
+            rolled_back_at = CASE WHEN #{status} = 'rolled_back' THEN NOW() ELSE rolled_back_at END,
+            error_message = #{errorMessage}
+        WHERE id = #{id}
+    </update>
+
+    <update id="markRollback">
+        UPDATE admin_change_records
+        SET rollback_record_id = #{rollbackRecordId}
+        WHERE id = #{id}
+    </update>
+</mapper>

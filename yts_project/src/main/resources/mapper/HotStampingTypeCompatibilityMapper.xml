@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.HotStampingTypeCompatibilityMapper">
+
+    <!-- 根据烫金类型ID获取兼容性配置 -->
+    <select id="findByHotStampingTypeId" resultType="com.it.yts_project.model.HotStampingTypeCompatibility">
+        SELECT * FROM hot_stamping_type_compatibility
+        WHERE hot_stamping_type_id = #{hotStampingTypeId}
+        ORDER BY product_name
+    </select>
+
+    <!-- 根据ID获取兼容性配置 -->
+    <select id="findById" resultType="com.it.yts_project.model.HotStampingTypeCompatibility">
+        SELECT * FROM hot_stamping_type_compatibility
+        WHERE id = #{id}
+    </select>
+
+    <!-- 插入兼容性配置 -->
+    <insert id="insert" parameterType="com.it.yts_project.model.HotStampingTypeCompatibility" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO hot_stamping_type_compatibility (
+            product_name,
+            hot_stamping_type_id,
+            compatibility_status,
+            paper_type,
+            created_at,
+            updated_at
+        ) VALUES (
+            #{productName},
+            #{hotStampingTypeId},
+            #{compatibilityStatus},
+            #{paperType},
+            #{createdAt},
+            #{updatedAt}
+        )
+    </insert>
+
+    <!-- 更新兼容性配置 -->
+    <update id="update" parameterType="com.it.yts_project.model.HotStampingTypeCompatibility">
+        UPDATE hot_stamping_type_compatibility
+        SET product_name = #{productName},
+            hot_stamping_type_id = #{hotStampingTypeId},
+            compatibility_status = #{compatibilityStatus},
+            paper_type = #{paperType},
+            updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除兼容性配置 -->
+    <delete id="deleteById">
+        DELETE FROM hot_stamping_type_compatibility
+        WHERE id = #{id}
+    </delete>
+
+    <!-- 根据烫金类型ID删除所有兼容性配置 -->
+    <delete id="deleteByHotStampingTypeId">
+        DELETE FROM hot_stamping_type_compatibility
+        WHERE hot_stamping_type_id = #{hotStampingTypeId}
+    </delete>
+
+    <!-- 获取所有可用的燙金紙系列 -->
+    <select id="getAllProductNames" resultType="string">
+        SELECT DISTINCT name 
+        FROM products 
+        WHERE name IS NOT NULL AND name != ''
+        ORDER BY name
+    </select>
+
+    <!-- 获取所有可用的纸张类型 -->
+    <select id="getAllPaperTypes" resultType="string">
+        SELECT DISTINCT hot_stamping_paper_type 
+        FROM products 
+        WHERE hot_stamping_paper_type IS NOT NULL AND hot_stamping_paper_type != ''
+        ORDER BY hot_stamping_paper_type
+    </select>
+
+    <!-- 根据产品名称获取对应的纸张类型 -->
+    <select id="getPaperTypesByProductName" resultType="string">
+        SELECT DISTINCT hot_stamping_paper_type 
+        FROM products 
+        WHERE name = #{productName} 
+        AND hot_stamping_paper_type IS NOT NULL AND hot_stamping_paper_type != ''
+        ORDER BY hot_stamping_paper_type
+    </select>
+
+    <!-- 检查燙金紙系列和烫金类型ID的组合是否已存在 -->
+    <select id="countByProductNameAndHotStampingTypeId" resultType="int">
+        SELECT COUNT(*) 
+        FROM hot_stamping_type_compatibility
+        WHERE product_name = #{productName} 
+        AND hot_stamping_type_id = #{hotStampingTypeId}
+    </select>
+
+    <!-- 统计指定烫金类型在常用界面映射中的记录数 -->
+    <select id="countByHotStampingTypeId" resultType="int">
+        SELECT COUNT(*)
+        FROM hot_stamping_type_compatibility
+        WHERE hot_stamping_type_id = #{hotStampingTypeId}
+    </select>
+
+    <!-- 获取所有兼容性配置（包含烫金类型信息） -->
+    <select id="findAll" resultType="com.it.yts_project.model.HotStampingTypeCompatibility">
+        SELECT 
+            hstc.id,
+            hstc.product_name as productName,
+            hstc.hot_stamping_type_id as hotStampingTypeId,
+            hstc.compatibility_status as compatibilityStatus,
+            hstc.paper_type as paperType,
+            hstc.created_at as createdAt,
+            hstc.updated_at as updatedAt,
+            CASE 
+                WHEN hto.position_type IS NULL THEN hto.stamping_type
+                ELSE hto.stamping_type || '-' || hto.position_type
+            END as hotStampingTypeName
+        FROM hot_stamping_type_compatibility hstc
+        LEFT JOIN hot_stamping_type_options hto ON hstc.hot_stamping_type_id = hto.id
+        ORDER BY hto.stamping_type, hto.position_type, hstc.product_name
+    </select>
+    
+    <!-- 根据条件获取注意事项ID列表 -->
+    <select id="getNoticeIdsByConditions" resultType="java.lang.Integer">
+        SELECT DISTINCT unnest(notice_ids)
+        FROM hot_stamping_type_compatibility
+        WHERE notice_ids IS NOT NULL
+        AND array_length(notice_ids, 1) > 0
+        AND compatibility_status IN ('V', '▷')
+        <if test="hotStampingTypeOptionId != null">
+            AND hot_stamping_type_id = #{hotStampingTypeOptionId}
+        </if>
+    </select>
+
+    <!-- 根据燙金紙系列、纸张类型、烫金类型ID获取兼容性配置 -->
+    <select id="findByProductNameAndPaperTypeAndHotStampingTypeId" resultType="com.it.yts_project.model.HotStampingTypeCompatibility">
+        SELECT id, product_name as productName, hot_stamping_type_id as hotStampingTypeId,
+               compatibility_status as compatibilityStatus, paper_type as paperType,
+               created_at as createdAt, updated_at as updatedAt
+        FROM hot_stamping_type_compatibility
+        WHERE product_name = #{productName}
+          AND paper_type = #{paperType}
+          AND hot_stamping_type_id = #{hotStampingTypeId}
+        LIMIT 1
+    </select>
+
+</mapper>

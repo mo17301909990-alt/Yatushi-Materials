@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.PricingMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="PricingResultMap" type="com.it.yts_project.model.Pricing">
+        <id property="id" column="id"/>
+        <result property="projectId" column="project_id"/>
+        <result property="price" column="price"/>
+    </resultMap>
+
+    <!-- 根据产品ID查询价格 -->
+    <select id="findByProjectId" resultMap="PricingResultMap">
+        SELECT * FROM pricing WHERE project_id = #{projectId} ORDER BY id DESC
+    </select>
+
+    <!-- 根据ID查询价格 -->
+    <select id="findById" resultMap="PricingResultMap">
+        SELECT * FROM pricing WHERE id = #{id}
+    </select>
+
+    <!-- 插入价格 -->
+    <insert id="insert" parameterType="com.it.yts_project.model.Pricing" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO pricing (project_id, price)
+        VALUES (#{projectId}, #{price})
+    </insert>
+
+    <!-- 更新价格 -->
+    <update id="update" parameterType="com.it.yts_project.model.Pricing">
+        UPDATE pricing SET
+            project_id = #{projectId},
+            price = #{price}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除价格 -->
+    <delete id="deleteById">
+        DELETE FROM pricing WHERE id = #{id}
+    </delete>
+
+    <!-- 根据产品ID删除所有价格 -->
+    <delete id="deleteByProjectId">
+        DELETE FROM pricing WHERE project_id = #{projectId}
+    </delete>
+
+</mapper>

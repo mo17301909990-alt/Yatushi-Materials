@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.HotStampingCompatibilityMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="HotStampingCompatibilityDetailResultMap" type="com.it.yts_project.dto.HotStampingCompatibilityDetailDTO">
+        <id column="id" property="id"/>
+        <result column="paper_performance" property="paperPerformance"/>
+        <result column="product_type" property="productType"/>
+        <result column="pattern_characteristic" property="patternCharacteristic"/>
+        <result column="hot_stamping_type" property="hotStampingType"/>
+        <result column="compatibility" property="compatibility"/>
+        <result column="pattern_type" property="patternType"/>
+        <result column="line_thickness_min" property="lineThicknessMin"/>
+        <result column="line_thickness_max" property="lineThicknessMax"/>
+        <result column="solid_area_min" property="solidAreaMin"/>
+        <result column="solid_area_max" property="solidAreaMax"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="product_type_id" property="productTypeId"/>
+        <result column="pattern_characteristic_id" property="patternCharacteristicId"/>
+        <result column="hot_stamping_type_id" property="hotStampingTypeId"/>
+        <result column="pre_processing_step_id" property="preProcessingStepId"/>
+        <result column="post_processing_step_id" property="postProcessingStepId"/>
+        <result column="notice_ids" property="noticeIds" typeHandler="com.it.yts_project.config.IntegerArrayTypeHandler"/>
+        <result column="product_type_name" property="productTypeName"/>
+        <result column="pattern_characteristic_name" property="patternCharacteristicName"/>
+        <result column="hot_stamping_type_name" property="hotStampingTypeName"/>
+        <result column="pre_processing_step_name" property="preProcessingStepName"/>
+        <result column="post_processing_step_name" property="postProcessingStepName"/>
+        <result column="product_type_description" property="productTypeDescription"/>
+        <result column="pattern_type_description" property="patternTypeDescription"/>
+        <result column="hot_stamping_type_description" property="hotStampingTypeDescription"/>
+        <result column="pre_processing_step_description" property="preProcessingStepDescription"/>
+        <result column="post_processing_step_description" property="postProcessingStepDescription"/>
+        <result column="is_active" property="isActive"/>
+        <result column="sort_order" property="sortOrder"/>
+    </resultMap>
+
+    <!-- HotStampingCompatibility 实体结果映射 -->
+    <resultMap id="HotStampingCompatibilityResultMap" type="com.it.yts_project.model.HotStampingCompatibility">
+        <id column="id" property="id"/>
+        <result column="paper_performance" property="paperPerformance"/>
+        <result column="product_type" property="productType"/>
+        <result column="pattern_characteristic" property="patternCharacteristic"/>
+        <result column="hot_stamping_type" property="hotStampingType"/>
+        <result column="compatibility" property="compatibility"/>
+        <result column="pre_processing_step_id" property="preProcessingStepId"/>
+        <result column="product_type_id" property="productTypeId"/>
+        <result column="pattern_characteristic_id" property="patternCharacteristicId"/>
+        <result column="hot_stamping_type_id" property="hotStampingTypeId"/>
+        <result column="post_processing_step_id" property="postProcessingStepId"/>
+        <result column="notice_ids" property="noticeIds" typeHandler="com.it.yts_project.config.IntegerArrayTypeHandler"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <!-- 根据查询参数获取兼容的烫金类型 -->
+    <select id="findCompatibleHotStampingTypes" resultMap="HotStampingCompatibilityResultMap">
+        SELECT 
+            id,
+            paper_performance,
+            product_type,
+            pattern_characteristic,
+            hot_stamping_type,
+            compatibility,
+            pre_processing_step_id,
+            product_type_id,
+            pattern_characteristic_id,
+            hot_stamping_type_id,
+            post_processing_step_id,
+            notice_ids,
+            created_at,
+            updated_at
+        FROM hot_stamping_compatibility
+        WHERE compatibility IN ('V', '▷')
+        <if test="paperPerformance != null and paperPerformance != ''">
+            AND paper_performance = #{paperPerformance}
+        </if>
+        <if test="productType != null and productType != ''">
+            AND product_type = #{productType}
+        </if>
+        <if test="patternType != null and patternType != ''">
+            AND pattern_type = #{patternType}
+        </if>
+        <if test="targetHotStampingTypes != null and targetHotStampingTypes.length > 0">
+            AND hot_stamping_type IN
+            <foreach collection="targetHotStampingTypes" item="type" open="(" separator="," close=")">
+                #{type}
+            </foreach>
+        </if>
+        ORDER BY paper_performance ASC, 
+                 product_type_id ASC NULLS LAST, 
+                 pattern_characteristic_id ASC NULLS LAST,
+                 hot_stamping_type_id ASC NULLS LAST,
+                 id ASC
+    </select>
+
+    <!-- 统计指定烫金类型在耐磨映射表中的记录数 -->
+    <select id="countByHotStampingTypeId" resultType="int">
+        SELECT COUNT(*)
+        FROM hot_stamping_compatibility
+        WHERE hot_stamping_type_id = #{hotStampingTypeId}
+    </select>
+
+    <!-- 获取所有烫金纸性能类型 -->
+    <select id="getAllPaperPerformanceTypes" resultType="string">
+        SELECT DISTINCT paper_performance FROM hot_stamping_compatibility ORDER BY paper_performance
+    </select>
+
+    <select id="countDistinctPaperPerformanceTypes" resultType="long">
+        SELECT COUNT(DISTINCT paper_performance) FROM hot_stamping_compatibility
+    </select>
+
+    <!-- 根据产品类型ID获取去重的图案特征ID列表 -->
+    <select id="getPatternCharacteristicIdsByProductTypeId" resultType="int">
+        SELECT DISTINCT pattern_characteristic_id
+        FROM hot_stamping_compatibility
+        WHERE product_type_id = #{productTypeId}
+          AND pattern_characteristic_id IS NOT NULL
+          AND compatibility IN ('V', '▷')
+        ORDER BY pattern_characteristic_id
+    </select>
+
+    <!-- 根据多个ID字段筛选烫金纸性能类型 -->
+    <select id="getPaperPerformanceByMultipleIds" resultType="string">
+        SELECT DISTINCT paper_performance 
+        FROM hot_stamping_compatibility
+        WHERE 1=1
+        <if test="productTypeId != null">
+            AND product_type_id = #{productTypeId}
+        </if>
+        <if test="patternCharacteristicId != null">
+            AND pattern_characteristic_id = #{patternCharacteristicId}
+        </if>
+        <if test="hotStampingTypeId != null">
+            AND hot_stamping_type_id = #{hotStampingTypeId}
+        </if>
+        <if test="preProcessingStepId != null">
+            AND pre_processing_step_id = #{preProcessingStepId}
+        </if>
+        <if test="postProcessingStepId != null">
+            AND post_processing_step_id = #{postProcessingStepId}
+        </if>
+        AND compatibility IN ('V', '▷')
+        ORDER BY paper_performance
+    </select>
+
+    <!-- 根据条件获取完整的兼容性规则（联表查询） -->
+    <select id="getCompatibilityRulesByMultipleIds" resultMap="HotStampingCompatibilityResultMap">
+        SELECT 
+            hsc.id,
+            hsc.paper_performance,
+            hsc.product_type,
+            hsc.pattern_characteristic,
+            hsc.hot_stamping_type,
+            hsc.compatibility,
+            hsc.created_at,
+            hsc.updated_at,
+            hsc.product_type_id,
+            hsc.pattern_characteristic_id,
+            hsc.hot_stamping_type_id,
+            hsc.pre_processing_step_id,
+            hsc.post_processing_step_id,
+            hsc.notice_ids
+        FROM hot_stamping_compatibility hsc
+        WHERE 1=1
+        <if test="productTypeId != null">
+            AND hsc.product_type_id = #{productTypeId}
+        </if>
+        <if test="patternCharacteristicId != null">
+            AND hsc.pattern_characteristic_id = #{patternCharacteristicId}
+        </if>
+        <if test="hotStampingTypeId != null">
+            AND hsc.hot_stamping_type_id = #{hotStampingTypeId}
+        </if>
+        <if test="preProcessingStepId != null">
+            AND hsc.pre_processing_step_id = #{preProcessingStepId}
+        </if>
+        <if test="postProcessingStepId != null">
+            AND hsc.post_processing_step_id = #{postProcessingStepId}
+        </if>
+        ORDER BY hsc.paper_performance ASC, 
+                 hsc.product_type_id ASC NULLS LAST, 
+                 hsc.pattern_characteristic_id ASC NULLS LAST,
+                 hsc.hot_stamping_type_id ASC NULLS LAST,
+                 hsc.id ASC
+    </select>
+
+    <!-- 获取完整的兼容性规则列表（包含关联表信息） -->
+    <select id="getCompatibilityRulesWithDetails" resultMap="HotStampingCompatibilityDetailResultMap">
+        SELECT 
+            hsc.id,
+            hsc.paper_performance,
+            hsc.product_type,
+            hsc.pattern_characteristic,
+            hsc.hot_stamping_type,
+            hsc.compatibility,
+            hpb.pattern_type,
+            hpb.line_thickness_min,
+            hpb.line_thickness_max,
+            hpb.solid_area_min,
+            hpb.solid_area_max,
+            hsc.created_at,
+            hsc.updated_at,
+            hsc.product_type_id,
+            hsc.pattern_characteristic_id,
+            hsc.hot_stamping_type_id,
+            hsc.pre_processing_step_id,
+            hsc.post_processing_step_id,
+            hsc.notice_ids,
+            -- 关联表信息（别名与 resultMap column 一致，便于 MyBatis 正确映射）
+            pto.product_name AS product_type_name,
+            hpb.option_name AS pattern_characteristic_name,
+            CASE 
+                WHEN hto.position_type IS NULL THEN hto.stamping_type
+                ELSE hto.stamping_type || '-' || hto.position_type
+            END AS hot_stamping_type_name,
+            pso.pre_processing_steps_name AS pre_processing_step_name,
+            NULL::text AS post_processing_step_name,
+            -- 关联表描述信息
+            pto.description AS product_type_description,
+            NULL::text AS pattern_type_description,
+            hto.description AS hot_stamping_type_description,
+            pso.description AS pre_processing_step_description,
+            NULL::text AS post_processing_step_description,
+            -- 状态信息
+            pto.is_active AS is_active,
+            pto.display_order AS sort_order
+        FROM hot_stamping_compatibility hsc
+        LEFT JOIN product_type_options pto ON hsc.product_type_id = pto.id
+        LEFT JOIN hot_stamping_pattern_base hpb ON hsc.pattern_characteristic_id = hpb.id
+        LEFT JOIN hot_stamping_type_options hto ON hsc.hot_stamping_type_id = hto.id
+        LEFT JOIN pre_processing_steps_options pso ON hsc.pre_processing_step_id = pso.id
+        ORDER BY hsc.paper_performance ASC, 
+                 hsc.product_type_id ASC NULLS LAST, 
+                 hsc.pattern_characteristic_id ASC NULLS LAST,
+                 hsc.hot_stamping_type_id ASC NULLS LAST,
+                 hsc.id ASC
+    </select>
+
+    <!-- 获取所有产品类型 -->
+    <select id="getAllProductTypes" resultType="string">
+        SELECT DISTINCT product_type FROM hot_stamping_compatibility ORDER BY product_type
+    </select>
+
+    <select id="countDistinctProductTypes" resultType="long">
+        SELECT COUNT(DISTINCT product_type) FROM hot_stamping_compatibility
+    </select>
+
+    <!-- 获取所有烫金类型 -->
+    <select id="getAllHotStampingTypes" resultType="string">
+        SELECT DISTINCT hot_stamping_type FROM hot_stamping_compatibility ORDER BY hot_stamping_type
+    </select>
+
+    <!-- 根据图案特征匹配兼容性规则 -->
+    <select id="matchPatternCompatibility" resultMap="HotStampingCompatibilityResultMap">
+        SELECT 
+            id,
+            paper_performance,
+            product_type,
+            pattern_characteristic,
+            hot_stamping_type,
+            compatibility,
+            pre_processing_step_id,
+            product_type_id,
+            pattern_characteristic_id,
+            hot_stamping_type_id,
+            post_processing_step_id,
+            notice_ids,
+            created_at,
+            updated_at
+        FROM hot_stamping_compatibility
+        WHERE compatibility IN ('V', '▷')
+        <if test="productType != null and productType != ''">
+            AND product_type = #{productType}
+        </if>
+        <if test="patternCharacteristic != null and patternCharacteristic != ''">
+            AND pattern_characteristic = #{patternCharacteristic}
+        </if>
+        <if test="hotStampingType != null and hotStampingType != ''">
+            AND hot_stamping_type = #{hotStampingType}
+        </if>
+        ORDER BY paper_performance ASC, 
+                 product_type_id ASC NULLS LAST, 
+                 pattern_characteristic_id ASC NULLS LAST,
+                 hot_stamping_type_id ASC NULLS LAST,
+                 id ASC
+    </select>
+
+    <!-- 获取所有烫金类型分组（支持多级下拉框） -->
+    <select id="getAllHotStampingTypeGroups" resultType="com.it.yts_project.dto.HotStampingTypeGroupDTO">
+        SELECT 
+            stamping_type as stampingType,
+            CASE WHEN COUNT(*) = 1 AND MAX(position_type) IS NULL THEN true ELSE false END as isDefault,
+            NULL as options
+        FROM hot_stamping_type_options 
+        WHERE is_active = true
+        GROUP BY stamping_type
+        ORDER BY MIN(sort_order)
+    </select>
+
+    <!-- 根据烫金类型获取位置选项 -->
+    <select id="getPositionOptionsByStampingType" resultType="com.it.yts_project.model.HotStampingTypeOptions">
+        SELECT 
+            id,
+            stamping_type as stampingType,
+            position_type as positionType,
+            description,
+            is_active as isActive,
+            sort_order as sortOrder,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM hot_stamping_type_options 
+        WHERE is_active = true 
+        AND stamping_type = #{stampingType}
+        ORDER BY sort_order
+    </select>
+
+    <!-- 根据ID删除兼容性规则 -->
+    <delete id="deleteById">
+        DELETE FROM hot_stamping_compatibility WHERE id = #{id}
+    </delete>
+
+    <!-- 根据ID获取单个兼容性规则 -->
+    <select id="getById" resultMap="HotStampingCompatibilityResultMap">
+        SELECT 
+            id,
+            paper_performance,
+            product_type,
+            pattern_characteristic,
+            hot_stamping_type,
+            compatibility,
+            pre_processing_step_id,
+            product_type_id,
+            pattern_characteristic_id,
+            hot_stamping_type_id,
+            post_processing_step_id,
+            notice_ids,
+            created_at,
+            updated_at
+        FROM hot_stamping_compatibility WHERE id = #{id}
+    </select>
+
+    <!-- 插入新的兼容性规则 -->
+    <insert id="insert" parameterType="com.it.yts_project.model.HotStampingCompatibility" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO hot_stamping_compatibility (
+            product_type_id, pattern_characteristic_id, hot_stamping_type_id,
+            pre_processing_step_id, post_processing_step_id,
+            product_type, pattern_characteristic, hot_stamping_type, 
+            compatibility, paper_performance, notice_ids, created_at, updated_at
+        ) VALUES (
+            #{productTypeId}, #{patternCharacteristicId}, #{hotStampingTypeId},
+            #{preProcessingStepId}, #{postProcessingStepId},
+            #{productType}, #{patternCharacteristic}, #{hotStampingType}, 
+            #{compatibility}, #{paperPerformance}, 
+            #{noticeIds, typeHandler=com.it.yts_project.config.IntegerArrayTypeHandler},
+            <choose>
+                <when test="createdAt != null">#{createdAt}</when>
+                <otherwise>NOW()</otherwise>
+            </choose>,
+            <choose>
+                <when test="updatedAt != null">#{updatedAt}</when>
+                <otherwise>NOW()</otherwise>
+            </choose>
+        )
+    </insert>
+
+    <!-- 更新兼容性规则 -->
+    <update id="update" parameterType="com.it.yts_project.model.HotStampingCompatibility">
+        UPDATE hot_stamping_compatibility SET
+            product_type_id = #{productTypeId},
+            pattern_characteristic_id = #{patternCharacteristicId},
+            hot_stamping_type_id = #{hotStampingTypeId},
+            pre_processing_step_id = #{preProcessingStepId},
+            post_processing_step_id = #{postProcessingStepId},
+            product_type = #{productType},
+            pattern_characteristic = #{patternCharacteristic},
+            hot_stamping_type = #{hotStampingType},
+            compatibility = #{compatibility},
+            paper_performance = #{paperPerformance},
+            notice_ids = #{noticeIds, typeHandler=com.it.yts_project.config.IntegerArrayTypeHandler},
+            updated_at = <choose>
+                <when test="updatedAt != null">#{updatedAt}</when>
+                <otherwise>NOW()</otherwise>
+            </choose>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 检查是否存在重复的兼容性规则 -->
+    <select id="countDuplicateRule" resultType="int">
+        SELECT COUNT(*) 
+        FROM hot_stamping_compatibility
+        WHERE product_type_id = #{productTypeId}
+          AND pattern_characteristic_id = #{patternCharacteristicId}
+          AND hot_stamping_type_id = #{hotStampingTypeId}
+          <choose>
+              <when test="preProcessingStepId != null">
+                  AND pre_processing_step_id = #{preProcessingStepId}
+              </when>
+              <otherwise>
+                  AND pre_processing_step_id IS NULL
+              </otherwise>
+          </choose>
+          <choose>
+              <when test="postProcessingStepId != null">
+                  AND post_processing_step_id = #{postProcessingStepId}
+              </when>
+              <otherwise>
+                  AND post_processing_step_id IS NULL
+              </otherwise>
+          </choose>
+          AND paper_performance = #{paperPerformance}
+          AND compatibility = #{compatibility}
+          <if test="excludeId != null">
+              AND id != #{excludeId}
+          </if>
+    </select>
+
+    <!-- 根据条件获取注意事项ID列表 -->
+    <select id="getNoticeIdsByConditions" resultType="java.lang.Integer">
+        SELECT DISTINCT unnest(notice_ids)
+        FROM hot_stamping_compatibility
+        WHERE notice_ids IS NOT NULL
+        AND array_length(notice_ids, 1) > 0
+        AND compatibility IN ('V', '▷')
+        <if test="productTypeId != null">
+            AND product_type_id = #{productTypeId}
+        </if>
+        <if test="patternId != null">
+            AND pattern_characteristic_id = #{patternId}
+        </if>
+        <if test="paperTypes != null and paperTypes.size() > 0">
+            AND paper_performance IN
+            <foreach collection="paperTypes" item="paperType" open="(" separator="," close=")">
+                #{paperType}
+            </foreach>
+        </if>
+    </select>
+    
+    <!-- 更新注意事项ID列表 -->
+    <update id="updateNoticeIds">
+        UPDATE hot_stamping_compatibility
+        SET notice_ids = #{noticeIds, typeHandler=com.it.yts_project.config.IntegerArrayTypeHandler},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+</mapper>
