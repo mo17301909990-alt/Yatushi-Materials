@@ -15,7 +15,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@RequestMapping("/reference/writing-function")
+@RequestMapping("/api/reference/writing-function")
 public class ReferenceWritingFunctionController {
 
     @Autowired

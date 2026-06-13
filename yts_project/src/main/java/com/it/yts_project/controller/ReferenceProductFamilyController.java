@@ -15,7 +15,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@RequestMapping("/reference/product-family")
+@RequestMapping("/api/reference/product-family")
 public class ReferenceProductFamilyController {
 
     @Autowired

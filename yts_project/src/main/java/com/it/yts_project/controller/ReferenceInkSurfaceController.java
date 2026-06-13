@@ -15,7 +15,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@RequestMapping("/reference/ink-surface")
+@RequestMapping("/api/reference/ink-surface")
 public class ReferenceInkSurfaceController {
 
     @Autowired

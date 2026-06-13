@@ -47,7 +47,7 @@ export const hotStampingTypeOptionsApi = {
    * 获取所有激活的烫金类型选项
    */
   getActiveTypes: async (): Promise<HotStampingTypeOption[]> => {
-    const response = await axios.get('/api/api/hot-stamping-type-options/active');
+    const response = await axios.get('/api/hot-stamping-type-options/active');
     return response.data;
   },
 
@@ -55,7 +55,7 @@ export const hotStampingTypeOptionsApi = {
    * 获取所有烫金类型选项
    */
   getAllTypes: async (): Promise<HotStampingTypeOption[]> => {
-    const response = await axios.get('/api/api/hot-stamping-type-options');
+    const response = await axios.get('/api/hot-stamping-type-options');
     return response.data;
   },
 
@@ -71,7 +71,7 @@ export const hotStampingTypeOptionsApi = {
    * 根据ID获取烫金类型选项
    */
   getTypeById: async (id: number): Promise<HotStampingTypeOption> => {
-    const response = await axios.get(`/api/api/hot-stamping-type-options/${id}`);
+    const response = await axios.get(`/api/hot-stamping-type-options/${id}`);
     return response.data;
   },
 
@@ -79,7 +79,7 @@ export const hotStampingTypeOptionsApi = {
    * 创建烫金类型选项
    */
   createType: async (type: CreateHotStampingTypeOption): Promise<HotStampingTypeOption> => {
-    const response = await axios.post('/api/api/hot-stamping-type-options', type);
+    const response = await axios.post('/api/hot-stamping-type-options', type);
     return response.data;
   },
 
@@ -87,7 +87,7 @@ export const hotStampingTypeOptionsApi = {
    * 更新烫金类型选项
    */
   updateType: async (id: number, type: Partial<CreateHotStampingTypeOption>): Promise<HotStampingTypeOption> => {
-    const response = await axios.put(`/api/api/hot-stamping-type-options/${id}`, type);
+    const response = await axios.put(`/api/hot-stamping-type-options/${id}`, type);
     return response.data;
   },
 
@@ -95,14 +95,14 @@ export const hotStampingTypeOptionsApi = {
    * 删除烫金类型选项
    */
   deleteType: async (id: number): Promise<void> => {
-    await axios.delete(`/api/api/hot-stamping-type-options/${id}`);
+    await axios.delete(`/api/hot-stamping-type-options/${id}`);
   },
 
   /**
    * 批量删除烫金类型选项
    */
   batchDeleteTypes: async (ids: number[]): Promise<void> => {
-    await axios.delete('/api/api/hot-stamping-type-options/batch', { data: { ids } });
+    await axios.delete('/api/hot-stamping-type-options/batch', { data: { ids } });
   }
 };
 

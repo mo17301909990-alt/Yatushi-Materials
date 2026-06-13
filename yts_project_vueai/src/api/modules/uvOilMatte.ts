@@ -1,5 +1,4 @@
 import request from '../request';
-import type { AxiosResponse } from 'axios';
 
 export interface UvOilMatteProduct {
   id?: number;

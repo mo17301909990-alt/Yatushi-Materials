@@ -15,7 +15,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@RequestMapping("/reference/paper-surface")
+@RequestMapping("/api/reference/paper-surface")
 public class ReferencePaperSurfaceController {
 
     @Autowired

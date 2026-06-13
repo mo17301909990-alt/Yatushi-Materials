@@ -15,7 +15,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@RequestMapping("/reference/coating-surface")
+@RequestMapping("/api/reference/coating-surface")
 @CrossOrigin(origins = {
     "http://localhost:5173",
     "http://120.26.101.0",

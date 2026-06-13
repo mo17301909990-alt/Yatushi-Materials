@@ -436,7 +436,7 @@
                 SELECT 1 FROM hot_stamping_compatibility hsc
                 WHERE hsc.paper_performance = p.hot_stamping_paper_type
             AND hsc.product_type_id = #{params.productTypeId}
-            AND hsc.compatibility = 'V'
+            AND hsc.compatibility IN ('V', '▷')
             )
         </if>
 
@@ -446,7 +446,7 @@
                 SELECT 1 FROM hot_stamping_compatibility hsc
                 WHERE hsc.paper_performance = p.hot_stamping_paper_type
             AND hsc.pattern_characteristic_id = #{params.patternId}
-            AND hsc.compatibility = 'V'
+            AND hsc.compatibility IN ('V', '▷')
             )
         </if>
 
