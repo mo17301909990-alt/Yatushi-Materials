@@ -61,7 +61,7 @@
     <!-- 插入产品 -->
     <insert id="insertProduct" parameterType="com.it.yts_project.model.SiliconeGlowInkProduct" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO silicone_glow_ink_product (
-            material_code, supplier_code, stock_code, material_name, `usage`,
+            material_code, supplier_code, stock_code, material_name, usage,
             category, color, responsible_person, min_sheet_size, max_sheet_size,
             min_spacing, max_spacing, design_info, applicable_interface, notes, is_active
         ) VALUES (
@@ -78,7 +78,7 @@
             supplier_code = #{supplierCode},
             stock_code = #{stockCode},
             material_name = #{materialName},
-            `usage` = #{usage},
+            usage = #{usage},
             category = #{category},
             color = #{color},
             responsible_person = #{responsiblePerson},

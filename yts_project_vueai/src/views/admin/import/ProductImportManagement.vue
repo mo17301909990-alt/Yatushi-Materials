@@ -1,8 +1,13 @@
 <template>
   <div class="product-import-management">
     <div class="page-header">
-      <h2>产品信息导入管理</h2>
-      <p>支持Excel文件导入产品信息，提供灵活的冲突处理策略</p>
+      <div class="page-header-row">
+        <AdminBackToPanel />
+        <div class="page-header-text">
+          <h2>产品信息导入管理</h2>
+          <p>支持Excel文件导入产品信息，提供灵活的冲突处理策略</p>
+        </div>
+      </div>
     </div>
 
     <div class="import-cards">
@@ -176,10 +181,11 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import AdminBackToPanel from '@/components/admin/AdminBackToPanel.vue'
 import { ElMessage } from 'element-plus'
 import { Upload, Download, Refresh } from '@element-plus/icons-vue'
-import ProductImportDialog from '../../components/import/ProductImportDialog.vue'
-import { productImportApi } from '../../api/modules/productImport'
+import ProductImportDialog from '@/components/import/ProductImportDialog.vue'
+import { productImportApi } from '@/api/modules/productImport'
 
 // 响应式数据
 const importDialogVisible = ref(false)
@@ -300,6 +306,17 @@ onMounted(() => {
 
 .page-header {
   margin-bottom: 30px;
+}
+
+.page-header-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.page-header-text {
+  flex: 1;
+  min-width: 0;
 }
 
 .page-header h2 {

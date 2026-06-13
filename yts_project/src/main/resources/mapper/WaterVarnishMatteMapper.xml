@@ -78,7 +78,7 @@
     <!-- 插入产品 -->
     <insert id="insertProduct" parameterType="com.it.yts_project.model.WaterVarnishMatteProduct" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO water_varnish_matte_product (
-            material_code, supplier_code, stock_code, material_name, `usage`,
+            material_code, supplier_code, stock_code, material_name, usage,
             material_type, color, responsible_person,
             min_sheet_size, max_sheet_size, min_point, max_point,
             min_line, max_line, min_spacing, max_spacing,
@@ -101,7 +101,7 @@
             supplier_code = #{supplierCode},
             stock_code = #{stockCode},
             material_name = #{materialName},
-            `usage` = #{usage},
+            usage = #{usage},
             material_type = #{materialType},
             color = #{color},
             responsible_person = #{responsiblePerson},

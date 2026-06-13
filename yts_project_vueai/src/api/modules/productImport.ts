@@ -1,4 +1,4 @@
-import { request } from '../request'
+import request from '../request'
 
 // 导入结果类型
 export interface ImportResult<T = any> {

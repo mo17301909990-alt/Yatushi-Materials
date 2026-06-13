@@ -81,7 +81,7 @@
 
     <insert id="insertProduct" parameterType="com.it.yts_project.model.YaguangUvOilProduct" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO yaguang_uv_oil_product (
-            material_code, supplier_code, stock_code, material_name, `usage`,
+            material_code, supplier_code, stock_code, material_name, usage,
             category, thickness, size, color, shape, responsible_person,
             min_sheet_size, max_sheet_size, min_dot, max_dot, min_line, max_line,
             min_spacing, max_spacing, min_pattern_area, max_pattern_area,
@@ -117,7 +117,7 @@
             supplier_code = #{supplierCode},
             stock_code = #{stockCode},
             material_name = #{materialName},
-            `usage` = #{usage},
+            usage = #{usage},
             category = #{category},
             thickness = #{thickness},
             size = #{size},

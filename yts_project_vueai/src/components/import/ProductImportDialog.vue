@@ -187,6 +187,23 @@ const handleImport = async () => {
     return
   }
 
+  // 方案 C 事中加固：覆盖式导入前二次确认
+  if (importConfig.conflictStrategy === 'OVERWRITE') {
+    try {
+      await ElMessageBox.confirm(
+        '将覆盖现有数据，是否继续？' + (importConfig.backupBeforeImport ? ' 导入前将自动备份。' : ''),
+        '二次确认',
+        {
+          confirmButtonText: '确定导入',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
+    } catch {
+      return
+    }
+  }
+
   try {
     isImporting.value = true
     importProgress.value = 0
@@ -197,6 +214,8 @@ const handleImport = async () => {
     const formData = new FormData()
     formData.append('file', selectedFile.value)
     formData.append('conflictStrategy', importConfig.conflictStrategy)
+    formData.append('validateData', String(importConfig.validateData))
+    formData.append('backupBeforeImport', String(importConfig.backupBeforeImport))
 
     // 调用导入API
     const result = await productImportApi.importProduct(
