@@ -62,36 +62,40 @@ cd $(git rev-parse --git-common-dir)/.. && pwd  # 得到 repo 根目录
 
 CC 启动时检查 `resolved: false` 且指向自己的消息。
 
+## 重要说明：工作目录统一
+
+**所有 CC 实例必须操作同一目录：`F:\yatushi-6-6`**
+- 这是 GitHub `main` 分支的本地副本，PR #1 已合并
+- 回路文件位于 `.claude/loops/`
+- 旧目录 `F:\YTS+JYY` 废弃，不再使用
+
 ## 当前状态
 
 ```json
 {
   "cc_instances": [
     {
-      "id": "cc-current",
-      "name": "当前 CC",
-      "worktree": "saojinzhi (主工作区)",
-      "task": "建立多 CC 协调机制",
-      "started_at": "2026-06-10T13:15:00+08:00",
+      "id": "cc-main",
+      "name": "主 CC",
+      "worktree": "F:\\yatushi-6-6 (main)",
+      "task": "回路体系运维：开发质量回路(10min) + 数据质量回路(daily)",
+      "started_at": "2026-06-13T18:10:00+08:00",
       "status": "active",
-      "files_touching": ["CC_COORDINATION.md", ".gitignore"]
-    }
-  ],
-  "observed_activity": [
-    {
-      "worktree": "supply-chain-agent-phase1",
-      "evidence": "untracked file: database_scripts/add_supply_chain_work_orders.sql",
-      "likely_task": "供应链 Agent Phase 1 - 工单表相关",
-      "last_active": "未知（有未提交文件但无 staged diff）",
-      "cc_id": "未知"
+      "files_touching": [
+        ".claude/loops/loop-registry.json",
+        ".claude/loops/data-quality-loop.sh",
+        ".claude/loops/record-error.sh",
+        ".claude/loops/dev-quality.log",
+        ".claude/loops/data-quality.log"
+      ]
     }
   ],
   "messages": [
     {
-      "from": "cc-current",
-      "to": "supply-chain 的 CC",
-      "msg": "我在主工作区建了协调机制。如果你看到这条消息，请更新 CC_COORDINATION.md 登记你的实例。",
-      "ts": "2026-06-10T13:15:00+08:00",
+      "from": "cc-main",
+      "to": "all",
+      "msg": "回路体系在 F:\\yatushi-6-6\\.claude\\loops/。工作目录统一为 F:\\yatushi-6-6，旧 F:\\YTS+JYY 废弃不用。",
+      "ts": "2026-06-13T18:10:00+08:00",
       "resolved": false
     }
   ]

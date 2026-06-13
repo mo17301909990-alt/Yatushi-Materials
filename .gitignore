@@ -62,3 +62,4 @@ _temp_*.py
 audit_script.py
 database_scripts/p0_etl.py
 ~$
+yst/
