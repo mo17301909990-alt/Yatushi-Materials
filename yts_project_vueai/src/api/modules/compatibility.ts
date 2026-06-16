@@ -77,26 +77,26 @@ export const compatibilityApi = {
   },
 
   /**
+   * @deprecated interfaceTypeId 字段已废弃（后端固定为 0），将在下一版本移除
    * 根据烫金纸系列和后加工步骤查询兼容的过胶材质
    */
-  getCompatibleLaminationMaterials(foilSeries: string, postProcessingStepId?: number, interfaceTypeId?: number) {
+  getCompatibleLaminationMaterials(foilSeries: string, postProcessingStepId?: number, _interfaceTypeId?: number) {
     const params = new URLSearchParams();
     params.append('foilSeries', foilSeries);
     if (postProcessingStepId) params.append('postProcessingStepId', postProcessingStepId.toString());
-    if (interfaceTypeId) params.append('interfaceTypeId', interfaceTypeId.toString());
-    
+
     return request.get<LaminationMaterialOptions[]>(`/api/compatibility/compatible-materials?${params.toString()}`);
   },
 
   /**
+   * @deprecated interfaceTypeId 字段已废弃（后端固定为 0），将在下一版本移除
    * 根据烫金纸系列和过胶材质查询兼容的后加工步骤
    */
-  getCompatiblePostProcessingSteps(foilSeries: string, laminationMaterialId?: number, interfaceTypeId?: number) {
+  getCompatiblePostProcessingSteps(foilSeries: string, laminationMaterialId?: number, _interfaceTypeId?: number) {
     const params = new URLSearchParams();
     params.append('foilSeries', foilSeries);
     if (laminationMaterialId) params.append('laminationMaterialId', laminationMaterialId.toString());
-    if (interfaceTypeId) params.append('interfaceTypeId', interfaceTypeId.toString());
-    
+
     return request.get<PostProcessingOptions[]>(`/api/compatibility/compatible-post-processing?${params.toString()}`);
   },
 
@@ -115,23 +115,16 @@ export const compatibilityApi = {
   },
 
   /**
+   * @deprecated interfaceTypeId 字段已废弃（后端固定为 0），将在下一版本移除
    * 检查过胶兼容性
    */
-  checkLaminationCompatibility(foilSeries: string, postProcessingStepId: number, laminationMaterialId: number, interfaceTypeId: number) {
+  checkLaminationCompatibility(foilSeries: string, postProcessingStepId: number, laminationMaterialId: number, _interfaceTypeId?: number) {
     const params = new URLSearchParams();
     params.append('foilSeries', foilSeries);
     params.append('postProcessingStepId', postProcessingStepId.toString());
     params.append('laminationMaterialId', laminationMaterialId.toString());
-    params.append('interfaceTypeId', interfaceTypeId.toString());
-    
-    return request.get<'V' | 'X'>(`/api/compatibility/check-lamination-compatibility?${params.toString()}`);
-  },
 
-  /**
-   * 获取过胶兼容性筛选选项
-   */
-  getLaminationFilterOptions() {
-    return request.get<LaminationFilterOptions>('/api/compatibility/lamination-filter-options');
+    return request.get<'V' | 'X'>(`/api/compatibility/check-lamination-compatibility?${params.toString()}`);
   },
 
   /**

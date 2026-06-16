@@ -43,8 +43,13 @@ __pycache__/
 # Deployment
 deploy/
 
-# Claude AI
+# Claude AI (whitelist workflows/loops/commands/plans/rules)
 .claude/
+!.claude/workflows/
+!.claude/loops/
+!.claude/commands/
+!.claude/plans/
+!.claude/rules/
 
 # Environment files
 .env
@@ -60,6 +65,6 @@ test_*.js
 test_*.html
 _temp_*.py
 audit_script.py
-database_scripts/p0_etl.py
+# database_scripts/p0_etl.py 是核心ETL，不忽略
 ~$
 yst/
