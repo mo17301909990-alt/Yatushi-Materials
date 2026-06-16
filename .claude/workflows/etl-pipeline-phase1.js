@@ -15,11 +15,11 @@ phase('Read references');
 const refFiles = await agent(`
 Read these reference files and return their content:
 
-1. F:/YTS+JYY/database_scripts/import_p0_data.py — existing ETL script (full content)
-2. F:/YTS+JYY/yts_project/src/main/resources/mapper/SiliconeGlowInkMapper.xml — example mapper XML to understand column mapping
-3. F:/YTS+JYY/yts_project/src/main/java/com/it/yts_project/model/SiliconeGlowInkProduct.java — example model to understand field names
-4. F:/YTS+JYY/yts_project/src/main/java/com/it/yts_project/model/SiliconeGlowInkCompatibility.java — example compat model
-5. F:/YTS+JYY/.claude/CLAUDE.md — for DB connection info
+1. F:/yatushi-6-6/database_scripts/p0_etl.py — existing ETL script (full content)
+2. F:/yatushi-6-6/yts_project/src/main/resources/mapper/SiliconeGlowInkMapper.xml — example mapper XML to understand column mapping
+3. F:/yatushi-6-6/yts_project/src/main/java/com/it/yts_project/model/SiliconeGlowInkProduct.java — example model to understand field names
+4. F:/yatushi-6-6/yts_project/src/main/java/com/it/yts_project/model/SiliconeGlowInkCompatibility.java — example compat model
+5. F:/yatushi-6-6/CLAUDE.md — for DB connection info
 
 Return ALL content verbatim. Do NOT summarize.
 `, {
@@ -40,7 +40,7 @@ Return ALL content verbatim. Do NOT summarize.
 
 phase('Write p0_etl.py');
 const etlScript = await agent(`
-Write a Python ETL script to F:/YTS+JYY/database_scripts/p0_etl.py
+Write a Python ETL script to F:/yatushi-6-6/database_scripts/p0_etl.py
 
 ## Context
 
@@ -159,11 +159,11 @@ Fix 5 MyBatis Mapper XML files that use MySQL backtick syntax for the \`usage\` 
 PostgreSQL doesn't support backtick quoting — it uses double quotes or (better) no quotes at all since "usage" is not a reserved word in PG.
 
 Files to fix (change \`\`\`usage\`\` to just \`usage\`):
-1. F:/YTS+JYY/yts_project/src/main/resources/mapper/SiliconeGlowInkMapper.xml
-2. F:/YTS+JYY/yts_project/src/main/resources/mapper/SiliconeWatercolorInkMapper.xml
-3. F:/YTS+JYY/yts_project/src/main/resources/mapper/UvOilMatteMapper.xml
-4. F:/YTS+JYY/yts_project/src/main/resources/mapper/WaterVarnishMatteMapper.xml
-5. F:/YTS+JYY/yts_project/src/main/resources/mapper/YaguangUvOilMapper.xml
+1. F:/yatushi-6-6/yts_project/src/main/resources/mapper/SiliconeGlowInkMapper.xml
+2. F:/yatushi-6-6/yts_project/src/main/resources/mapper/SiliconeWatercolorInkMapper.xml
+3. F:/yatushi-6-6/yts_project/src/main/resources/mapper/UvOilMatteMapper.xml
+4. F:/yatushi-6-6/yts_project/src/main/resources/mapper/WaterVarnishMatteMapper.xml
+5. F:/yatushi-6-6/yts_project/src/main/resources/mapper/YaguangUvOilMapper.xml
 
 Read each file first, then use Edit tool to replace all occurrences of \`\`\`usage\`\` (backtick-usage-backtick) with just \`usage\` (no backticks).
 
@@ -194,7 +194,7 @@ const testResult = await agent(`
 Run the p0_etl.py script on a single module to verify it works:
 
 \`\`\`
-/e/anaconda/python F:/YTS+JYY/database_scripts/p0_etl.py --category uv_oil_matte --dry-run
+/e/anaconda/python F:/yatushi-6-6/database_scripts/p0_etl.py --category uv_oil_matte --dry-run
 \`\`\`
 
 Report:
@@ -226,20 +226,20 @@ Run the full p0_etl.py import:
 
 Step 1: Create all tables first:
 \`\`\`
-/e/anaconda/python F:/YTS+JYY/database_scripts/p0_etl.py --create-tables-only
+/e/anaconda/python F:/yatushi-6-6/database_scripts/p0_etl.py --create-tables-only
 \`\`\`
 
 Step 2: Import each category with data:
 \`\`\`
-/e/anaconda/python F:/YTS+JYY/database_scripts/p0_etl.py --category uv_oil_matte
-/e/anaconda/python F:/YTS+JYY/database_scripts/p0_etl.py --category water_varnish_matte
-/e/anaconda/python F:/YTS+JYY/database_scripts/p0_etl.py --category lamination_material
+/e/anaconda/python F:/yatushi-6-6/database_scripts/p0_etl.py --category uv_oil_matte
+/e/anaconda/python F:/yatushi-6-6/database_scripts/p0_etl.py --category water_varnish_matte
+/e/anaconda/python F:/yatushi-6-6/database_scripts/p0_etl.py --category lamination_material
 # ... silicone categories
 \`\`\`
 
 Step 3: Validate:
 \`\`\`
-/e/anaconda/python F:/YTS+JYY/database_scripts/p0_etl.py --validate
+/e/anaconda/python F:/yatushi-6-6/database_scripts/p0_etl.py --validate
 \`\`\`
 
 Report per-category row counts and any errors.

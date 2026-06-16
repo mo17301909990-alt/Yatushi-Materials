@@ -66,7 +66,7 @@ Password: HryENprJrxThYSDz
 
 phase('Write exporter');
 const exporterScript = await agent(`
-Write a Python script to F:/YTS+JYY/database_scripts/export_to_excel.py
+Write a Python script to F:/yatushi-6-6/database_scripts/export_to_excel.py
 
 ## Purpose
 Export ALL P0 module data from PostgreSQL to individual Excel files, one workbook per module.
@@ -75,7 +75,7 @@ Each workbook has 2 sheets:
 - Sheet 2 "兼容性矩阵": Compatibility matrix in wide format (rows=products, columns=step_names, cells=V/X)
 
 ## Output directory
-F:/YTS+JYY/审核导出/
+F:/yatushi-6-6/审核导出/
 
 ## File naming
 Each module gets its own xlsx: \`{category_key}_审核.xlsx\` (e.g. \`uv_oil_matte_审核.xlsx\`)
@@ -175,7 +175,7 @@ const exportResult = await agent(`
 Run the export script:
 
 \`\`\`
-/e/anaconda/python F:/YTS+JYY/database_scripts/export_to_excel.py
+/e/anaconda/python F:/yatushi-6-6/database_scripts/export_to_excel.py
 \`\`\`
 
 Report:
@@ -216,7 +216,7 @@ phase('Inventory');
 const inventory = await agent(`
 List the exported files and create an inventory:
 
-1. List all files in F:/YTS+JYY/审核导出/ with sizes
+1. List all files in F:/yatushi-6-6/审核导出/ with sizes
 2. Read the 00_审核导出报告.md
 3. Check if the validation row counts match what Phase 1 imported:
    - Total products should be ~90
@@ -251,18 +251,18 @@ Report a concise inventory table.
 log(`
 ✅ 审计导出完成！
 
-共 ${exportResult?.total_files} 个 xlsx 文件在 F:/YTS+JYY/审核导出/
+共 ${exportResult?.total_files} 个 xlsx 文件在 F:/yatushi-6-6/审核导出/
 总产品数: ${inventory?.total_products_exported}
 总兼容性记录: ${inventory?.total_compat_exported}
 
-工厂技术人员直接打开 \`F:/YTS+JYY/审核导出/\` 目录下的 xlsx 文件即可审阅。
+工厂技术人员直接打开 \`F:/yatushi-6-6/审核导出/\` 目录下的 xlsx 文件即可审阅。
 每模块包含：
   - Sheet 1: 产品列表（物料编号、名称、用途等）
   - Sheet 2: 兼容性矩阵（V/X 矩阵，跟原始文件格式一致）
 `);
 
 return {
-  exportDir: 'F:/YTS+JYY/审核导出/',
+  exportDir: 'F:/yatushi-6-6/审核导出/',
   totalFiles: exportResult?.total_files,
   totalProducts: inventory?.total_products_exported,
   totalCompatPairs: inventory?.total_compat_exported,

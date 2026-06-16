@@ -158,17 +158,17 @@ const fixApiChain = await agent(`
 ### Step 1: 找到 API 接口代码
 搜索 Controller 中所有返回 compat/compatibility 列表的方法：
 \`\`\`
-grep -rn "compatibility|compat" --include="*.java" F:/YTS+JYY/yts_project/src/main/java/com/it/yts_project/controller/ | grep -i "list|query|search"
+grep -rn "compatibility|compat" --include="*.java" F:/yatushi-6-6/yts_project/src/main/java/com/it/yts_project/controller/ | grep -i "list|query|search"
 \`\`\`
 
 ### Step 2: 找到对应的 Service 实现和 Mapper XML
 \`\`\`
-grep -rn "compatibility|compat" --include="*.java" F:/YTS+JYY/yts_project/src/main/java/com/it/yts_project/service/Impl/ | grep -i "list|query|search"
+grep -rn "compatibility|compat" --include="*.java" F:/yatushi-6-6/yts_project/src/main/java/com/it/yts_project/service/Impl/ | grep -i "list|query|search"
 \`\`\`
 
 ### Step 3: 找到 MyBatis XML 中对应的 SQL
 \`\`\`
-grep -rn "compatibility|compat" --include="*.xml" F:/YTS+JYY/yts_project/src/main/resources/mapper/ | head -20
+grep -rn "compatibility|compat" --include="*.xml" F:/yatushi-6-6/yts_project/src/main/resources/mapper/ | head -20
 \`\`\`
 
 ### Step 4: 分析 SQL 查询逻辑
@@ -234,13 +234,13 @@ psql -h localhost -p 5432 -U postgres -d gold_foil_db -c "SELECT id, material_na
 ### Step 3: 重新导出审核文件
 重新运行导出脚本生成更新后的 xlsx：
 \`\`\`
-/e/anaconda/python F:/YTS+JYY/database_scripts/export_to_excel.py
+/e/anaconda/python F:/yatushi-6-6/database_scripts/export_to_excel.py
 \`\`\`
 
 ### Step 4: 验证构建
 \`\`\`
-cd F:/YTS+JYY/yts_project && mvn compile -q
-cd F:/YTS+JYY/yts_project_vueai && npm run build 2>&1 | tail -5
+cd F:/yatushi-6-6/yts_project && mvn compile -q
+cd F:/yatushi-6-6/yts_project_vueai && npm run build 2>&1 | tail -5
 \`\`\`
 
 DB Password: HryENprJrxThYSDz

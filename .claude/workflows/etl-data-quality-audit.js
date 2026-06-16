@@ -365,7 +365,7 @@ ${JSON.stringify(crossModuleCheck, null, 2).slice(0, 2000)}
 
 ## Task A: Write a comprehensive audit report
 
-Write the audit report to F:/YTS+JYY/审核导出/01_数据质量审计报告.md
+Write the audit report to F:/yatushi-6-6/审核导出/01_数据质量审计报告.md
 
 Structure:
 1. **Executive Summary** (1 paragraph: overall data health)
@@ -378,7 +378,7 @@ Structure:
 
 ## Task B: Design reusable module architecture
 
-Write the architecture doc to F:/YTS+JYY/审核导出/02_可复用资料模块架构.md
+Write the architecture doc to F:/yatushi-6-6/审核导出/02_可复用资料模块架构.md
 
 This should be a design doc for a generic "印刷厂资料管理模块" that can handle any factory document type:
 

@@ -264,13 +264,13 @@ SELECT COUNT(*) FROM hot_stamping_compatibility WHERE step_name LIKE '%烫%';
 
 ### Step 3: 重新导出
 \`\`\`
-/e/anaconda/python F:/YTS+JYY/database_scripts/export_to_excel.py
+/e/anaconda/python F:/yatushi-6-6/database_scripts/export_to_excel.py
 \`\`\`
 
 ### Step 4: 构建验证
 \`\`\`
-cd F:/YTS+JYY/yts_project && mvn compile -q
-cd F:/YTS+JYY/yts_project_vueai && npm run build 2>&1 | tail -5
+cd F:/yatushi-6-6/yts_project && mvn compile -q
+cd F:/yatushi-6-6/yts_project_vueai && npm run build 2>&1 | tail -5
 \`\`\`
 
 DB Password: HryENprJrxThYSDz

@@ -8,7 +8,7 @@
       "maturity": "L2",
       "targetMaturity": "L3",
       "target": "零编译错误",
-      "trigger": "cron 10min",
+      "trigger": "cron 6h",
       "maker": "auto-check cron",
       "checker": "manual",
       "log": ".claude/loops/dev-quality.log",
@@ -33,10 +33,10 @@
       "targetMaturity": "L1",
       "target": "AI匹配准确率>85%",
       "trigger": "manual",
-      "maker": "pending",
-      "checker": "pending",
+      "maker": "ai-match-feedback-loop.sh",
+      "checker": "manual",
       "log": ".claude/loops/ai-match.log",
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "compatibility-audit",
@@ -45,10 +45,10 @@
       "targetMaturity": "L1",
       "target": "兼容性规则一致性100%",
       "trigger": "cron weekly",
-      "maker": "pending",
-      "checker": "pending",
+      "maker": "compatibility-audit-loop.sh",
+      "checker": "manual",
       "log": ".claude/loops/compatibility-audit.log",
-      "enabled": false
+      "enabled": true
     },
     {
       "id": "permission-security",
@@ -57,10 +57,10 @@
       "targetMaturity": "L1",
       "target": "零未授权访问",
       "trigger": "cron daily",
-      "maker": "pending",
-      "checker": "pending",
+      "maker": "permission-security-loop.sh",
+      "checker": "manual",
       "log": ".claude/loops/permission-security.log",
-      "enabled": false
+      "enabled": true
     }
   ]
 }
