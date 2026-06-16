@@ -1,0 +1,66 @@
+{
+  "version": "1.0",
+  "createdAt": "2026-06-13",
+  "loops": [
+    {
+      "id": "dev-quality",
+      "name": "开发质量回路",
+      "maturity": "L2",
+      "targetMaturity": "L3",
+      "target": "零编译错误",
+      "trigger": "cron 6h",
+      "maker": "auto-check cron",
+      "checker": "manual",
+      "log": ".claude/loops/dev-quality.log",
+      "enabled": true
+    },
+    {
+      "id": "data-quality",
+      "name": "数据质量回路",
+      "maturity": "L1",
+      "targetMaturity": "L2",
+      "target": "物料兼容性数据零冲突零冗余",
+      "trigger": "cron daily",
+      "maker": "data-quality-loop.sh",
+      "checker": "manual",
+      "log": ".claude/loops/data-quality.log",
+      "enabled": true
+    },
+    {
+      "id": "ai-match-feedback",
+      "name": "AI匹配反馈回路",
+      "maturity": "L0",
+      "targetMaturity": "L1",
+      "target": "AI匹配准确率>85%",
+      "trigger": "manual",
+      "maker": "ai-match-feedback-loop.sh",
+      "checker": "manual",
+      "log": ".claude/loops/ai-match.log",
+      "enabled": true
+    },
+    {
+      "id": "compatibility-audit",
+      "name": "兼容性规则审计回路",
+      "maturity": "L0",
+      "targetMaturity": "L1",
+      "target": "兼容性规则一致性100%",
+      "trigger": "cron weekly",
+      "maker": "compatibility-audit-loop.sh",
+      "checker": "manual",
+      "log": ".claude/loops/compatibility-audit.log",
+      "enabled": true
+    },
+    {
+      "id": "permission-security",
+      "name": "权限安全审计回路",
+      "maturity": "L0",
+      "targetMaturity": "L1",
+      "target": "零未授权访问",
+      "trigger": "cron daily",
+      "maker": "permission-security-loop.sh",
+      "checker": "manual",
+      "log": ".claude/loops/permission-security.log",
+      "enabled": true
+    }
+  ]
+}

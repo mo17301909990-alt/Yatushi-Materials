@@ -88,6 +88,25 @@ CC 启动时检查 `resolved: false` 且指向自己的消息。
         ".claude/loops/dev-quality.log",
         ".claude/loops/data-quality.log"
       ]
+    },
+    {
+      "id": "cc-migration",
+      "name": "搬迁 CC",
+      "worktree": "F:\\YTS+JYY → F:\\yatushi-6-6 (migrate-complete)",
+      "task": "YTS+JYY saojinzhi 完整搬迁到 yatushi-6-6",
+      "started_at": "2026-06-16T14:00:00+08:00",
+      "status": "done",
+      "files_touching": [
+        "database_scripts/p0_etl.py",
+        ".claude/workflows/*",
+        ".claude/loops/*",
+        ".claude/commands/*",
+        ".claude/plans/*",
+        ".claude/rules/*",
+        "yts_project/src/main/resources/mapper/HotStampingCompatibilityMapper.xml",
+        "yts_project_vueai/src/api/modules/compatibility.ts",
+        "yts_project_vueai/src/router/index.ts"
+      ]
     }
   ],
   "messages": [

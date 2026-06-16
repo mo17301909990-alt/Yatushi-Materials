@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS {table} (
+    id SERIAL PRIMARY KEY,
+    material_code VARCHAR(100) DEFAULT NULL,
+    supplier_code VARCHAR(100) DEFAULT NULL,
+    stock_code VARCHAR(100) DEFAULT NULL,
+    material_name VARCHAR(500) NOT NULL,
+    usage TEXT DEFAULT NULL,
+    category VARCHAR(200) DEFAULT NULL,
+    color VARCHAR(200) DEFAULT NULL,
+    responsible_person VARCHAR(200) DEFAULT NULL,
+    min_sheet_size VARCHAR(200) DEFAULT NULL,
+    max_sheet_size VARCHAR(200) DEFAULT NULL,
+    min_spacing VARCHAR(100) DEFAULT NULL,
+    max_spacing VARCHAR(100) DEFAULT NULL,
+    design_info TEXT DEFAULT NULL,
+    applicable_interface TEXT DEFAULT NULL,
+    notes TEXT DEFAULT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
