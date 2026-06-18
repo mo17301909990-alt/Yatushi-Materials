@@ -21,7 +21,7 @@ export interface ChatMessage {
   actions?: ActionButton[]
   isStreaming?: boolean;
   cardType?: MessageCardType;
-  cardData?: ProductCardData | CompatibilityTableData | ActionCardData | AdminPreviewData | AdminResultData;
+  cardData?: ProductCardData | CompatibilityTableData | ActionCardData | AdminPreviewData | AdminResultData | CompatibilityResultData;
 }
 
 export type AgentRole = 'general' | 'matching' | 'guide'
@@ -58,7 +58,7 @@ export const STAGE_SYSTEM_PROMPTS: Record<ConversationStage, string> = {
 
 // ====== 交互式消息卡片类型 ======
 export type MessageCardType = 'text' | 'product_card' | 'compatibility_table' | 'action_buttons'
-  | 'admin_preview' | 'admin_result' | 'admin_dialog'
+  | 'admin_preview' | 'admin_result' | 'admin_dialog' | 'compatibility'
 
 export interface AdminPreviewData {
   entityType: string
@@ -80,6 +80,17 @@ export interface AdminDialogData {
   title: string
   message: string
   risk: string
+}
+
+export interface CompatibilityItem {
+  materialName: string
+  status: 'compatible' | 'incompatible' | 'partial'
+  verifyCount: number
+}
+
+export interface CompatibilityResultData {
+  items: CompatibilityItem[]
+  title?: string
 }
 
 export interface ProductCardData {

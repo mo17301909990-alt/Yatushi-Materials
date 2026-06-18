@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { copilotApi, extractSources } from '@/api/modules/copilot';
+import { copilotApi, extractSources, queryCompatibility } from '@/api/modules/copilot';
 import type { ChatMessage, AgentRole, ConversationStage } from '@/types/copilot';
 import type { GoldFoilProduct } from '@/types/goldFoil';
 import { ROLE_DEFAULTS, STAGE_SYSTEM_PROMPTS } from '@/types/copilot';
@@ -204,7 +204,19 @@ export const useCopilotStore = defineStore('copilot', () => {
     processing.value = true;
     try {
       const systemPrompt = agentRole.value !== 'general' ? ROLE_DEFAULTS[agentRole.value] : undefined;
-      const response = await copilotApi.chat(trimmed, systemPrompt) as any;
+
+      // 先尝试兼容性查询，fallback 到通用 copilot 聊天
+      let response: any;
+      try {
+        const compatResp = await queryCompatibility(trimmed);
+        if (compatResp?.type === 'compatibility') {
+          response = compatResp;
+        } else {
+          response = await copilotApi.chat(trimmed, systemPrompt);
+        }
+      } catch {
+        response = await copilotApi.chat(trimmed, systemPrompt);
+      }
       const reply = typeof response.reply === 'string' ? response.reply : '';
       const suggestions = Array.isArray(response.suggestions) ? response.suggestions : [];
       const cardType = (response as any)?.type || undefined;

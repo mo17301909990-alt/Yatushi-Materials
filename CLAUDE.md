@@ -14,7 +14,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### 后端
 ```bash
 cd yts_project
-./mvnw spring-boot:run                  # 本地启动 (port 8093)
+./mvnw spring-boot:run                  # 本地启动 (port 8092)
 mvn clean package -DskipTests           # 打包 JAR
 mvn test                                # 跑全部测试
 mvn test -Dtest=TestClass#method        # 跑单个测试

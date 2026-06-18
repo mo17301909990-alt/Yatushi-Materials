@@ -33,6 +33,10 @@ export function extractSources(reply: string): { sources: SourceRef[]; cleanRepl
   return { sources, cleanReply: cleanedLines.join('\n').trim() };
 }
 
+export const queryCompatibility = (message: string): Promise<CopilotResponse> => {
+  return request.post('/api/ai/compatibility/query', { message }) as any;
+};
+
 export const copilotApi = {
   chat(message: string, systemPrompt?: string) {
     return request({

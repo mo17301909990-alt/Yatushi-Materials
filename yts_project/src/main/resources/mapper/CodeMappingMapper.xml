@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.CodeMappingMapper">
+
+    <resultMap id="baseResultMap" type="com.it.yts_project.model.CodeMapping">
+        <id column="id" property="id" javaType="java.lang.Integer"/>
+        <result column="p0_table_name" property="p0TableName"/>
+        <result column="p0_row_id" property="p0RowId"/>
+        <result column="p0_material_code" property="p0MaterialCode"/>
+        <result column="p0_material_name" property="p0MaterialName"/>
+        <result column="target_type" property="targetType"/>
+        <result column="target_id" property="targetId"/>
+        <result column="target_code" property="targetCode"/>
+        <result column="target_name" property="targetName"/>
+        <result column="match_type" property="matchType"/>
+        <result column="confidence" property="confidence"/>
+        <result column="notes" property="notes"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <sql id="baseColumns">
+        id,
+        p0_table_name,
+        p0_row_id,
+        p0_material_code,
+        p0_material_name,
+        target_type,
+        target_id,
+        target_code,
+        target_name,
+        match_type,
+        confidence,
+        notes,
+        created_at,
+        updated_at
+    </sql>
+
+    <sql id="columnAliases">
+        id,
+        p0_table_name as p0TableName,
+        p0_row_id as p0RowId,
+        p0_material_code as p0MaterialCode,
+        p0_material_name as p0MaterialName,
+        target_type as targetType,
+        target_id as targetId,
+        target_code as targetCode,
+        target_name as targetName,
+        match_type as matchType,
+        confidence,
+        notes,
+        created_at as createdAt,
+        updated_at as updatedAt
+    </sql>
+
+    <!-- 获取所有映射 -->
+    <select id="findAll" resultMap="baseResultMap">
+        SELECT <include refid="columnAliases"/>
+        FROM code_mapping
+        ORDER BY p0_table_name, p0_row_id
+    </select>
+
+    <!-- 分页获取映射 -->
+    <select id="findWithPagination" resultMap="baseResultMap">
+        SELECT <include refid="columnAliases"/>
+        FROM code_mapping
+        ORDER BY p0_table_name, p0_row_id
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 获取总记录数 -->
+    <select id="getTotalCount" resultType="int">
+        SELECT COUNT(*) FROM code_mapping
+    </select>
+
+    <!-- 根据 ID 获取映射 -->
+    <select id="findById" resultMap="baseResultMap">
+        SELECT <include refid="columnAliases"/>
+        FROM code_mapping
+        WHERE id = #{id}
+    </select>
+
+    <!-- 插入映射 -->
+    <insert id="insert" parameterType="com.it.yts_project.model.CodeMapping" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO code_mapping (
+            p0_table_name,
+            p0_row_id,
+            p0_material_code,
+            p0_material_name,
+            target_type,
+            target_id,
+            target_code,
+            target_name,
+            match_type,
+            confidence,
+            notes,
+            created_at,
+            updated_at
+        ) VALUES (
+            #{p0TableName},
+            #{p0RowId},
+            #{p0MaterialCode},
+            #{p0MaterialName},
+            #{targetType},
+            #{targetId},
+            #{targetCode},
+            #{targetName},
+            COALESCE(#{matchType}, 'auto'),
+            #{confidence},
+            #{notes},
+            #{createdAt},
+            #{updatedAt}
+        )
+    </insert>
+
+    <!-- 更新映射 -->
+    <update id="update" parameterType="com.it.yts_project.model.CodeMapping">
+        UPDATE code_mapping
+        SET p0_table_name = #{p0TableName},
+            p0_row_id = #{p0RowId},
+            p0_material_code = #{p0MaterialCode},
+            p0_material_name = #{p0MaterialName},
+            target_type = #{targetType},
+            target_id = #{targetId},
+            target_code = #{targetCode},
+            target_name = #{targetName},
+            match_type = #{matchType},
+            confidence = #{confidence},
+            notes = #{notes},
+            updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除映射 -->
+    <delete id="deleteById">
+        DELETE FROM code_mapping WHERE id = #{id}
+    </delete>
+
+    <!-- 批量删除映射 -->
+    <delete id="batchDeleteByIds">
+        DELETE FROM code_mapping WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 根据 P0 来源查询映射 -->
+    <select id="findByP0Source" resultMap="baseResultMap">
+        SELECT <include refid="columnAliases"/>
+        FROM code_mapping
+        WHERE p0_table_name = #{p0TableName}
+        AND p0_row_id = #{p0RowId}
+        ORDER BY target_type
+    </select>
+
+    <!-- 根据目标类型和 ID 查询映射 -->
+    <select id="findByTarget" resultMap="baseResultMap">
+        SELECT <include refid="columnAliases"/>
+        FROM code_mapping
+        WHERE target_type = #{targetType}
+        AND target_id = #{targetId}
+        ORDER BY p0_table_name, p0_row_id
+    </select>
+
+    <!-- 根据匹配类型查询映射 -->
+    <select id="findByMatchType" resultMap="baseResultMap">
+        SELECT <include refid="columnAliases"/>
+        FROM code_mapping
+        WHERE match_type = #{matchType}
+        ORDER BY p0_table_name, p0_row_id
+    </select>
+
+    <!-- 搜索（支持多条件） -->
+    <select id="search" resultMap="baseResultMap">
+        SELECT <include refid="columnAliases"/>
+        FROM code_mapping
+        <where>
+            <if test="p0TableName != null and p0TableName != ''">
+                AND p0_table_name LIKE CONCAT('%', #{p0TableName}, '%')
+            </if>
+            <if test="p0MaterialName != null and p0MaterialName != ''">
+                AND p0_material_name LIKE CONCAT('%', #{p0MaterialName}, '%')
+            </if>
+            <if test="targetType != null and targetType != ''">
+                AND target_type = #{targetType}
+            </if>
+            <if test="matchType != null and matchType != ''">
+                AND match_type = #{matchType}
+            </if>
+        </where>
+        ORDER BY p0_table_name, p0_row_id
+    </select>
+
+    <!-- 获取所有来源表名列表 -->
+    <select id="getAllP0TableNames" resultType="string">
+        SELECT DISTINCT p0_table_name
+        FROM code_mapping
+        WHERE p0_table_name IS NOT NULL AND p0_table_name != ''
+        ORDER BY p0_table_name
+    </select>
+
+</mapper>
