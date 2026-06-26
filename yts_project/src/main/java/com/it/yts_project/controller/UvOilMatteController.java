@@ -2,6 +2,9 @@ package com.it.yts_project.controller;
 
 // 源文件: 哑光UV油标准书-20250730 (10)(1).xlsx
 
+import com.it.yts_project.dto.PagedResult;
+import com.it.yts_project.dto.UvOilMatteProductDTO;
+import com.it.yts_project.dto.UvOilMatteQueryParams;
 import com.it.yts_project.model.UvOilMatteProduct;
 import com.it.yts_project.model.UvOilMatteCompatibility;
 import com.it.yts_project.service.UvOilMatteService;
@@ -17,7 +20,7 @@ import java.util.Map;
  * UV油_哑光UV油 Controller
  */
 @RestController
-@RequestMapping("/api/uv_oil_matte")
+@RequestMapping({"/api/uv-oil-matte", "/api/uv_oil_matte"})
 @CrossOrigin(origins = {
     "http://localhost:5173",
     "http://120.26.101.0",
@@ -194,5 +197,59 @@ public class UvOilMatteController {
         response.put("success", true);
         response.put("message", String.format("成功删除 %d 条记录", ids.size()));
         return ResponseEntity.ok(response);
+    }
+
+    // ========== 匹配查询 ==========
+
+    /**
+     * 匹配查询：关键词搜索 + 工序筛选 + 分页
+     * 支持单步骤（stepName）或多步骤（steps 数组）INTERSECT 查询
+     */
+    @PostMapping("/match")
+    public ResponseEntity<PagedResult<UvOilMatteProductDTO>> match(@RequestBody UvOilMatteQueryParams params) {
+        if (params.getPage() == null || params.getPage() < 1) {
+            params.setPage(1);
+        }
+        if (params.getSize() == null || params.getSize() < 1) {
+            params.setSize(15);
+        }
+        PagedResult<UvOilMatteProductDTO> result;
+        List<String> steps = params.getSteps();
+        if (steps != null && !steps.isEmpty()) {
+            // 多步骤 INTERSECT 查询
+            result = uvOilMatteService.searchProductsMultiStep(
+                params.getKeyword(), steps, params.getPage(), params.getSize());
+        } else if (params.getStepName() != null && !params.getStepName().isEmpty()) {
+            // 单步骤查询（兼容旧版）
+            result = uvOilMatteService.searchProducts(
+                params.getKeyword(), params.getStepName(), params.getPage(), params.getSize());
+        } else {
+            // 无工序筛选
+            result = uvOilMatteService.searchProducts(
+                params.getKeyword(), null, params.getPage(), params.getSize());
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 获取所有后加工工序步骤名称（去重），按大类分组（两级结构）
+     */
+    @GetMapping("/steps")
+    public ResponseEntity<List<Map<String, Object>>> getSteps() {
+        List<Map<String, Object>> steps = uvOilMatteService.getSteps();
+        return ResponseEntity.ok(steps);
+    }
+
+    /**
+     * 获取产品详情（含兼容性列表）
+     */
+    @GetMapping("/products/{id}/detail")
+    public ResponseEntity<UvOilMatteProductDTO> getProductDetail(@PathVariable Integer id) {
+        UvOilMatteProductDTO dto = uvOilMatteService.getProductDetail(id);
+        if (dto != null) {
+            return ResponseEntity.ok(dto);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

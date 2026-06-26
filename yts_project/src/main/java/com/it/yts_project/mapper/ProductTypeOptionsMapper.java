@@ -51,4 +51,9 @@ public interface ProductTypeOptionsMapper {
      * @return 影响行数
      */
     int deleteById(@Param("id") Integer id);
+
+    /**
+     * 更新注意事项ID列表
+     */
+    void updateNoticeIds(@Param("id") Integer id, @Param("noticeIds") List<Integer> noticeIds);
 }

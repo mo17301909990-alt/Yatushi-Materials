@@ -1,5 +1,7 @@
 package com.it.yts_project.service.Impl;
 
+import com.it.yts_project.dto.LaminationMaterialProductDTO;
+import com.it.yts_project.dto.PagedResult;
 import com.it.yts_project.mapper.LaminationMaterialProductMapper;
 import com.it.yts_project.model.LaminationMaterialCompatibility;
 import com.it.yts_project.model.LaminationMaterialProduct;
@@ -150,5 +152,38 @@ public class LaminationMaterialProductServiceImpl implements LaminationMaterialP
     @Override
     public List<String> getAllPostProcessingSteps() {
         return laminationMaterialProductMapper.getAllPostProcessingSteps();
+    }
+
+    // ========== 匹配查询 ==========
+
+    @Override
+    public PagedResult<LaminationMaterialProduct> searchProducts(String keyword, List<String> materialTypes, List<String> steps, int page, int size) {
+        int offset = (page - 1) * size;
+        List<LaminationMaterialProduct> items = laminationMaterialProductMapper.searchProductsWithStep(keyword, materialTypes, steps, offset, size);
+        Long total = laminationMaterialProductMapper.countProductsWithStep(keyword, materialTypes, steps);
+        return new PagedResult<>(items, total, size, page);
+    }
+
+    @Override
+    public List<String> getDistinctSteps() {
+        return laminationMaterialProductMapper.getDistinctPostProcessingSteps();
+    }
+
+    @Override
+    public List<String> getDistinctMaterialTypes() {
+        return laminationMaterialProductMapper.getDistinctMaterialTypes();
+    }
+
+    @Override
+    public LaminationMaterialProductDTO getProductDetail(Integer id) {
+        LaminationMaterialProduct product = laminationMaterialProductMapper.findProductById(id);
+        if (product == null) {
+            return null;
+        }
+        List<LaminationMaterialCompatibility> compatibilities = laminationMaterialProductMapper.findCompatibilitiesByProductId(id);
+        LaminationMaterialProductDTO dto = new LaminationMaterialProductDTO();
+        dto.setProduct(product);
+        dto.setCompatibilities(compatibilities);
+        return dto;
     }
 }

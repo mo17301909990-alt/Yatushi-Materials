@@ -72,4 +72,9 @@ public interface HotStampingPatternAreaOptionMapper {
      * @return 烫金图案区域选项
      */
     HotStampingPatternAreaOptionDTO getPatternAreaOptionByPatternType(@Param("patternType") String patternType);
+
+    /**
+     * 更新注意事项ID列表
+     */
+    void updateNoticeIds(@Param("id") Integer id, @Param("noticeIds") List<Integer> noticeIds);
 }

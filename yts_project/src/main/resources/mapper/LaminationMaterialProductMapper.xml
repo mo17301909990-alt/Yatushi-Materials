@@ -132,16 +132,84 @@
         DELETE FROM lamination_material_compatibility WHERE product_id = #{productId}
     </delete>
 
-    <batchInsert id="batchInsertCompatibilities">
+    <insert id="batchInsertCompatibilities">
         INSERT INTO lamination_material_compatibility (product_id, post_processing_step, compatibility_status, remark, display_order)
         VALUES
         <foreach collection="list" item="item" separator=",">
             (#{item.productId}, #{item.postProcessingStep}, #{item.compatibilityStatus}, #{item.remark}, #{item.displayOrder})
         </foreach>
-    </batchInsert>
+    </insert>
 
     <select id="getAllPostProcessingSteps" resultType="string">
         SELECT DISTINCT post_processing_step FROM lamination_material_compatibility ORDER BY post_processing_step ASC
+    </select>
+
+    <!-- ========== 匹配查询 ========== -->
+
+    <select id="searchProductsWithStep" resultMap="ProductResultMap">
+        SELECT DISTINCT p.* FROM lamination_material_products p
+        <if test="steps != null and steps.size > 0">
+            INNER JOIN lamination_material_compatibility c ON p.id = c.product_id
+        </if>
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (p.material_name LIKE CONCAT('%', #{keyword}, '%')
+                   OR p.material_code LIKE CONCAT('%', #{keyword}, '%')
+                   OR p.stock_code LIKE CONCAT('%', #{keyword}, '%')
+                   OR p.color LIKE CONCAT('%', #{keyword}, '%')
+                   OR p.category LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="materialTypes != null and materialTypes.size > 0">
+                AND p.material_type IN
+                <foreach collection="materialTypes" item="type" open="(" separator="," close=")">
+                    #{type}
+                </foreach>
+            </if>
+            <if test="steps != null and steps.size > 0">
+                AND c.post_processing_step IN
+                <foreach collection="steps" item="step" open="(" separator="," close=")">
+                    #{step}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY p.material_code ASC, p.id ASC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countProductsWithStep" resultType="java.lang.Long">
+        SELECT COUNT(DISTINCT p.id) FROM lamination_material_products p
+        <if test="steps != null and steps.size > 0">
+            INNER JOIN lamination_material_compatibility c ON p.id = c.product_id
+        </if>
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (p.material_name LIKE CONCAT('%', #{keyword}, '%')
+                   OR p.material_code LIKE CONCAT('%', #{keyword}, '%')
+                   OR p.stock_code LIKE CONCAT('%', #{keyword}, '%')
+                   OR p.color LIKE CONCAT('%', #{keyword}, '%')
+                   OR p.category LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="materialTypes != null and materialTypes.size > 0">
+                AND p.material_type IN
+                <foreach collection="materialTypes" item="type" open="(" separator="," close=")">
+                    #{type}
+                </foreach>
+            </if>
+            <if test="steps != null and steps.size > 0">
+                AND c.post_processing_step IN
+                <foreach collection="steps" item="step" open="(" separator="," close=")">
+                    #{step}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="getDistinctPostProcessingSteps" resultType="java.lang.String">
+        SELECT DISTINCT post_processing_step FROM lamination_material_compatibility ORDER BY post_processing_step ASC
+    </select>
+
+    <select id="getDistinctMaterialTypes" resultType="java.lang.String">
+        SELECT DISTINCT material_type FROM lamination_material_products WHERE material_type IS NOT NULL AND material_type != '' ORDER BY material_type ASC
     </select>
 
 </mapper>

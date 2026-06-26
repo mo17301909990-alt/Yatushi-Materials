@@ -13,6 +13,8 @@
         <result property="materialType" column="material_type"/>
         <result property="color" column="color"/>
         <result property="responsiblePerson" column="responsible_person"/>
+        <result property="thickness" column="thickness"/>
+        <result property="shape" column="shape"/>
         <result property="minSheetSize" column="min_sheet_size"/>
         <result property="maxSheetSize" column="max_sheet_size"/>
         <result property="minPoint" column="min_point"/>

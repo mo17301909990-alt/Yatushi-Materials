@@ -121,4 +121,9 @@ public interface PostProcessingPrintUvMapper {
      * 批量更新兼容性状态
      */
     int batchUpdateStatus(@Param("ids") List<Integer> ids, @Param("compatibilityStatus") String compatibilityStatus);
+
+    /**
+     * 更新注意事项ID列表
+     */
+    void updateNoticeIds(@Param("id") Integer id, @Param("noticeIds") List<Integer> noticeIds);
 }

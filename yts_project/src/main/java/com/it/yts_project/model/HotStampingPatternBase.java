@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 烫金图案基础信息表实体类
@@ -85,7 +86,12 @@ public class HotStampingPatternBase {
      * 是否激活（原始字段，用于业务逻辑）
      */
     private Boolean isActive;
-    
+
+    /**
+     * 关联的注意事项ID数组
+     */
+    private List<Integer> noticeIds;
+
     /**
      * 获取激活状态文本
      */

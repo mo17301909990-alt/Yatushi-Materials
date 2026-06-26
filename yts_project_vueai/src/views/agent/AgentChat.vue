@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, computed, watch } from 'vue'
+import { onMounted, watch } from 'vue'
 import { useAgentChatStore } from '@/stores/agentChat'
 import { usePermissionStore } from '@/stores/permission'
 import ChatSessionList from '@/components/agent/ChatSessionList.vue'
@@ -10,9 +10,9 @@ const permissionStore = usePermissionStore()
 
 onMounted(async () => {
   // 等待 RBAC 权限加载完成，避免竞态导致 isAdmin 误判
-  if (!permissionStore.currentUserRbacReady) {
+  if (!permissionStore.rbacReady) {
     await new Promise<void>(resolve => {
-      const stop = watch(() => permissionStore.currentUserRbacReady, (val) => {
+      const stop = watch(() => permissionStore.rbacReady, (val) => {
         if (val) { stop(); resolve() }
       })
     })

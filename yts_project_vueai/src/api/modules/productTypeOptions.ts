@@ -17,7 +17,7 @@ export const productTypeOptionsApi = {
    * 获取所有激活的产品类型选项
    */
   getAllActiveOptions: async (): Promise<ProductTypeOption[]> => {
-    const response = await axios.get('/api/product-type-options/active');
+    const response = await axios.get('/product-type-options/active');
     return response.data;
   },
 
@@ -25,7 +25,7 @@ export const productTypeOptionsApi = {
    * 根据ID获取产品类型选项
    */
   getById: async (id: number): Promise<ProductTypeOption> => {
-    const response = await axios.get(`/api/product-type-options/${id}`);
+    const response = await axios.get(`/product-type-options/${id}`);
     return response.data;
   },
 
@@ -33,7 +33,7 @@ export const productTypeOptionsApi = {
    * 获取所有产品类型选项（包括非激活的）
    */
   getAllOptions: async (): Promise<ProductTypeOption[]> => {
-    const response = await axios.get('/api/product-type-options/all');
+    const response = await axios.get('/product-type-options/all');
     return response.data;
   },
 
@@ -41,7 +41,7 @@ export const productTypeOptionsApi = {
    * 创建产品类型选项
    */
   createProductType: async (productType: Omit<ProductTypeOption, 'id' | 'createdAt' | 'updatedAt'>): Promise<ProductTypeOption> => {
-    const response = await axios.post('/api/product-type-options', productType);
+    const response = await axios.post('/product-type-options', productType);
     return response.data;
   },
 
@@ -49,7 +49,7 @@ export const productTypeOptionsApi = {
    * 更新产品类型选项
    */
   updateProductType: async (id: number, productType: Partial<ProductTypeOption>): Promise<ProductTypeOption> => {
-    const response = await axios.put(`/api/product-type-options/${id}`, productType);
+    const response = await axios.put(`/product-type-options/${id}`, productType);
     return response.data;
   },
 
@@ -57,6 +57,6 @@ export const productTypeOptionsApi = {
    * 删除产品类型选项
    */
   deleteProductType: async (id: number): Promise<void> => {
-    await axios.delete(`/api/product-type-options/${id}`);
+    await axios.delete(`/product-type-options/${id}`);
   }
 };

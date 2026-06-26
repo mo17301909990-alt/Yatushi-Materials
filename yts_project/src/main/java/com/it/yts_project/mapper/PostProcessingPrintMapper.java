@@ -127,4 +127,9 @@ public interface PostProcessingPrintMapper {
         @Param("productName") String productName,
         @Param("productModelNumber") String productModelNumber
     );
+
+    /**
+     * 更新注意事项ID列表
+     */
+    void updateNoticeIds(@Param("id") Integer id, @Param("noticeIds") List<Integer> noticeIds);
 }

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.SiliconeMapper">
+
+    <!--
+        硅胶组合匹配 Mapper
+        使用 UNION ALL 动态拼接多个 silicone_${type}_product/compatibility 表
+        type 参数在 Service 层已做白名单校验，防止 SQL 注入
+    -->
+
+    <!-- ========== 多步骤匹配：获取匹配所有步骤的产品 ID（含类型）========== -->
+
+    <select id="searchMultiStepProductIds" resultType="java.util.Map">
+        <foreach collection="types" item="type" separator="UNION ALL">
+            SELECT p.id, '${type}' AS silicone_type
+            FROM silicone_${type}_product p
+            INNER JOIN silicone_${type}_compatibility c ON p.id = c.product_id
+            <where>
+                <if test="keyword != null and keyword != ''">
+                    AND (p.material_name LIKE CONCAT('%', #{keyword}, '%')
+                       OR p.material_code LIKE CONCAT('%', #{keyword}, '%')
+                       OR p.stock_code LIKE CONCAT('%', #{keyword}, '%')
+                       OR p.notes LIKE CONCAT('%', #{keyword}, '%'))
+                </if>
+                AND c.post_processing_step IN
+                <foreach collection="steps" item="step" open="(" separator="," close=")">
+                    #{step}
+                </foreach>
+            </where>
+            GROUP BY p.id
+            HAVING COUNT(DISTINCT c.post_processing_step) = #{stepCount}
+        </foreach>
+        ORDER BY silicone_type, id
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countMultiStepProducts" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM (
+            <foreach collection="types" item="type" separator="UNION ALL">
+                SELECT p.id
+                FROM silicone_${type}_product p
+                INNER JOIN silicone_${type}_compatibility c ON p.id = c.product_id
+                <where>
+                    <if test="keyword != null and keyword != ''">
+                        AND (p.material_name LIKE CONCAT('%', #{keyword}, '%')
+                           OR p.material_code LIKE CONCAT('%', #{keyword}, '%')
+                           OR p.stock_code LIKE CONCAT('%', #{keyword}, '%')
+                           OR p.notes LIKE CONCAT('%', #{keyword}, '%'))
+                    </if>
+                    AND c.post_processing_step IN
+                    <foreach collection="steps" item="step" open="(" separator="," close=")">
+                        #{step}
+                    </foreach>
+                </where>
+                GROUP BY p.id
+                HAVING COUNT(DISTINCT c.post_processing_step) = #{stepCount}
+            </foreach>
+        ) tmp
+    </select>
+
+    <!-- ========== 单步骤匹配：搜索产品（带工序筛选 + 分页）========== -->
+
+    <select id="searchProductsWithStep" resultType="java.util.Map">
+        <foreach collection="types" item="type" separator="UNION ALL">
+            SELECT p.*, '${type}' AS silicone_type, c.compatibility_status
+            FROM silicone_${type}_product p
+            LEFT JOIN silicone_${type}_compatibility c ON p.id = c.product_id
+            <where>
+                <if test="keyword != null and keyword != ''">
+                    AND (p.material_name LIKE CONCAT('%', #{keyword}, '%')
+                       OR p.material_code LIKE CONCAT('%', #{keyword}, '%')
+                       OR p.stock_code LIKE CONCAT('%', #{keyword}, '%')
+                       OR p.notes LIKE CONCAT('%', #{keyword}, '%'))
+                </if>
+                <if test="stepName != null and stepName != ''">
+                    AND c.post_processing_step = #{stepName}
+                </if>
+            </where>
+        </foreach>
+        ORDER BY silicone_type, material_code, id
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countProductsWithStep" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM (
+            <foreach collection="types" item="type" separator="UNION ALL">
+                SELECT p.id
+                FROM silicone_${type}_product p
+                LEFT JOIN silicone_${type}_compatibility c ON p.id = c.product_id
+                <where>
+                    <if test="keyword != null and keyword != ''">
+                        AND (p.material_name LIKE CONCAT('%', #{keyword}, '%')
+                           OR p.material_code LIKE CONCAT('%', #{keyword}, '%')
+                           OR p.stock_code LIKE CONCAT('%', #{keyword}, '%')
+                           OR p.notes LIKE CONCAT('%', #{keyword}, '%'))
+                    </if>
+                    <if test="stepName != null and stepName != ''">
+                        AND c.post_processing_step = #{stepName}
+                    </if>
+                </where>
+            </foreach>
+        ) tmp
+    </select>
+
+    <!-- ========== 批量查询产品详情（按 ID + 类型）========== -->
+
+    <select id="findProductByIdAndType" resultType="java.util.Map">
+        SELECT p.*, '${type}' AS silicone_type
+        FROM silicone_${type}_product p
+        WHERE p.id = #{id}
+    </select>
+
+    <select id="findCompatibilitiesByProductIdAndType" resultType="java.util.Map">
+        SELECT c.*, p.material_name AS product_name
+        FROM silicone_${type}_compatibility c
+        LEFT JOIN silicone_${type}_product p ON c.product_id = p.id
+        WHERE c.product_id = #{productId}
+        ORDER BY c.display_order ASC, c.id ASC
+    </select>
+
+    <!-- ========== 查询兼容性状态（多步骤详情）========== -->
+
+    <select id="findCompatibilityStatusForProducts" resultType="java.util.Map">
+        SELECT product_id, '${type}' AS silicone_type, post_processing_step, compatibility_status
+        FROM silicone_${type}_compatibility
+        WHERE product_id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND post_processing_step IN
+        <foreach collection="steps" item="step" open="(" separator="," close=")">
+            #{step}
+        </foreach>
+    </select>
+
+    <!-- ========== 获取所有后加工工序步骤（跨类型 UNION）========== -->
+
+    <select id="getDistinctSteps" resultType="java.lang.String">
+        SELECT DISTINCT post_processing_step FROM (
+            <foreach collection="types" item="type" separator="UNION ALL">
+                SELECT post_processing_step FROM silicone_${type}_compatibility
+            </foreach>
+        ) steps
+        ORDER BY post_processing_step ASC
+    </select>
+
+    <select id="getDistinctStepsWithCategory" resultType="java.util.Map">
+        SELECT step_category AS "category", post_processing_step AS "step" FROM (
+            <foreach collection="types" item="type" separator="UNION ALL">
+                SELECT step_category, post_processing_step
+                FROM silicone_${type}_compatibility
+                WHERE step_category IS NOT NULL
+            </foreach>
+        ) sc
+        GROUP BY step_category, post_processing_step
+        ORDER BY step_category, post_processing_step
+    </select>
+
+</mapper>

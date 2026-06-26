@@ -95,6 +95,11 @@ public interface LaminatingService {
      * 批量保存过胶兼容性
      */
     void batchSaveCompatibility(List<LaminationCompatibility> compatibilities);
+
+    /**
+     * 批量保存过胶兼容性（矩阵导入用快捷版本，仅确保 interfaceTypeId 为 0）
+     */
+    void batchSaveCompatibilityFast(List<LaminationCompatibility> compatibilities);
     
     /**
      * 删除过胶兼容性

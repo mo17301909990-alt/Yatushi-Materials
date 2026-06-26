@@ -1,23 +1,20 @@
 package com.it.yts_project.controller;
 
-// 源文件: 硅胶发光油墨(Glow-In-The-Dark)标准书-20250530 (2).xlsx
-
-import com.it.yts_project.model.SiliconeGlowInkCompatibility;
+import com.it.yts_project.dto.PagedResult;
+import com.it.yts_project.dto.SiliconeGlowInkProductDTO;
+import com.it.yts_project.dto.SiliconeGlowInkQueryParams;
 import com.it.yts_project.model.SiliconeGlowInkProduct;
+import com.it.yts_project.model.SiliconeGlowInkCompatibility;
 import com.it.yts_project.service.SiliconeGlowInkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * 硅胶发光油墨Controller
- */
 @RestController
-@RequestMapping("/api/silicone_glow_ink")
+@RequestMapping({"/api/silicone-glow-ink", "/api/silicone_glow_ink"})
 @CrossOrigin(origins = {
     "http://localhost:5173",
     "http://120.26.101.0",
@@ -32,59 +29,34 @@ public class SiliconeGlowInkController {
 
     // ========== 产品管理 ==========
 
-    /**
-     * 获取所有产品
-     */
     @GetMapping("/products")
     public ResponseEntity<List<SiliconeGlowInkProduct>> getAllProducts() {
-        List<SiliconeGlowInkProduct> products = siliconeGlowInkService.getAllProducts();
-        return ResponseEntity.ok(products);
+        return ResponseEntity.ok(siliconeGlowInkService.getAllProducts());
     }
 
-    /**
-     * 根据ID获取产品
-     */
     @GetMapping("/products/{id}")
     public ResponseEntity<SiliconeGlowInkProduct> getProductById(@PathVariable Integer id) {
         SiliconeGlowInkProduct product = siliconeGlowInkService.getProductById(id);
-        if (product != null) {
-            return ResponseEntity.ok(product);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        if (product != null) return ResponseEntity.ok(product);
+        return ResponseEntity.notFound().build();
     }
 
-    /**
-     * 搜索产品
-     */
     @GetMapping("/products/search")
     public ResponseEntity<List<SiliconeGlowInkProduct>> searchProducts(@RequestParam String keyword) {
-        List<SiliconeGlowInkProduct> products = siliconeGlowInkService.searchProducts(keyword);
-        return ResponseEntity.ok(products);
+        return ResponseEntity.ok(siliconeGlowInkService.searchProducts(keyword));
     }
 
-    /**
-     * 新增产品
-     */
     @PostMapping("/products")
     public ResponseEntity<SiliconeGlowInkProduct> createProduct(@RequestBody SiliconeGlowInkProduct product) {
-        SiliconeGlowInkProduct savedProduct = siliconeGlowInkService.saveProduct(product);
-        return ResponseEntity.ok(savedProduct);
+        return ResponseEntity.ok(siliconeGlowInkService.saveProduct(product));
     }
 
-    /**
-     * 更新产品
-     */
     @PutMapping("/products/{id}")
     public ResponseEntity<SiliconeGlowInkProduct> updateProduct(@PathVariable Integer id, @RequestBody SiliconeGlowInkProduct product) {
         product.setId(id);
-        SiliconeGlowInkProduct updatedProduct = siliconeGlowInkService.saveProduct(product);
-        return ResponseEntity.ok(updatedProduct);
+        return ResponseEntity.ok(siliconeGlowInkService.saveProduct(product));
     }
 
-    /**
-     * 删除产品
-     */
     @DeleteMapping("/products/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Integer id) {
         siliconeGlowInkService.deleteProduct(id);
@@ -93,94 +65,88 @@ public class SiliconeGlowInkController {
 
     // ========== 兼容性管理 ==========
 
-    /**
-     * 获取所有兼容性列表
-     */
     @GetMapping("/compatibilities")
-    public ResponseEntity<List<SiliconeGlowInkCompatibility>> getAllCompatibilities() {
-        List<SiliconeGlowInkCompatibility> list = siliconeGlowInkService.getAllCompatibilities();
-        return ResponseEntity.ok(list);
+    public ResponseEntity<List<SiliconeGlowInkCompatibility>> getCompatibilitiesByProductId(@RequestParam Integer productId) {
+        return ResponseEntity.ok(siliconeGlowInkService.getCompatibilitiesByProductId(productId));
     }
 
-    /**
-     * 根据产品ID获取兼容性列表
-     */
-    @GetMapping("/compatibilities/by-product/{productId}")
-    public ResponseEntity<List<SiliconeGlowInkCompatibility>> getCompatibilitiesByProductId(@PathVariable Integer productId) {
-        List<SiliconeGlowInkCompatibility> list = siliconeGlowInkService.getCompatibilitiesByProductId(productId);
-        return ResponseEntity.ok(list);
-    }
-
-    /**
-     * 根据ID获取兼容性
-     */
     @GetMapping("/compatibilities/{id}")
     public ResponseEntity<SiliconeGlowInkCompatibility> getCompatibilityById(@PathVariable Integer id) {
         SiliconeGlowInkCompatibility compatibility = siliconeGlowInkService.getCompatibilityById(id);
-        if (compatibility != null) {
-            return ResponseEntity.ok(compatibility);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        if (compatibility != null) return ResponseEntity.ok(compatibility);
+        return ResponseEntity.notFound().build();
     }
 
-    /**
-     * 新增兼容性
-     */
     @PostMapping("/compatibilities")
     public ResponseEntity<?> createCompatibility(@RequestBody SiliconeGlowInkCompatibility compatibility) {
         try {
-            SiliconeGlowInkCompatibility savedCompatibility = siliconeGlowInkService.saveCompatibility(compatibility);
-            return ResponseEntity.ok(savedCompatibility);
+            return ResponseEntity.ok(siliconeGlowInkService.saveCompatibility(compatibility));
         } catch (IllegalArgumentException e) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", false);
-            response.put("message", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
+            Map<String, Object> r = new HashMap<>(); r.put("success", false); r.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(r);
         }
     }
 
-    /**
-     * 更新兼容性
-     */
     @PutMapping("/compatibilities/{id}")
     public ResponseEntity<?> updateCompatibility(@PathVariable Integer id, @RequestBody SiliconeGlowInkCompatibility compatibility) {
         try {
             compatibility.setId(id);
-            SiliconeGlowInkCompatibility updatedCompatibility = siliconeGlowInkService.saveCompatibility(compatibility);
-            return ResponseEntity.ok(updatedCompatibility);
+            return ResponseEntity.ok(siliconeGlowInkService.saveCompatibility(compatibility));
         } catch (IllegalArgumentException e) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", false);
-            response.put("message", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
+            Map<String, Object> r = new HashMap<>(); r.put("success", false); r.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(r);
         }
     }
 
-    /**
-     * 批量保存兼容性
-     */
     @PostMapping("/compatibilities/batch")
-    public ResponseEntity<Void> batchSaveCompatibilities(@RequestBody List<SiliconeGlowInkCompatibility> compatibilities) {
-        siliconeGlowInkService.batchSaveCompatibilities(compatibilities);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> batchSaveCompatibilities(@RequestBody List<SiliconeGlowInkCompatibility> compatibilities) {
+        try {
+            siliconeGlowInkService.batchSaveCompatibilities(compatibilities);
+            Map<String, Object> r = new HashMap<>(); r.put("success", true); r.put("message", "批量保存成功");
+            return ResponseEntity.ok(r);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> r = new HashMap<>(); r.put("success", false); r.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(r);
+        }
     }
 
-    /**
-     * 删除兼容性
-     */
     @DeleteMapping("/compatibilities/{id}")
     public ResponseEntity<Void> deleteCompatibility(@PathVariable Integer id) {
         siliconeGlowInkService.deleteCompatibility(id);
         return ResponseEntity.ok().build();
     }
 
-    /**
-     * 获取所有后加工工序名称
-     */
-    @GetMapping("/options/post-processing-steps")
-    public ResponseEntity<List<String>> getAllPostProcessingSteps() {
-        List<String> steps = siliconeGlowInkService.getAllPostProcessingSteps();
-        return ResponseEntity.ok(steps);
+    @DeleteMapping("/compatibilities/batch")
+    public ResponseEntity<Map<String, Object>> batchDeleteCompatibility(@RequestBody List<Integer> ids) {
+        Map<String, Object> r = new HashMap<>();
+        if (ids == null || ids.isEmpty()) {
+            r.put("success", false); r.put("message", "请选择要删除的记录");
+            return ResponseEntity.badRequest().body(r);
+        }
+        for (Integer id : ids) { siliconeGlowInkService.deleteCompatibility(id); }
+        r.put("success", true); r.put("message", String.format("成功删除 %d 条记录", ids.size()));
+        return ResponseEntity.ok(r);
+    }
+
+    // ========== 匹配查询 ==========
+
+    @PostMapping("/match")
+    public ResponseEntity<PagedResult<SiliconeGlowInkProduct>> match(@RequestBody SiliconeGlowInkQueryParams params) {
+        if (params.getPage() == null || params.getPage() < 1) params.setPage(1);
+        if (params.getSize() == null || params.getSize() < 1) params.setSize(15);
+        return ResponseEntity.ok(siliconeGlowInkService.searchProducts(
+            params.getKeyword(), params.getStepName(), params.getPage(), params.getSize()));
+    }
+
+    @GetMapping("/steps")
+    public ResponseEntity<List<String>> getSteps() {
+        return ResponseEntity.ok(siliconeGlowInkService.getDistinctSteps());
+    }
+
+    @GetMapping("/products/{id}/detail")
+    public ResponseEntity<SiliconeGlowInkProductDTO> getProductDetail(@PathVariable Integer id) {
+        SiliconeGlowInkProductDTO dto = siliconeGlowInkService.getProductDetail(id);
+        if (dto != null) return ResponseEntity.ok(dto);
+        return ResponseEntity.notFound().build();
     }
 }

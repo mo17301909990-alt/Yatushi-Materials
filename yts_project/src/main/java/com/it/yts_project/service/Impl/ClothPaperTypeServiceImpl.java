@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 布料纸类型服务实现类
@@ -27,6 +28,20 @@ public class ClothPaperTypeServiceImpl implements ClothPaperTypeService {
         return clothPaperTypeMapper.getAllClothPaperTypes();
     }
     
+    @Override
+    public List<ClothPaperTypeDTO> getActiveClothPaperTypesForCommonInterfaceMatrix() {
+        return clothPaperTypeMapper.getAllActiveClothPaperTypes().stream()
+                .filter(t -> !Boolean.TRUE.equals(t.getExcludeFromCommonInterfaceMatrix()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ClothPaperTypeDTO> getActiveSpecialInterfaceClothPaperTypes() {
+        return clothPaperTypeMapper.getAllActiveClothPaperTypes().stream()
+                .filter(t -> Boolean.TRUE.equals(t.getExcludeFromCommonInterfaceMatrix()))
+                .collect(Collectors.toList());
+    }
+
     @Override
     public ClothPaperTypeDTO getById(Integer id) {
         return clothPaperTypeMapper.getById(id);

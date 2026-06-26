@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.LeoMapper">
+
+    <!-- ========== 跨表 UNION ALL + INTERSECT 匹配查询 ========== -->
+
+    <select id="searchLeoProductIds" resultType="java.util.Map">
+        <foreach collection="types" item="type" separator="UNION ALL">
+            SELECT p.id AS id, '${type}' AS source_type
+            FROM leo_${type}_product p
+            WHERE 1=1
+            <if test="steps != null and steps.size() > 0">
+                AND p.id IN (
+                    SELECT c.product_id
+                    FROM leo_${type}_compatibility c
+                    WHERE c.compatibility_status = 'V'
+                      AND c.post_processing_step IN
+                    <foreach collection="steps" item="step" open="(" separator="," close=")">
+                        #{step}
+                    </foreach>
+                    GROUP BY c.product_id
+                    HAVING COUNT(DISTINCT c.post_processing_step) = #{stepCount}
+                )
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (p.material_name LIKE CONCAT('%', #{keyword}, '%')
+                   OR p.material_code LIKE CONCAT('%', #{keyword}, '%')
+                   OR p.stock_code LIKE CONCAT('%', #{keyword}, '%')
+                   OR p.notes LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </foreach>
+        ORDER BY source_type, id ASC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countLeoProducts" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM (
+            <foreach collection="types" item="type" separator="UNION ALL">
+                SELECT p.id
+                FROM leo_${type}_product p
+                WHERE 1=1
+                <if test="steps != null and steps.size() > 0">
+                    AND p.id IN (
+                        SELECT c.product_id
+                        FROM leo_${type}_compatibility c
+                        WHERE c.compatibility_status = 'V'
+                          AND c.post_processing_step IN
+                        <foreach collection="steps" item="step" open="(" separator="," close=")">
+                            #{step}
+                        </foreach>
+                        GROUP BY c.product_id
+                        HAVING COUNT(DISTINCT c.post_processing_step) = #{stepCount}
+                    )
+                </if>
+                <if test="keyword != null and keyword != ''">
+                    AND (p.material_name LIKE CONCAT('%', #{keyword}, '%')
+                       OR p.material_code LIKE CONCAT('%', #{keyword}, '%')
+                       OR p.stock_code LIKE CONCAT('%', #{keyword}, '%')
+                       OR p.notes LIKE CONCAT('%', #{keyword}, '%'))
+                </if>
+            </foreach>
+        ) tmp
+    </select>
+
+    <!-- ========== 按类型查询兼容性状态 ========== -->
+
+    <select id="findBookBoardCompatibilityStatus" resultType="java.util.Map">
+        SELECT c.product_id, c.post_processing_step, c.compatibility_status
+        FROM leo_book_board_compatibility c
+        WHERE c.product_id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND c.post_processing_step IN
+        <foreach collection="steps" item="step" open="(" separator="," close=")">
+            #{step}
+        </foreach>
+    </select>
+
+    <select id="findFlatCompatibilityStatus" resultType="java.util.Map">
+        SELECT c.product_id, c.post_processing_step, c.compatibility_status
+        FROM leo_flat_compatibility c
+        WHERE c.product_id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND c.post_processing_step IN
+        <foreach collection="steps" item="step" open="(" separator="," close=")">
+            #{step}
+        </foreach>
+    </select>
+
+    <select id="findNonFlatCompatibilityStatus" resultType="java.util.Map">
+        SELECT c.product_id, c.post_processing_step, c.compatibility_status
+        FROM leo_non_flat_compatibility c
+        WHERE c.product_id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND c.post_processing_step IN
+        <foreach collection="steps" item="step" open="(" separator="," close=")">
+            #{step}
+        </foreach>
+    </select>
+
+    <!-- ========== 获取所有步骤（含分类） ========== -->
+
+    <select id="getDistinctStepsWithCategory" resultType="java.util.Map">
+        SELECT DISTINCT step_category AS "category", post_processing_step AS "step"
+        FROM (
+            SELECT step_category, post_processing_step FROM leo_book_board_compatibility
+            UNION ALL
+            SELECT step_category, post_processing_step FROM leo_flat_compatibility
+            UNION ALL
+            SELECT step_category, post_processing_step FROM leo_non_flat_compatibility
+        ) all_steps
+        WHERE step_category IS NOT NULL
+          AND post_processing_step IS NOT NULL
+        ORDER BY step_category, post_processing_step
+    </select>
+
+</mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.SystemContentMapper">
+
+    <resultMap id="SystemContentResultMap" type="com.it.yts_project.model.SystemContent">
+        <id property="id" column="id"/>
+        <result property="contentKey" column="content_key"/>
+        <result property="title" column="title"/>
+        <result property="bodyHtml" column="body_html"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="updatedBy" column="updated_by"/>
+    </resultMap>
+
+    <select id="findByContentKey" resultMap="SystemContentResultMap">
+        SELECT id, content_key, title, body_html, updated_at, updated_by
+        FROM system_content
+        WHERE content_key = #{contentKey}
+    </select>
+
+    <insert id="upsert">
+        INSERT INTO system_content (content_key, title, body_html, updated_at, updated_by)
+        VALUES (#{contentKey}, #{title}, #{bodyHtml}, CURRENT_TIMESTAMP, #{updatedBy})
+        ON CONFLICT (content_key) DO UPDATE SET
+            title = EXCLUDED.title,
+            body_html = EXCLUDED.body_html,
+            updated_at = CURRENT_TIMESTAMP,
+            updated_by = EXCLUDED.updated_by
+    </insert>
+</mapper>

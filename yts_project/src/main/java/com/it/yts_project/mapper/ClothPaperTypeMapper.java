@@ -89,6 +89,18 @@ public interface ClothPaperTypeMapper {
      * @return 布料纸类型
      */
     ClothPaperTypeDTO getByTypeName(@Param("typeName") String typeName);
+
+    /**
+     * 解除绑定：将引用指定规则ID的布面纸类型的 series_priority_rule_id 置为 null
+     * @param ruleId 系列优先级规则ID
+     * @return 影响行数
+     */
+    int unsetSeriesPriorityRuleId(@Param("ruleId") Integer ruleId);
+
+    /**
+     * 更新注意事项ID列表
+     */
+    void updateNoticeIds(@Param("id") Integer id, @Param("noticeIds") List<Integer> noticeIds);
 }
 
 

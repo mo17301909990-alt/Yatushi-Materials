@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 过胶兼容性模型
@@ -82,7 +83,14 @@ public class LaminationCompatibility {
      */
     @ExcelIgnore
     private LocalDateTime updatedAt;
-    
+
+    /**
+     * 关联的注意事项ID列表
+     * 对应数据库字段: notice_ids (INTEGER[])
+     */
+    @ExcelIgnore
+    private List<Integer> noticeIds;
+
     // 关联对象（用于显示和导出）
     /**
      * 过胶材料名称（用于导出，格式：materialName）

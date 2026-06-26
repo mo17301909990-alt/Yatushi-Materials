@@ -10,36 +10,36 @@ import type {
 export const roleApi = {
   // 获取所有角色
   getAllRoles(): Promise<Role[]> {
-    return request.get('/api/roles');
+    return request.get('/roles');
   },
 
   // 根据ID获取角色
   getRoleById(id: number): Promise<Role> {
-    return request.get(`/api/roles/${id}`);
+    return request.get(`/roles/${id}`);
   },
 
   // 创建角色
   createRole(data: CreateRoleRequest): Promise<Role> {
-    return request.post('/api/roles', data);
+    return request.post('/roles', data);
   },
 
   // 更新角色
   updateRole(id: number, data: UpdateRoleRequest): Promise<Role> {
-    return request.put(`/api/roles/${id}`, data);
+    return request.put(`/roles/${id}`, data);
   },
 
   // 删除角色
   deleteRole(id: number): Promise<ApiResponse<any>> {
-    return request.delete(`/api/roles/${id}`);
+    return request.delete(`/roles/${id}`);
   },
 
   // 根据用户ID获取角色列表
   getRolesByUserId(userId: number): Promise<Role[]> {
-    return request.get(`/api/roles/user/${userId}`);
+    return request.get(`/roles/user/${userId}`);
   },
 
   // 为用户分配角色
   assignRolesToUser(data: AssignRolesRequest): Promise<ApiResponse<any>> {
-    return request.post('/api/roles/assign', data);
+    return request.post('/roles/assign', data);
   }
 };

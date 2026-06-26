@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 絲印LED UV灑閃粉后加工表实体类
@@ -64,4 +65,11 @@ public class PostProcessingLeduvglitter {
     
     @ExcelIgnore
     private LocalDateTime updatedAt;
+    
+    /**
+     * 关联的注意事项ID列表
+     * 对应数据库字段: notice_ids (INTEGER[])
+     */
+    @ExcelIgnore
+    private List<Integer> noticeIds;
 }

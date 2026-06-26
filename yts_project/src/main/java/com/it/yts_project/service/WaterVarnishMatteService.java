@@ -1,12 +1,14 @@
 package com.it.yts_project.service;
 
-import com.it.yts_project.model.WaterVarnishMatteCompatibility;
+import com.it.yts_project.dto.PagedResult;
+import com.it.yts_project.dto.WaterVarnishMatteProductDTO;
 import com.it.yts_project.model.WaterVarnishMatteProduct;
+import com.it.yts_project.model.WaterVarnishMatteCompatibility;
 
 import java.util.List;
 
 /**
- * UV油_哑光水油 Service接口
+ * 水油(哑光) Service接口
  */
 public interface WaterVarnishMatteService {
 
@@ -18,19 +20,9 @@ public interface WaterVarnishMatteService {
     List<WaterVarnishMatteProduct> getAllProducts();
 
     /**
-     * 查询激活的产品
-     */
-    List<WaterVarnishMatteProduct> getActiveProducts();
-
-    /**
      * 根据ID查询产品
      */
     WaterVarnishMatteProduct getProductById(Integer id);
-
-    /**
-     * 根据物料编码查询产品
-     */
-    WaterVarnishMatteProduct getProductByMaterialCode(String materialCode);
 
     /**
      * 搜索产品
@@ -55,11 +47,6 @@ public interface WaterVarnishMatteService {
     List<WaterVarnishMatteCompatibility> getCompatibilitiesByProductId(Integer productId);
 
     /**
-     * 查询所有兼容性记录
-     */
-    List<WaterVarnishMatteCompatibility> getAllCompatibilities();
-
-    /**
      * 根据ID查询兼容性
      */
     WaterVarnishMatteCompatibility getCompatibilityById(Integer id);
@@ -70,22 +57,38 @@ public interface WaterVarnishMatteService {
     WaterVarnishMatteCompatibility saveCompatibility(WaterVarnishMatteCompatibility compatibility);
 
     /**
-     * 批量保存兼容性
-     */
-    void batchSaveCompatibility(List<WaterVarnishMatteCompatibility> compatibilities);
-
-    /**
      * 删除兼容性
      */
     void deleteCompatibility(Integer id);
 
     /**
-     * 根据产品ID删除兼容性
+     * 批量保存兼容性（用于矩阵导入）
      */
-    void deleteCompatibilityByProductId(Integer productId);
+    void batchSaveCompatibilities(List<WaterVarnishMatteCompatibility> compatibilities);
+
+    // ========== 匹配查询 ==========
 
     /**
-     * 获取所有后加工工序步骤名称
+     * 搜索产品（关键词 + 工序筛选 + 分页）
+     *
+     * @param keyword  搜索关键词
+     * @param stepName 后加工工序名称（可选）
+     * @param page     当前页码（从1开始）
+     * @param size     每页条数
+     * @return 分页结果
      */
-    List<String> getAllPostProcessingSteps();
+    PagedResult<WaterVarnishMatteProduct> searchProducts(String keyword, String stepName, int page, int size);
+
+    /**
+     * 获取所有后加工工序步骤名称（去重）
+     */
+    List<String> getDistinctSteps();
+
+    /**
+     * 获取产品详情（含兼容性列表）
+     *
+     * @param id 产品ID
+     * @return 产品详情DTO，不存在返回null
+     */
+    WaterVarnishMatteProductDTO getProductDetail(Integer id);
 }

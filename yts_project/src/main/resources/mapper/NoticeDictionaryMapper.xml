@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.NoticeDictionaryMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="NoticeDictionaryResultMap" type="com.it.yts_project.model.NoticeDictionary">
+        <id column="id" property="id"/>
+        <result column="notice_code" property="noticeCode"/>
+        <result column="title" property="title"/>
+        <result column="problem_description" property="problemDescription"/>
+        <result column="solution" property="solution"/>
+        <result column="category" property="category"/>
+        <result column="priority" property="priority"/>
+        <result column="is_active" property="isActive"/>
+        <result column="rich_content" property="richContent"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <!-- 根据ID列表查询 -->
+    <select id="findByIds" resultMap="NoticeDictionaryResultMap">
+        SELECT id, notice_code, title, problem_description, solution,
+               category, priority, is_active, rich_content, created_at, updated_at
+        FROM notice_dictionary
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND is_active = true
+        ORDER BY priority DESC, id ASC
+    </select>
+
+    <!-- 查询所有 -->
+    <select id="findAll" resultMap="NoticeDictionaryResultMap">
+        SELECT id, notice_code, title, problem_description, solution,
+               category, priority, is_active, rich_content, created_at, updated_at
+        FROM notice_dictionary
+        ORDER BY priority DESC, id ASC
+    </select>
+
+    <!-- 查询所有启用的 -->
+    <select id="findAllActive" resultMap="NoticeDictionaryResultMap">
+        SELECT id, notice_code, title, problem_description, solution,
+               category, priority, is_active, rich_content, created_at, updated_at
+        FROM notice_dictionary
+        WHERE is_active = true
+        ORDER BY priority DESC, id ASC
+    </select>
+
+    <!-- 根据ID查询 -->
+    <select id="findById" resultMap="NoticeDictionaryResultMap">
+        SELECT id, notice_code, title, problem_description, solution,
+               category, priority, is_active, rich_content, created_at, updated_at
+        FROM notice_dictionary
+        WHERE id = #{id}
+    </select>
+
+    <!-- 根据编码查询 -->
+    <select id="findByCode" resultMap="NoticeDictionaryResultMap">
+        SELECT id, notice_code, title, problem_description, solution,
+               category, priority, is_active, rich_content, created_at, updated_at
+        FROM notice_dictionary
+        WHERE notice_code = #{noticeCode}
+    </select>
+
+    <!-- 根据分类查询 -->
+    <select id="findByCategory" resultMap="NoticeDictionaryResultMap">
+        SELECT id, notice_code, title, problem_description, solution,
+               category, priority, is_active, rich_content, created_at, updated_at
+        FROM notice_dictionary
+        WHERE category = #{category}
+        AND is_active = true
+        ORDER BY priority DESC, id ASC
+    </select>
+
+    <!-- 插入 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO notice_dictionary (
+            notice_code, title, problem_description, solution,
+            category, priority, is_active, rich_content, created_at, updated_at
+        ) VALUES (
+            #{noticeCode}, #{title}, #{problemDescription}, #{solution},
+            #{category}, #{priority}, #{isActive}, #{richContent}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <!-- 更新 -->
+    <update id="update">
+        UPDATE notice_dictionary
+        SET notice_code = #{noticeCode},
+            title = #{title},
+            problem_description = #{problemDescription},
+            solution = #{solution},
+            category = #{category},
+            priority = #{priority},
+            is_active = #{isActive},
+            rich_content = #{richContent},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除 -->
+    <delete id="deleteById">
+        DELETE FROM notice_dictionary WHERE id = #{id}
+    </delete>
+
+</mapper>

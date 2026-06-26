@@ -4,6 +4,7 @@ import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.format.DateTimeFormat;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 产品类型选项实体类
@@ -60,7 +61,12 @@ public class ProductTypeOptions {
      * 是否激活（原始字段，用于业务逻辑）
      */
     private Boolean isActive;
-    
+
+    /**
+     * 关联的注意事项ID数组
+     */
+    private List<Integer> noticeIds;
+
     /**
      * 获取激活状态文本
      */

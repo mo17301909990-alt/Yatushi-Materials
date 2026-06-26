@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 烫金工艺兼容性表实体类
@@ -96,4 +97,9 @@ public class HotStampingCompatibility {
     @ExcelProperty(value = "更新時間", index = 12)
     @DateTimeFormat("yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
+
+    /**
+     * 关联的注意事项ID数组
+     */
+    private List<Integer> noticeIds;
 }

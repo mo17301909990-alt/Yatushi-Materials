@@ -61,4 +61,9 @@ public class SiliconeGlowInkCompatibility {
     @ExcelProperty(value = "更新时间", index = 6)
     @DateTimeFormat("yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
+
+    /**
+     * 关联产品名称（非数据库字段，用于前端显示）
+     */
+    private String productName;
 }

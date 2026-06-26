@@ -13,22 +13,22 @@ export const useProcessStore = defineStore('process', () => {
     },
     {
       id: 'printing',
-      name: '各品牌纸类通用产品指引书',
-      description: '各品牌纸类通用产品标准与指引'
+      name: '印刷匹配系统',
+      description: '用于印刷工艺的物料匹配'
     },
     {
       id: 'laminating',
-      name: '平面产品贴纸-应用指引书',
-      description: '平面贴纸产品应用标准与指引'
+      name: '过胶匹配系统',
+      description: '用于过胶工艺的物料匹配'
     },
     {
       id: 'screenPrinting',
-      name: '非平面产品贴纸-应用指引书',
-      description: '非平面贴纸产品应用标准与指引'
+      name: '丝印匹配系统',
+      description: '用于丝印工艺的物料匹配'
     },
     {
       id: 'silicone',
-      name: '书板贴纸-应用指引书',
+      name: '书板贴纸指引',
       description: '书板贴纸产品应用标准与指引'
     }
   ];

@@ -14,6 +14,18 @@ public interface ClothPaperTypeService {
      * @return 布料纸类型列表
      */
     List<ClothPaperTypeDTO> getAllActiveClothPaperTypes();
+
+    /**
+     * 获取用于「常用界面燙印性 組合應用表」导出的布面纸类型（排除勾选「特殊界面布面纸」的类型）
+     * @return 参与矩阵特殊界面列的布面纸类型列表
+     */
+    List<ClothPaperTypeDTO> getActiveClothPaperTypesForCommonInterfaceMatrix();
+
+    /**
+     * 获取勾选「特殊界面布面纸」的激活布面纸类型（用于「布面紙+燙金」組合應用表）
+     * @return excludeFromCommonInterfaceMatrix=true 的布面纸类型列表，按 sortOrder、id 排序
+     */
+    List<ClothPaperTypeDTO> getActiveSpecialInterfaceClothPaperTypes();
     
     /**
      * 获取所有布料纸类型（包括未激活的）

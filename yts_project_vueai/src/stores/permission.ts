@@ -20,7 +20,10 @@ export const usePermissionStore = defineStore('permission', {
       roles: false,
       permissions: false,
       menuPermissions: false
-    }
+    },
+
+    // RBAC 是否已完成初始化
+    rbacReady: false
   }),
 
   getters: {
@@ -93,6 +96,8 @@ export const usePermissionStore = defineStore('permission', {
         this.currentUserRoles = [];
         this.currentUserPermissions = [];
         // 不抛出错误，避免阻塞应用启动
+      } finally {
+        this.rbacReady = true;
       }
     },
 

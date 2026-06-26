@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.HotStampingTypeOptionsMapper">
+
+    <resultMap id="hotStampingTypeOptionsMap" type="com.it.yts_project.model.HotStampingTypeOptions">
+        <id property="id" column="id"/>
+        <result property="stampingType" column="stamping_type"/>
+        <result property="positionType" column="position_type"/>
+        <result property="description" column="description"/>
+        <result property="isActive" column="is_active"/>
+        <result property="sortOrder" column="sort_order"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+    
+    <!-- 更新注意事项ID列表 -->
+    <update id="updateNoticeIds">
+        UPDATE hot_stamping_type_options
+        SET notice_ids = #{noticeIds, typeHandler=com.it.yts_project.config.IntegerArrayTypeHandler}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 插入烫金类型选项 -->
+    <insert id="insert" parameterType="com.it.yts_project.model.HotStampingTypeOptions" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO hot_stamping_type_options (
+            stamping_type, position_type, description, is_active, sort_order, created_at, updated_at
+        ) VALUES (
+            #{stampingType}, #{positionType}, #{description}, #{isActive}, #{sortOrder}, NOW(), NOW()
+        )
+    </insert>
+
+    <!-- 更新烫金类型选项 -->
+    <update id="update" parameterType="com.it.yts_project.model.HotStampingTypeOptions">
+        UPDATE hot_stamping_type_options SET
+            stamping_type = #{stampingType},
+            position_type = #{positionType},
+            description = #{description},
+            is_active = #{isActive},
+            sort_order = #{sortOrder},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据ID删除烫金类型选项 -->
+    <delete id="deleteById">
+        DELETE FROM hot_stamping_type_options WHERE id = #{id}
+    </delete>
+
+</mapper>
+

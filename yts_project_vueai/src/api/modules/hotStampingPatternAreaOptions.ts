@@ -57,7 +57,7 @@ export const hotStampingPatternAreaOptionsApi = {
    * 获取所有激活的烫金图案区域选项
    */
   getActiveOptions: async (): Promise<HotStampingPatternAreaOption[]> => {
-    const response = await axios.get('/api/hot-stamping-pattern-area-options/active')
+    const response = await axios.get('/hot-stamping-pattern-area-options/active')
     return response.data
   },
 
@@ -65,7 +65,7 @@ export const hotStampingPatternAreaOptionsApi = {
    * 获取所有烫金图案区域选项
    */
   getAllOptions: async (): Promise<HotStampingPatternAreaOption[]> => {
-    const response = await axios.get('/api/hot-stamping-pattern-area-options')
+    const response = await axios.get('/hot-stamping-pattern-area-options')
     return response.data
   },
 
@@ -73,7 +73,7 @@ export const hotStampingPatternAreaOptionsApi = {
    * 分页获取烫金图案区域选项
    */
   getOptionsPaginated: async (params: HotStampingPatternAreaQueryParams = {}): Promise<PaginatedResponse<HotStampingPatternAreaOption>> => {
-    const response = await axios.get('/api/hot-stamping-pattern-area-options/paginated', { params })
+    const response = await axios.get('/hot-stamping-pattern-area-options/paginated', { params })
     return response.data
   },
 
@@ -81,7 +81,7 @@ export const hotStampingPatternAreaOptionsApi = {
    * 根据ID获取烫金图案区域选项
    */
   getOptionById: async (id: number): Promise<HotStampingPatternAreaOption> => {
-    const response = await axios.get(`/api/hot-stamping-pattern-area-options/${id}`)
+    const response = await axios.get(`/hot-stamping-pattern-area-options/${id}`)
     return response.data
   },
 
@@ -89,7 +89,7 @@ export const hotStampingPatternAreaOptionsApi = {
    * 创建烫金图案区域选项
    */
   createOption: async (option: CreateHotStampingPatternAreaOption): Promise<HotStampingPatternAreaOption> => {
-    const response = await axios.post('/api/hot-stamping-pattern-area-options', option)
+    const response = await axios.post('/hot-stamping-pattern-area-options', option)
     return response.data
   },
 
@@ -97,7 +97,7 @@ export const hotStampingPatternAreaOptionsApi = {
    * 更新烫金图案区域选项
    */
   updateOption: async (id: number, option: Partial<CreateHotStampingPatternAreaOption>): Promise<HotStampingPatternAreaOption> => {
-    const response = await axios.put(`/api/hot-stamping-pattern-area-options/${id}`, option)
+    const response = await axios.put(`/hot-stamping-pattern-area-options/${id}`, option)
     return response.data
   },
 
@@ -105,13 +105,13 @@ export const hotStampingPatternAreaOptionsApi = {
    * 删除烫金图案区域选项
    */
   deleteOption: async (id: number): Promise<void> => {
-    await axios.delete(`/api/hot-stamping-pattern-area-options/${id}`)
+    await axios.delete(`/hot-stamping-pattern-area-options/${id}`)
   },
 
   /**
    * 批量删除烫金图案区域选项
    */
   batchDeleteOptions: async (ids: number[]): Promise<void> => {
-    await axios.delete('/api/hot-stamping-pattern-area-options/batch', { data: { ids } })
+    await axios.delete('/hot-stamping-pattern-area-options/batch', { data: { ids } })
   }
 }

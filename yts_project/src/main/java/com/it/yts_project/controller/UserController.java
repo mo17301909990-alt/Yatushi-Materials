@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping({"/api/users", "/users"})
 @CrossOrigin(origins = {
     "http://localhost:5173",
     "http://120.26.101.0",

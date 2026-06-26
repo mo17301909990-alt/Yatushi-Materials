@@ -23,7 +23,7 @@ export const batchNoticeApi = {
    */
   batchUpdateNotices: async (ruleType: string, request: BatchNoticeUpdateRequest): Promise<BatchNoticeUpdateResponse> => {
     const response = await axios.post<BatchNoticeUpdateResponse>(
-      `/api/batch-notice/update/${ruleType}`,
+      `/batch-notice/update/${ruleType}`,
       request
     )
     return response.data

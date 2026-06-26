@@ -37,6 +37,10 @@
         SELECT DISTINCT paper_performance FROM hot_stamping_compatibility ORDER BY paper_performance
     </select>
 
+    <select id="countDistinctPaperPerformanceTypes" resultType="long">
+        SELECT COUNT(DISTINCT paper_performance) FROM hot_stamping_compatibility
+    </select>
+
     <!-- 根据产品类型ID获取去重的图案特征ID列表 -->
     <select id="getPatternCharacteristicIdsByProductTypeId" resultType="int">
         SELECT DISTINCT pattern_characteristic_id
@@ -163,6 +167,10 @@
     <!-- 获取所有产品类型 -->
     <select id="getAllProductTypes" resultType="string">
         SELECT DISTINCT product_type FROM hot_stamping_compatibility ORDER BY product_type
+    </select>
+
+    <select id="countDistinctProductTypes" resultType="long">
+        SELECT COUNT(DISTINCT product_type) FROM hot_stamping_compatibility
     </select>
 
     <!-- 获取所有烫金类型 -->

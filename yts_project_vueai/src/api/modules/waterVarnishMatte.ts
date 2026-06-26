@@ -11,6 +11,8 @@ export interface WaterVarnishMatteProduct {
   materialType?: string
   color?: string
   responsiblePerson?: string
+  thickness?: string
+  shape?: string
   minSheetSize?: string
   maxSheetSize?: string
   minPoint?: string

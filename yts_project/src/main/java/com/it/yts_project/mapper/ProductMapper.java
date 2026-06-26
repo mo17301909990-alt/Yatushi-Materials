@@ -16,6 +16,9 @@ public interface ProductMapper {
      * 查询所有产品
      */
     List<Product> findAll();
+
+    /** 產品總數（燙金物料 Hub 統計等，避免拉全表） */
+    long countAll();
     
     /**
      * 根据ID查询产品

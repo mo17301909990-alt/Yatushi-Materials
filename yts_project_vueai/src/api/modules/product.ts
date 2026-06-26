@@ -93,7 +93,7 @@ export interface ProductOptions {
   temperatureRangeOptions: string[]
 }
 
-const API_BASE_URL = '/api/api'
+const API_BASE_URL = '/api'
 
 // 产品管理API
 export const productApi = {

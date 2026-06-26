@@ -4,13 +4,21 @@ import com.it.yts_project.dto.ClothPaperTypeDTO;
 import com.it.yts_project.mapper.ProductsMapper;
 import com.it.yts_project.model.PostProcessingLeduvglitter;
 import com.it.yts_project.service.ClothPaperTypeService;
+import com.it.yts_project.service.LeduvglitterMatrixService;
 import com.it.yts_project.service.PostProcessingLeduvglitterService;
 import com.it.yts_project.util.ExcelExportUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 絲印LED UV灑閃粉后加工控制器
  */
 @RestController
-@RequestMapping("/api/post-processing-leduvglitter")
+@RequestMapping(value = { "/api/post-processing-leduvglitter", "/post-processing-leduvglitter" })
 @CrossOrigin(origins = {
     "http://localhost:5173",
     "http://120.26.101.0",
@@ -39,7 +47,73 @@ public class PostProcessingLeduvglitterController {
     
     @Autowired
     private ProductsMapper productsMapper;
-    
+
+    @Autowired
+    private LeduvglitterMatrixService leduvglitterMatrixService;
+
+    // ========== 矩阵表导出/导入（配对烫金纸型号） ==========
+
+    /**
+     * 导出矩阵表为 Excel（CSV）
+     */
+    @GetMapping("/matrix/export/excel")
+    public ResponseEntity<byte[]> exportMatrixExcel() {
+        try {
+            byte[] data = leduvglitterMatrixService.exportToExcel();
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            String fileName = "燙金_絲印LED_UV灑閃粉_配對燙金紙型號_" + timestamp + ".csv";
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType("text/csv; charset=UTF-8"));
+            headers.setContentDispositionFormData("attachment", URLEncoder.encode(fileName, StandardCharsets.UTF_8));
+            headers.setContentLength(data.length);
+            return new ResponseEntity<>(data, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    /**
+     * 导出矩阵表为 Word（.docx）
+     */
+    @GetMapping("/matrix/export/word")
+    public ResponseEntity<byte[]> exportMatrixWord() {
+        try {
+            byte[] data = leduvglitterMatrixService.exportToWord();
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            String fileName = "燙金_絲印LED_UV灑閃粉_配對燙金紙型號_" + timestamp + ".docx";
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.wordprocessingml.document"));
+            headers.setContentDispositionFormData("attachment", URLEncoder.encode(fileName, StandardCharsets.UTF_8));
+            headers.setContentLength(data.length);
+            return new ResponseEntity<>(data, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    /**
+     * 导入矩阵表（支持 .xlsx / .csv / .docx）
+     */
+    @PostMapping("/matrix/import")
+    public ResponseEntity<Map<String, Object>> importMatrix(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "conflictStrategy", defaultValue = "skip") String conflictStrategy) {
+        try {
+            Map<String, Object> result = leduvglitterMatrixService.importMatrix(file, conflictStrategy);
+            return ResponseEntity.ok(result);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> body = new HashMap<>();
+            body.put("success", false);
+            body.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+        } catch (Exception e) {
+            Map<String, Object> body = new HashMap<>();
+            body.put("success", false);
+            body.put("message", "Import failed: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
+        }
+    }
+
     /**
      * 获取所有LED UV灑閃粉配置
      */

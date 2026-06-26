@@ -28,6 +28,12 @@ public interface HotStampingCompatibilityMapper {
      * 获取所有产品类型
      */
     List<String> getAllProductTypes();
+
+    /** DISTINCT product_type 數量（與 getAllProductTypes 列表長度一致） */
+    long countDistinctProductTypes();
+
+    /** DISTINCT paper_performance 數量（與 getAllPaperPerformanceTypes 列表長度一致） */
+    long countDistinctPaperPerformanceTypes();
     
     /**
      * 获取所有烫金类型
@@ -126,4 +132,9 @@ public interface HotStampingCompatibilityMapper {
      * 统计某个烫金类型在耐磨映射表中的规则数量
      */
     int countByHotStampingTypeId(@Param("hotStampingTypeId") Integer hotStampingTypeId);
+
+    /**
+     * 更新注意事项ID列表
+     */
+    void updateNoticeIds(@Param("id") Long id, @Param("noticeIds") List<Integer> noticeIds);
 }

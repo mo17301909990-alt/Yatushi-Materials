@@ -24,6 +24,10 @@
         SELECT * FROM products ORDER BY id DESC
     </select>
 
+    <select id="countAll" resultType="long">
+        SELECT COUNT(*) FROM products
+    </select>
+
     <!-- 根据ID查询产品 -->
     <select id="findById" resultMap="ProductResultMap">
         SELECT * FROM products WHERE id = #{id}

@@ -282,7 +282,7 @@
         FROM post_processing_leduvglitter
         WHERE notice_ids IS NOT NULL
         AND array_length(notice_ids, 1) > 0
-        AND compatibility_status IN ('V', '▷')
+        AND compatibility_status = 'V'
         <if test="clothPaperTypeId != null">
             AND cloth_paper_type_id = #{clothPaperTypeId}
         </if>

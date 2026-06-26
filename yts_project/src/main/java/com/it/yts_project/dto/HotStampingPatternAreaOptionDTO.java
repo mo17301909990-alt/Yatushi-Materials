@@ -1,6 +1,7 @@
 package com.it.yts_project.dto;
 
 import lombok.Data;
+import java.util.List;
 
 /**
  * 烫金图案区域选项DTO
@@ -19,4 +20,5 @@ public class HotStampingPatternAreaOptionDTO {
     private Integer sortOrder;
     private String createdAt;
     private String updatedAt;
+    private List<Integer> noticeIds;  // 关联的注意事项ID数组
 }

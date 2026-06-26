@@ -1,5 +1,8 @@
 package com.it.yts_project.controller;
 
+import com.it.yts_project.dto.LaminationMaterialProductDTO;
+import com.it.yts_project.dto.LaminationMaterialQueryParams;
+import com.it.yts_project.dto.PagedResult;
 import com.it.yts_project.model.LaminationMaterialCompatibility;
 import com.it.yts_project.model.LaminationMaterialProduct;
 import com.it.yts_project.service.LaminationMaterialProductService;
@@ -138,5 +141,54 @@ public class LaminationMaterialProductController {
     public ResponseEntity<List<String>> getAllPostProcessingSteps() {
         List<String> steps = service.getAllPostProcessingSteps();
         return ResponseEntity.ok(steps);
+    }
+
+    // ========== 匹配查询 ==========
+
+    /**
+     * 匹配查询：关键词搜索 + 多材料类型筛选 + 多工序筛选 + 分页
+     */
+    @PostMapping("/match")
+    public ResponseEntity<PagedResult<LaminationMaterialProduct>> match(@RequestBody LaminationMaterialQueryParams params) {
+        if (params.getPage() == null || params.getPage() < 1) {
+            params.setPage(1);
+        }
+        if (params.getSize() == null || params.getSize() < 1) {
+            params.setSize(15);
+        }
+        PagedResult<LaminationMaterialProduct> result = service.searchProducts(
+            params.getKeyword(), params.getMaterialTypes(), params.getSteps(), params.getPage(), params.getSize());
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 获取所有后加工工序步骤名称（去重）
+     */
+    @GetMapping("/steps")
+    public ResponseEntity<List<String>> getSteps() {
+        List<String> steps = service.getDistinctSteps();
+        return ResponseEntity.ok(steps);
+    }
+
+    /**
+     * 获取所有材料类型（去重）
+     */
+    @GetMapping("/material-types")
+    public ResponseEntity<List<String>> getMaterialTypes() {
+        List<String> types = service.getDistinctMaterialTypes();
+        return ResponseEntity.ok(types);
+    }
+
+    /**
+     * 获取产品详情（含兼容性列表）
+     */
+    @GetMapping("/products/{id}/detail")
+    public ResponseEntity<LaminationMaterialProductDTO> getProductDetail(@PathVariable Integer id) {
+        LaminationMaterialProductDTO dto = service.getProductDetail(id);
+        if (dto != null) {
+            return ResponseEntity.ok(dto);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

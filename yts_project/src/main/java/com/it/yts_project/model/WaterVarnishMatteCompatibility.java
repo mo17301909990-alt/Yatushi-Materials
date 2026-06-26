@@ -8,7 +8,7 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 /**
- * UV油_哑光水油后加工兼容性模型
+ * 水油(哑光)兼容性模型
  */
 @Data
 @NoArgsConstructor
@@ -16,20 +16,38 @@ import java.time.LocalDateTime;
 @Builder
 public class WaterVarnishMatteCompatibility {
 
+    /**
+     * 主键ID
+     */
     private Integer id;
 
-    /** 产品ID,关联water_varnish_matte_product.id */
+    /**
+     * 关联产品ID
+     */
     private Integer productId;
 
-    /** 后加工工序步骤名称 */
+    /**
+     * 后加工工序步骤名称
+     */
     private String postProcessingStep;
 
-    /** 兼容性状态: V=兼容, X=不兼容 */
+    /**
+     * 兼容性状态(V=兼容/X=不兼容/▷=有条件兼容)
+     */
     private String compatibilityStatus;
 
-    /** 显示顺序 */
+    /**
+     * 显示顺序
+     */
     private Integer displayOrder;
 
-    /** 创建时间 */
+    /**
+     * 创建时间
+     */
     private LocalDateTime createdAt;
+
+    /**
+     * 产品名称（非数据库字段，用于显示）
+     */
+    private String productName;
 }

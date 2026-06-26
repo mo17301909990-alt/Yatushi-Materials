@@ -151,4 +151,9 @@ public interface PreProcessingStepsMapper {
                                           @Param("seriesName") String seriesName,
                                           @Param("productId") Integer productId,
                                           @Param("paperType") String paperType);
+
+    /**
+     * 更新注意事项ID列表
+     */
+    void updateNoticeIds(@Param("id") Integer id, @Param("noticeIds") List<Integer> noticeIds);
 }

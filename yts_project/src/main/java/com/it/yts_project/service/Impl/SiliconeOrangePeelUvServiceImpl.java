@@ -1,5 +1,7 @@
 package com.it.yts_project.service.Impl;
 
+import com.it.yts_project.dto.SiliconeOrangePeelUvProductDTO;
+import com.it.yts_project.dto.PagedResult;
 import com.it.yts_project.mapper.SiliconeOrangePeelUvMapper;
 import com.it.yts_project.model.SiliconeOrangePeelUvProduct;
 import com.it.yts_project.model.SiliconeOrangePeelUvCompatibility;
@@ -7,117 +9,101 @@ import com.it.yts_project.service.SiliconeOrangePeelUvService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
-/**
- * 硅胶桔纹UV(Orange Peel UV) Service实现类
- */
 @Service
 @Transactional
 public class SiliconeOrangePeelUvServiceImpl implements SiliconeOrangePeelUvService {
 
     @Autowired
-    private SiliconeOrangePeelUvMapper mapper;
-
-    // ========== 产品管理 ==========
+    private SiliconeOrangePeelUvMapper siliconeOrangePeelUvMapper;
 
     @Override
-    public List<SiliconeOrangePeelUvProduct> getAllProducts() {
-        return mapper.findAllProducts();
-    }
+    public List<SiliconeOrangePeelUvProduct> getAllProducts() { return siliconeOrangePeelUvMapper.findAllProducts(); }
 
     @Override
-    public List<SiliconeOrangePeelUvProduct> getActiveProducts() {
-        return mapper.findActiveProducts();
-    }
+    public SiliconeOrangePeelUvProduct getProductById(Integer id) { return siliconeOrangePeelUvMapper.findProductById(id); }
 
     @Override
-    public SiliconeOrangePeelUvProduct getProductById(Integer id) {
-        return mapper.findProductById(id);
-    }
-
-    @Override
-    public List<SiliconeOrangePeelUvProduct> searchProducts(String keyword) {
-        return mapper.searchProducts(keyword);
-    }
+    public List<SiliconeOrangePeelUvProduct> searchProducts(String keyword) { return siliconeOrangePeelUvMapper.searchProducts(keyword); }
 
     @Override
     public SiliconeOrangePeelUvProduct saveProduct(SiliconeOrangePeelUvProduct product) {
-        if (product.getId() == null) {
-            mapper.insertProduct(product);
-        } else {
-            mapper.updateProduct(product);
-        }
+        if (product.getId() == null) { siliconeOrangePeelUvMapper.insertProduct(product); }
+        else { siliconeOrangePeelUvMapper.updateProduct(product); }
         return product;
     }
 
     @Override
-    public void deleteProduct(Integer id) {
-        mapper.deleteProductById(id);
-    }
-
-    // ========== 兼容性管理 ==========
+    public void deleteProduct(Integer id) { siliconeOrangePeelUvMapper.deleteProductById(id); }
 
     @Override
     public List<SiliconeOrangePeelUvCompatibility> getCompatibilitiesByProductId(Integer productId) {
-        return mapper.findCompatibilitiesByProductId(productId);
-    }
-
-    @Override
-    public List<SiliconeOrangePeelUvCompatibility> getAllCompatibilities() {
-        return mapper.findAllCompatibilities();
+        return siliconeOrangePeelUvMapper.findCompatibilitiesByProductId(productId);
     }
 
     @Override
     public SiliconeOrangePeelUvCompatibility getCompatibilityById(Integer id) {
-        return mapper.findCompatibilityById(id);
+        return siliconeOrangePeelUvMapper.findCompatibilityById(id);
     }
 
     @Override
     public SiliconeOrangePeelUvCompatibility saveCompatibility(SiliconeOrangePeelUvCompatibility compatibility) {
-        // 检查唯一性
-        SiliconeOrangePeelUvCompatibility existing = mapper.findCompatibilityByProductAndStep(
-                compatibility.getProductId(), compatibility.getPostProcessingStep());
-        if (existing != null && !existing.getId().equals(compatibility.getId())) {
-            throw new IllegalArgumentException("该产品与后加工工序的兼容性配置已存在");
-        }
+        if (compatibility.getProductId() == null) throw new IllegalArgumentException("产品ID不能为空");
+        SiliconeOrangePeelUvProduct product = siliconeOrangePeelUvMapper.findProductById(compatibility.getProductId());
+        if (product == null) throw new IllegalArgumentException("产品ID " + compatibility.getProductId() + " 不存在");
         if (compatibility.getId() == null) {
-            mapper.insertCompatibility(compatibility);
+            SiliconeOrangePeelUvCompatibility existing = siliconeOrangePeelUvMapper.findCompatibilityByUniqueKey(
+                compatibility.getProductId(), compatibility.getPostProcessingStep());
+            if (existing != null) throw new IllegalArgumentException("该产品与后加工工序的兼容性配置已存在");
+            siliconeOrangePeelUvMapper.insertCompatibility(compatibility);
         } else {
-            mapper.updateCompatibility(compatibility);
+            SiliconeOrangePeelUvCompatibility existing = siliconeOrangePeelUvMapper.findCompatibilityByUniqueKey(
+                compatibility.getProductId(), compatibility.getPostProcessingStep());
+            if (existing != null && !existing.getId().equals(compatibility.getId()))
+                throw new IllegalArgumentException("该产品与后加工工序的兼容性配置已存在");
+            siliconeOrangePeelUvMapper.updateCompatibility(compatibility);
         }
+        compatibility.setProductName(product.getMaterialName());
         return compatibility;
     }
 
     @Override
-    @Transactional
+    public void deleteCompatibility(Integer id) { siliconeOrangePeelUvMapper.deleteCompatibilityById(id); }
+
+    @Override
     public void batchSaveCompatibilities(List<SiliconeOrangePeelUvCompatibility> compatibilities) {
-        for (SiliconeOrangePeelUvCompatibility compatibility : compatibilities) {
-            // 先检查是否已存在
-            SiliconeOrangePeelUvCompatibility existing = mapper.findCompatibilityByProductAndStep(
-                    compatibility.getProductId(), compatibility.getPostProcessingStep());
-            if (existing != null) {
-                compatibility.setId(existing.getId());
-                mapper.updateCompatibility(compatibility);
-            } else {
-                mapper.insertCompatibility(compatibility);
-            }
+        if (compatibilities == null || compatibilities.isEmpty()) return;
+        for (SiliconeOrangePeelUvCompatibility comp : compatibilities) {
+            if (comp.getProductId() == null) throw new IllegalArgumentException("产品ID不能为空");
+            SiliconeOrangePeelUvProduct product = siliconeOrangePeelUvMapper.findProductById(comp.getProductId());
+            if (product == null) throw new IllegalArgumentException("产品ID " + comp.getProductId() + " 不存在");
+            SiliconeOrangePeelUvCompatibility existing = siliconeOrangePeelUvMapper.findCompatibilityByUniqueKey(
+                comp.getProductId(), comp.getPostProcessingStep());
+            if (existing != null) { comp.setId(existing.getId()); siliconeOrangePeelUvMapper.updateCompatibility(comp); }
+            else { siliconeOrangePeelUvMapper.insertCompatibility(comp); }
         }
     }
 
     @Override
-    public void deleteCompatibility(Integer id) {
-        mapper.deleteCompatibilityById(id);
+    public PagedResult<SiliconeOrangePeelUvProduct> searchProducts(String keyword, String stepName, int page, int size) {
+        int offset = (page - 1) * size;
+        List<SiliconeOrangePeelUvProduct> items = siliconeOrangePeelUvMapper.searchProductsWithStep(keyword, stepName, offset, size);
+        Long total = siliconeOrangePeelUvMapper.countProductsWithStep(keyword, stepName);
+        return new PagedResult<>(items, total, size, page);
     }
 
     @Override
-    public void deleteCompatibilitiesByProductId(Integer productId) {
-        mapper.deleteCompatibilitiesByProductId(productId);
-    }
+    public List<String> getDistinctSteps() { return siliconeOrangePeelUvMapper.getDistinctPostProcessingSteps(); }
 
     @Override
-    public List<String> getAllPostProcessingSteps() {
-        return mapper.getAllPostProcessingSteps();
+    public SiliconeOrangePeelUvProductDTO getProductDetail(Integer id) {
+        SiliconeOrangePeelUvProduct product = siliconeOrangePeelUvMapper.findProductById(id);
+        if (product == null) return null;
+        List<SiliconeOrangePeelUvCompatibility> compatibilities = siliconeOrangePeelUvMapper.findCompatibilitiesByProductId(id);
+        SiliconeOrangePeelUvProductDTO dto = new SiliconeOrangePeelUvProductDTO();
+        dto.setProduct(product);
+        dto.setCompatibilities(compatibilities);
+        return dto;
     }
 }

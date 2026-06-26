@@ -15,7 +15,7 @@ export interface ClothPaperType {
 export const clothPaperTypeApi = {
   // 获取所有激活的布料纸类型
   getActiveClothPaperTypes: (): Promise<ClothPaperType[]> => {
-    return request.get('/api/cloth-paper-types/active');
+    return request.get('/cloth-paper-types/active');
   }
 };
 

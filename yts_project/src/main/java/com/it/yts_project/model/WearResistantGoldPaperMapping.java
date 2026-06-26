@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 耐磨金纸映射表实体类
@@ -70,6 +71,12 @@ public class WearResistantGoldPaperMapping {
      */
     @ExcelIgnore
     private LocalDateTime updatedAt;
+
+    /**
+     * 关联的注意事项ID数组
+     */
+    @ExcelIgnore
+    private List<Integer> noticeIds;
 }
 
 
