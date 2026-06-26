@@ -34,6 +34,7 @@
 | 安全审计/密码扫描 | `guard` | Controller 权限注解扫描 |
 | Bug 排查 | `investigate` | 定位→复现→修复→记录 gotcha |
 | 代码审查 | `global-code-reviewer` | 编译通过 + 逻辑审查 |
+| 任何代码改动 | `quality-gate` | `bash scripts/quality-gate.sh` |
 | 端到端验证 | `qa` | curl API + 前端构建 |
 | 架构/方案设计 | `software-architect` | 方案文档产出 |
 

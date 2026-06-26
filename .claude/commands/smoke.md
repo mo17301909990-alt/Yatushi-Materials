@@ -28,6 +28,23 @@ bash scripts/smoke.sh
 | 2 | `npm run test:run` | 252 个测试通过（70 API 模块 + 7 组件/store） |
 | 3 | `npm run build` | Vite 生产构建无错误 |
 
+## 可选: API 契约烟雾测试（需后端运行）
+
+当后端正在运行时（`cd yts_project && mvn spring-boot:run`），额外跑 API 端点可达性检查:
+
+```bash
+bash scripts/api-contract-test.sh
+```
+
+默认连接 `http://localhost:8092`，自定义端口: `bash scripts/api-contract-test.sh http://localhost:8092`
+
+检查项:
+- `GET /api/health` — 健康端点
+- `GET /api/gold-foil/products` — 烫金产品
+- `GET /api/laminating/options/materials` — 裱纸/覆膜
+- `POST /api/compatibility/hot-stamping-types` — 烫金兼容性
+- `GET /api/cloth-paper-types` — 布纸类型对照表
+
 ## 当烟雾测试失败
 
 | 失败 | 原因 | 修法 |
