@@ -52,12 +52,12 @@ run_step "Backend compile" \
 # --- 2. Frontend build ----------------------------------------
 
 run_step "Frontend build" \
-  bash -c "cd '$FRONTEND_DIR' && npm run build 2>&1 | tail -3"
+  bash -c "cd '$FRONTEND_DIR' && npm run build 2>&1 | tail -3; exit \${PIPESTATUS[0]}"
 
 # --- 3. Tests -------------------------------------------------
 
 run_step "Tests" \
-  bash -c "cd '$FRONTEND_DIR' && npm run test:run 2>&1 | tail -5"
+  bash -c "cd '$FRONTEND_DIR' && npm run test:run 2>&1 | tail -5; exit \${PIPESTATUS[0]}"
 
 # --- 4. Smoke routes ------------------------------------------
 
