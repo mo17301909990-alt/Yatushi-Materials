@@ -46,6 +46,11 @@ export default defineConfig({
   },
   test: {
     globals: true,
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src')
+      }
+    },
     environment: 'jsdom',
     setupFiles: './src/test-setup.ts',
     coverage: {

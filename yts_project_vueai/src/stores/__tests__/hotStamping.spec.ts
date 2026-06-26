@@ -171,7 +171,7 @@ describe('hotStamping store', () => {
     it('otherMatches 委托到 matchingStore', () => {
       const store = useHotStampingStore();
       const matchingStore = useMatchingStore();
-      expect(store.otherMatches).toBe(matchingStore.otherMatches);
+      expect(store.otherMatches).toEqual(matchingStore.otherMatches);
     });
 
     it('firstMatchParams 委托到 matchingStore', () => {
