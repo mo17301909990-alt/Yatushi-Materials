@@ -1,0 +1,669 @@
+[2026-06-23T01:23:38.780Z] [debug] [vite] connecting...
+[2026-06-23T01:23:38.808Z] [debug] [vite] connected.
+[2026-06-23T01:23:39.187Z] [log] initUserState 被调用
+[2026-06-23T01:23:39.187Z] [log] localStorage 状态: {userInfo: 不存在, isLoggedIn: null, expirationTimeStr: null}
+[2026-06-23T01:23:39.187Z] [log] 用户信息或登录状态无效
+[2026-06-23T01:23:39.187Z] [log] 清除登录状态后: {isLoggedIn: false, userInfo: null}
+[2026-06-23T01:23:39.187Z] [log] 路由守衛: 路由到 /login, 登錄狀態: false
+[2026-06-23T01:23:39.676Z] [log] 开始初始化权限系统...
+[2026-06-23T01:23:39.676Z] [log] 用户未登录，跳过权限初始化
+[2026-06-23T01:23:39.676Z] [log] 权限系统初始化完成 - 角色: 0 权限: 0
+[2026-06-23T01:23:45.355Z] [log] 开始登录请求: admin
+[2026-06-23T01:23:45.356Z] [log] Request: POST /api/users/login {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:23:45.424Z] [log] 响应成功: /users/login {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:23:45.424Z] [log] 登录请求响应数据: {id: 1, username: admin, password: null, email: 134679@example.com}
+[2026-06-23T01:23:45.425Z] [log] 登录请求响应: {id: 1, username: admin, password: null, email: 134679@example.com}
+[2026-06-23T01:23:45.425Z] [log] 处理的用户数据: {id: 1, username: admin, password: null, email: 134679@example.com}
+[2026-06-23T01:23:45.425Z] [log] 已保存到localStorage: {userInfo: {"id":1,"username":"admin","password":null,"email":"134679@example.com"}, isLoggedIn: true, loginTime: 1782177825424, expirationTime: 1782199425424}
+[2026-06-23T01:23:45.436Z] [log] 登录成功，过期时间：2026/6/23 15:23:45
+[2026-06-23T01:23:45.436Z] [log] 当前登录状态: true
+[2026-06-23T01:23:45.436Z] [log] initUserState 被调用
+[2026-06-23T01:23:45.436Z] [log] localStorage 状态: {userInfo: 存在, isLoggedIn: true, expirationTimeStr: 1782199425424}
+[2026-06-23T01:23:45.436Z] [log] 当前时间: 2026/6/23 09:23:45
+[2026-06-23T01:23:45.436Z] [log] 过期时间: 2026/6/23 15:23:45
+[2026-06-23T01:23:45.436Z] [log] 登录状态有效，还剩 360 分钟过期
+[2026-06-23T01:23:45.437Z] [log] 当前登录状态: true
+[2026-06-23T01:23:45.437Z] [log] 用户信息: Proxy(Object)
+[2026-06-23T01:23:45.437Z] [log] 路由守衛: 路由到 /process-config, 登錄狀態: true
+[2026-06-23T01:23:45.441Z] [log] Current process changed to: hotStamping
+[2026-06-23T01:23:45.441Z] [log] isTechManagement: false
+[2026-06-23T01:23:45.443Z] [log] hotStampingStore.firstMatch getter called
+[2026-06-23T01:23:45.443Z] [log] matchingStore.firstMatchParams: null
+[2026-06-23T01:23:45.443Z] [log] Computing firstMatch in matchingStore
+[2026-06-23T01:23:45.443Z] [log] searchMatchResult.value: null
+[2026-06-23T01:23:45.443Z] [log] firstMatchParams.value: null
+[2026-06-23T01:23:45.444Z] [log] No match result found, returning null
+[2026-06-23T01:23:45.444Z] [log] hotStampingStore.firstMatch returning: null
+[2026-06-23T01:23:45.444Z] [log] hotStampingStore.secondMatchParams getter called
+[2026-06-23T01:23:45.444Z] [log] matchingStore.secondMatchParams: null
+[2026-06-23T01:23:45.444Z] [log] hotStampingStore.secondMatchParams returning: null
+[2026-06-23T01:23:45.444Z] [log] hotStampingStore.searchMatchResult getter called
+[2026-06-23T01:23:45.444Z] [log] hotStampingStore.searchMatchResult returning: null
+[2026-06-23T01:23:45.444Z] [log] hotStampingStore.firstMatch getter called
+[2026-06-23T01:23:45.444Z] [log] matchingStore.firstMatchParams: null
+[2026-06-23T01:23:45.444Z] [log] hotStampingStore.firstMatch returning: null
+[2026-06-23T01:23:45.445Z] [log] hotStampingStore.secondMatchParams getter called
+[2026-06-23T01:23:45.445Z] [log] matchingStore.secondMatchParams: null
+[2026-06-23T01:23:45.445Z] [log] hotStampingStore.secondMatchParams returning: null
+[2026-06-23T01:23:45.445Z] [log] hotStampingStore.searchMatchResult getter called
+[2026-06-23T01:23:45.445Z] [log] hotStampingStore.searchMatchResult returning: null
+[2026-06-23T01:23:45.445Z] [log] hotStampingStore.firstMatch getter called
+[2026-06-23T01:23:45.445Z] [log] matchingStore.firstMatchParams: null
+[2026-06-23T01:23:45.445Z] [log] hotStampingStore.firstMatch returning: null
+[2026-06-23T01:23:45.445Z] [log] hotStampingStore.secondMatchParams getter called
+[2026-06-23T01:23:45.445Z] [log] matchingStore.secondMatchParams: null
+[2026-06-23T01:23:45.445Z] [log] hotStampingStore.secondMatchParams returning: null
+[2026-06-23T01:23:45.445Z] [log] hotStampingStore.searchMatchResult getter called
+[2026-06-23T01:23:45.445Z] [log] hotStampingStore.searchMatchResult returning: null
+[2026-06-23T01:23:45.481Z] [log] getCurrentMatchStage - 有效參數數量: 0
+[2026-06-23T01:23:45.481Z] [log] getCurrentMatchStage - 有效參數: []
+[2026-06-23T01:23:45.481Z] [log] MatchingResult - 參數數量: 0
+[2026-06-23T01:23:45.481Z] [log] 可用匹配結果: {searchResults: 0, searchMatchResult: 0, secondMatchResults: 0, thirdMatchResults: 0}
+[2026-06-23T01:23:45.513Z] [log] 使用静态过胶选项: [Object, Object]
+[2026-06-23T01:23:45.513Z] [log] Calling getAllActiveOptions API
+[2026-06-23T01:23:45.513Z] [log] 开始加载烫金类型选项...
+[2026-06-23T01:23:45.525Z] [log] Calling getUserPreferences API with userId: 1
+[2026-06-23T01:23:45.525Z] [log] Component mounted
+[2026-06-23T01:23:45.525Z] [log] Starting to fetch products
+[2026-06-23T01:23:45.525Z] [log] Calling getAllProducts API
+[2026-06-23T01:23:45.528Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:23:45.528Z] [log] Request: GET /api/api/pre-processing-steps/options {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:23:45.528Z] [log] Request: GET /api/api/compatibility/hot-stamping-type-groups {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:23:45.528Z] [log] Request: GET /api/api/cloth-paper-types/active {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:23:45.528Z] [log] Request: GET /api/users/1/match-preferences {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:23:45.528Z] [log] Request: GET /api/gold-foil/products {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 120000}
+[2026-06-23T01:23:45.554Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:23:45.554Z] [error] 获取产品类型选项失败: AxiosError
+[2026-06-23T01:23:45.555Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:23:45.555Z] [error] 加载过胶相关数据失败: AxiosError
+[2026-06-23T01:23:45.556Z] [log] 燙金圖案（面积/类型）选项加载成功: Proxy(Array)
+[2026-06-23T01:23:45.562Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:23:45.562Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:23:45.563Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:23:45.563Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:23:45.564Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:23:45.564Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:23:45.564Z] [error] 获取前工序选项失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:23:45.571Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:23:45.572Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:23:45.572Z] [error] 加载烫金类型选项失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:23:45.572Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:23:45.572Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:23:45.572Z] [error] 获取布料纸类型选项失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:23:45.572Z] [log] 响应成功: /users/1/match-preferences {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:23:45.572Z] [log] 加載用戶匹配偏好: {performance: Array(1), color: Array(1), size: Array(1), temperature: Array(1), tightness: Array(1)}
+[2026-06-23T01:23:45.583Z] [log] 响应成功: /gold-foil/products {data: Array(797), status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:23:45.584Z] [log] API response data: [Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object]
+[2026-06-23T01:23:45.585Z] [warning] [Vue warn]: Invalid prop: custom validator check failed for prop "pagerCount". 
+  at <ElPagination current-page=1 onUpdate:currentPage=fn page-size=15  ... > 
+  at <GoldFoilSupplyList> 
+  at <ProcessSidebar key=0 > 
+  at <ProcessConfig onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > 
+  at <RouterView> 
+  at <App>
+[2026-06-23T01:23:45.586Z] [warning] ElementPlusError: [el-pagination] [API] small is about to be deprecated in version 3.0.0, please use size instead.
+For more detail, please visit: https://element-plus.org/zh-CN/component/pagination.html
+
+    at debugWarn (http://localhost:5173/node_modules/.vite/deps/element-plus.js?v=f8a47250:9675:37)
+    at watch.immediate (http://localhost:5173/node_modules/.vite/deps/element-plus.js?v=f8a47250:15592:7)
+    at callWithErrorHandling (http://localhost:5173/node_modules/.vite/deps/chunk-UQWBJQZ5.js?v=f8a47250:2263:19)
+    at callWithAsyncErrorHandling (http://localhost:5173/node_modules/.vite/deps/chunk-UQWBJQZ5.js?v=f8a47250:2270:17)
+    at baseWatchOptions.call (http://localhost:5173/node_modules/.vite/deps/chunk-UQWBJQZ5.js?v=f8a47250:8275:47)
+    at job (http://localhost:5173/node_modules/.vite/deps/chunk-UQWBJQZ5.js?v=f8a47250:1992:18)
+    at watch (http://localhost:5173/node_modules/.vite/deps/chunk-UQWBJQZ5.js?v=f8a47250:2028:7)
+    at doWatch (http://localhost:5173/node_modules/.vite/deps/chunk-UQWBJQZ5.js?v=f8a47250:8303:23)
+    at watch2 (http://localhost:5173/node_modules/.vite/deps/chunk-UQWBJQZ5.js?v=f8a47250:8236:10)
+    at useDeprecated (http://localhost:5173/node_modules/.vite/deps/element-plus.js?v=f8a47250:15590:3)
+[2026-06-23T01:23:49.615Z] [debug] [vite] connecting...
+[2026-06-23T01:23:49.754Z] [debug] [vite] connected.
+[2026-06-23T01:23:49.908Z] [log] initUserState 被调用
+[2026-06-23T01:23:49.908Z] [log] localStorage 状态: {userInfo: 存在, isLoggedIn: true, expirationTimeStr: 1782199425424}
+[2026-06-23T01:23:49.908Z] [log] 当前时间: 2026/6/23 09:23:49
+[2026-06-23T01:23:49.908Z] [log] 过期时间: 2026/6/23 15:23:45
+[2026-06-23T01:23:49.909Z] [log] 登录状态有效，还剩 360 分钟过期
+[2026-06-23T01:23:49.909Z] [log] 当前登录状态: true
+[2026-06-23T01:23:49.909Z] [log] 用户信息: Proxy(Object)
+[2026-06-23T01:23:49.909Z] [log] 路由守衛: 路由到 /matching/lamination-material, 登錄狀態: true
+[2026-06-23T01:23:49.934Z] [log] Request: GET /api/api/lamination-material/material-types {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:23:49.935Z] [log] Request: GET /api/api/lamination-material/steps {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:23:49.935Z] [log] Request: POST /api/api/lamination-material/match {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:23:49.980Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:23:49.980Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:23:49.980Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:23:49.980Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:23:49.980Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:23:49.980Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:23:50.432Z] [log] 开始初始化权限系统...
+[2026-06-23T01:23:50.432Z] [log] Request: GET /api/roles/user/1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:23:50.432Z] [log] Request: GET /api/permissions/user/1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:23:50.531Z] [log] 响应成功: /roles/user/1 {data: Array(1), status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:23:50.531Z] [log] 响应成功: /permissions/user/1 {data: Array(112), status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:23:50.531Z] [log] 权限系统初始化完成 - 角色: 1 权限: 112
+[2026-06-23T01:24:06.830Z] [debug] [vite] hot updated: /src/style.css
+[2026-06-23T01:24:06.830Z] [debug] [vite] hot updated: /src/views/admin/material/LaminationMaterialManagement.vue
+[2026-06-23T01:24:06.830Z] [debug] [vite] hot updated: /src/views/matching/LaminationMaterialMatching.vue
+[2026-06-23T01:24:06.846Z] [log] Request: GET /api/lamination-material/material-types {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:06.846Z] [log] Request: GET /api/lamination-material/steps {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:06.846Z] [log] Request: POST /api/lamination-material/match {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:06.859Z] [log] 响应成功: /lamination-material/material-types {data: Array(3), status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:06.860Z] [log] 响应成功: /lamination-material/match {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:06.862Z] [log] Request: GET /api/api/lamination-material/products/19/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:06.862Z] [log] Request: GET /api/api/lamination-material/products/27/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:06.863Z] [log] Request: GET /api/api/lamination-material/products/24/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:06.863Z] [log] Request: GET /api/api/lamination-material/products/26/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:06.863Z] [log] Request: GET /api/api/lamination-material/products/32/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:06.863Z] [log] Request: GET /api/api/lamination-material/products/25/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:06.863Z] [log] Request: GET /api/api/lamination-material/products/23/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:06.863Z] [log] Request: GET /api/api/lamination-material/products/21/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:06.863Z] [log] Request: GET /api/api/lamination-material/products/28/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:06.863Z] [log] Request: GET /api/api/lamination-material/products/29/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:06.863Z] [log] Request: GET /api/api/lamination-material/products/36/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:06.863Z] [log] Request: GET /api/api/lamination-material/products/33/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:06.863Z] [log] Request: GET /api/api/lamination-material/products/34/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:06.864Z] [log] Request: GET /api/api/lamination-material/products/35/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:06.864Z] [log] Request: GET /api/api/lamination-material/products/20/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:06.866Z] [log] 响应成功: /lamination-material/steps {data: Array(80), status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:06.889Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:24:06.889Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:06.890Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:24:06.890Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:06.890Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:24:06.890Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:06.890Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:24:06.891Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:06.891Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:24:06.892Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:06.892Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:24:06.893Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:06.893Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:24:06.893Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:06.893Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:24:06.893Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:06.894Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:24:06.894Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:06.894Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:24:06.894Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:06.894Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:24:06.894Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:06.894Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:24:06.895Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:06.895Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:24:06.895Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:06.895Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:24:06.895Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:06.896Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:24:06.896Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:19.918Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:19.922Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:24:19.923Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:19.923Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:24:25.958Z] [debug] [vite] hot updated: /src/style.css
+[2026-06-23T01:24:25.959Z] [debug] [vite] hot updated: /src/views/admin/material/LaminationMaterialManagement.vue
+[2026-06-23T01:24:25.963Z] [debug] [vite] hot updated: /src/views/matching/LaminationMaterialMatching.vue
+[2026-06-23T01:24:25.982Z] [log] Request: GET /api/lamination-material/material-types {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:25.982Z] [log] Request: GET /api/lamination-material/steps {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:25.982Z] [log] Request: POST /api/lamination-material/match {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:25.997Z] [log] 响应成功: /lamination-material/steps {data: Array(80), status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:26.011Z] [log] 响应成功: /lamination-material/match {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:26.019Z] [log] Request: GET /api/lamination-material/products/19/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:26.019Z] [log] Request: GET /api/lamination-material/products/27/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:26.019Z] [log] Request: GET /api/lamination-material/products/24/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:26.019Z] [log] Request: GET /api/lamination-material/products/26/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:26.019Z] [log] Request: GET /api/lamination-material/products/32/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:26.019Z] [log] Request: GET /api/lamination-material/products/25/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:26.020Z] [log] Request: GET /api/lamination-material/products/23/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:26.020Z] [log] Request: GET /api/lamination-material/products/21/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:26.020Z] [log] Request: GET /api/lamination-material/products/28/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:26.021Z] [log] Request: GET /api/lamination-material/products/29/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:26.021Z] [log] Request: GET /api/lamination-material/products/36/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:26.021Z] [log] Request: GET /api/lamination-material/products/33/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:26.021Z] [log] Request: GET /api/lamination-material/products/34/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:26.021Z] [log] Request: GET /api/lamination-material/products/35/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:26.021Z] [log] Request: GET /api/lamination-material/products/20/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:26.022Z] [log] 响应成功: /lamination-material/material-types {data: Array(3), status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:26.030Z] [log] 响应成功: /lamination-material/products/32/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:26.031Z] [log] 响应成功: /lamination-material/products/26/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:26.031Z] [log] 响应成功: /lamination-material/products/24/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:26.031Z] [log] 响应成功: /lamination-material/products/25/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:26.032Z] [log] 响应成功: /lamination-material/products/19/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:26.032Z] [log] 响应成功: /lamination-material/products/27/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:26.041Z] [log] 响应成功: /lamination-material/products/23/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:26.043Z] [log] 响应成功: /lamination-material/products/21/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:26.043Z] [log] 响应成功: /lamination-material/products/29/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:26.043Z] [log] 响应成功: /lamination-material/products/28/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:26.044Z] [log] 响应成功: /lamination-material/products/33/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:26.044Z] [log] 响应成功: /lamination-material/products/36/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:26.046Z] [log] 响应成功: /lamination-material/products/35/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:26.047Z] [log] 响应成功: /lamination-material/products/34/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:26.047Z] [log] 响应成功: /lamination-material/products/20/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:47.537Z] [debug] [vite] hot updated: /src/style.css
+[2026-06-23T01:24:47.537Z] [debug] [vite] hot updated: /src/views/matching/LeoMatching.vue
+[2026-06-23T01:24:49.921Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:24:49.926Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:24:49.926Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:24:49.926Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:25:08.155Z] [debug] [vite] connecting...
+[2026-06-23T01:25:08.255Z] [debug] [vite] connected.
+[2026-06-23T01:25:08.451Z] [log] initUserState 被调用
+[2026-06-23T01:25:08.451Z] [log] localStorage 状态: {userInfo: 存在, isLoggedIn: true, expirationTimeStr: 1782199425424}
+[2026-06-23T01:25:08.451Z] [log] 当前时间: 2026/6/23 09:25:08
+[2026-06-23T01:25:08.451Z] [log] 过期时间: 2026/6/23 15:23:45
+[2026-06-23T01:25:08.451Z] [log] 登录状态有效，还剩 359 分钟过期
+[2026-06-23T01:25:08.451Z] [log] 当前登录状态: true
+[2026-06-23T01:25:08.451Z] [log] 用户信息: Proxy(Object)
+[2026-06-23T01:25:08.451Z] [log] 路由守衛: 路由到 /login, 登錄狀態: true
+[2026-06-23T01:25:08.451Z] [log] 已登錄，重定向到首頁
+[2026-06-23T01:25:08.451Z] [log] initUserState 被调用
+[2026-06-23T01:25:08.451Z] [log] localStorage 状态: {userInfo: 存在, isLoggedIn: true, expirationTimeStr: 1782199425424}
+[2026-06-23T01:25:08.451Z] [log] 当前时间: 2026/6/23 09:25:08
+[2026-06-23T01:25:08.451Z] [log] 过期时间: 2026/6/23 15:23:45
+[2026-06-23T01:25:08.451Z] [log] 登录状态有效，还剩 359 分钟过期
+[2026-06-23T01:25:08.451Z] [log] 当前登录状态: true
+[2026-06-23T01:25:08.452Z] [log] 用户信息: Proxy(Object)
+[2026-06-23T01:25:08.452Z] [log] 路由守衛: 路由到 /process-config, 登錄狀態: true
+[2026-06-23T01:25:08.453Z] [log] Current process changed to: hotStamping
+[2026-06-23T01:25:08.453Z] [log] isTechManagement: false
+[2026-06-23T01:25:08.454Z] [log] hotStampingStore.firstMatch getter called
+[2026-06-23T01:25:08.454Z] [log] matchingStore.firstMatchParams: null
+[2026-06-23T01:25:08.454Z] [log] Computing firstMatch in matchingStore
+[2026-06-23T01:25:08.454Z] [log] searchMatchResult.value: null
+[2026-06-23T01:25:08.454Z] [log] firstMatchParams.value: null
+[2026-06-23T01:25:08.454Z] [log] No match result found, returning null
+[2026-06-23T01:25:08.454Z] [log] hotStampingStore.firstMatch returning: null
+[2026-06-23T01:25:08.454Z] [log] hotStampingStore.secondMatchParams getter called
+[2026-06-23T01:25:08.454Z] [log] matchingStore.secondMatchParams: null
+[2026-06-23T01:25:08.454Z] [log] hotStampingStore.secondMatchParams returning: null
+[2026-06-23T01:25:08.454Z] [log] hotStampingStore.searchMatchResult getter called
+[2026-06-23T01:25:08.454Z] [log] hotStampingStore.searchMatchResult returning: null
+[2026-06-23T01:25:08.455Z] [log] hotStampingStore.firstMatch getter called
+[2026-06-23T01:25:08.455Z] [log] matchingStore.firstMatchParams: null
+[2026-06-23T01:25:08.455Z] [log] hotStampingStore.firstMatch returning: null
+[2026-06-23T01:25:08.455Z] [log] hotStampingStore.secondMatchParams getter called
+[2026-06-23T01:25:08.455Z] [log] matchingStore.secondMatchParams: null
+[2026-06-23T01:25:08.455Z] [log] hotStampingStore.secondMatchParams returning: null
+[2026-06-23T01:25:08.455Z] [log] hotStampingStore.searchMatchResult getter called
+[2026-06-23T01:25:08.455Z] [log] hotStampingStore.searchMatchResult returning: null
+[2026-06-23T01:25:08.455Z] [log] hotStampingStore.firstMatch getter called
+[2026-06-23T01:25:08.455Z] [log] matchingStore.firstMatchParams: null
+[2026-06-23T01:25:08.455Z] [log] hotStampingStore.firstMatch returning: null
+[2026-06-23T01:25:08.455Z] [log] hotStampingStore.secondMatchParams getter called
+[2026-06-23T01:25:08.455Z] [log] matchingStore.secondMatchParams: null
+[2026-06-23T01:25:08.455Z] [log] hotStampingStore.secondMatchParams returning: null
+[2026-06-23T01:25:08.455Z] [log] hotStampingStore.searchMatchResult getter called
+[2026-06-23T01:25:08.455Z] [log] hotStampingStore.searchMatchResult returning: null
+[2026-06-23T01:25:08.477Z] [log] getCurrentMatchStage - 有效參數數量: 0
+[2026-06-23T01:25:08.477Z] [log] getCurrentMatchStage - 有效參數: []
+[2026-06-23T01:25:08.477Z] [log] MatchingResult - 參數數量: 0
+[2026-06-23T01:25:08.477Z] [log] 可用匹配結果: {searchResults: 0, searchMatchResult: 0, secondMatchResults: 0, thirdMatchResults: 0}
+[2026-06-23T01:25:08.486Z] [log] 使用静态过胶选项: [Object, Object]
+[2026-06-23T01:25:08.486Z] [log] Calling getAllActiveOptions API
+[2026-06-23T01:25:08.487Z] [log] 开始加载烫金类型选项...
+[2026-06-23T01:25:08.488Z] [log] Calling getUserPreferences API with userId: 1
+[2026-06-23T01:25:08.488Z] [log] Component mounted
+[2026-06-23T01:25:08.488Z] [log] Starting to fetch products
+[2026-06-23T01:25:08.489Z] [log] Calling getAllProducts API
+[2026-06-23T01:25:08.497Z] [log] Request: GET /api/api/pre-processing-steps/options {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:08.497Z] [log] Request: GET /api/api/compatibility/hot-stamping-type-groups {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:08.497Z] [log] Request: GET /api/api/cloth-paper-types/active {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:08.497Z] [log] Request: GET /api/users/1/match-preferences {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:08.497Z] [log] Request: GET /api/gold-foil/products {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 120000}
+[2026-06-23T01:25:08.522Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:25:08.522Z] [error] 加载过胶相关数据失败: AxiosError
+[2026-06-23T01:25:08.522Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:25:08.522Z] [error] 获取产品类型选项失败: AxiosError
+[2026-06-23T01:25:08.523Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:25:08.523Z] [log] 燙金圖案（面积/类型）选项加载成功: Proxy(Array)
+[2026-06-23T01:25:08.525Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:25:08.526Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:08.526Z] [error] 获取布料纸类型选项失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:25:08.526Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:25:08.527Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:08.527Z] [error] 加载烫金类型选项失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:25:08.527Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:25:08.527Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:08.527Z] [error] 获取前工序选项失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:25:08.536Z] [log] 响应成功: /users/1/match-preferences {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:08.536Z] [log] 加載用戶匹配偏好: {performance: Array(1), color: Array(1), size: Array(1), temperature: Array(1), tightness: Array(1)}
+[2026-06-23T01:25:08.536Z] [log] 响应成功: /gold-foil/products {data: Array(797), status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:08.538Z] [log] API response data: [Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object]
+[2026-06-23T01:25:08.539Z] [warning] [Vue warn]: Invalid prop: custom validator check failed for prop "pagerCount". 
+  at <ElPagination current-page=1 onUpdate:currentPage=fn page-size=15  ... > 
+  at <GoldFoilSupplyList> 
+  at <ProcessSidebar key=0 > 
+  at <ProcessConfig onVnodeUnmounted=fn<onVnodeUnmounted> ref=Ref< Proxy(Object) > > 
+  at <RouterView> 
+  at <App>
+[2026-06-23T01:25:08.539Z] [warning] ElementPlusError: [el-pagination] [API] small is about to be deprecated in version 3.0.0, please use size instead.
+For more detail, please visit: https://element-plus.org/zh-CN/component/pagination.html
+
+    at debugWarn (http://localhost:5173/node_modules/.vite/deps/element-plus.js?v=f8a47250:9675:37)
+    at watch.immediate (http://localhost:5173/node_modules/.vite/deps/element-plus.js?v=f8a47250:15592:7)
+    at callWithErrorHandling (http://localhost:5173/node_modules/.vite/deps/chunk-UQWBJQZ5.js?v=f8a47250:2263:19)
+    at callWithAsyncErrorHandling (http://localhost:5173/node_modules/.vite/deps/chunk-UQWBJQZ5.js?v=f8a47250:2270:17)
+    at baseWatchOptions.call (http://localhost:5173/node_modules/.vite/deps/chunk-UQWBJQZ5.js?v=f8a47250:8275:47)
+    at job (http://localhost:5173/node_modules/.vite/deps/chunk-UQWBJQZ5.js?v=f8a47250:1992:18)
+    at watch (http://localhost:5173/node_modules/.vite/deps/chunk-UQWBJQZ5.js?v=f8a47250:2028:7)
+    at doWatch (http://localhost:5173/node_modules/.vite/deps/chunk-UQWBJQZ5.js?v=f8a47250:8303:23)
+    at watch2 (http://localhost:5173/node_modules/.vite/deps/chunk-UQWBJQZ5.js?v=f8a47250:8236:10)
+    at useDeprecated (http://localhost:5173/node_modules/.vite/deps/element-plus.js?v=f8a47250:15590:3)
+[2026-06-23T01:25:09.327Z] [log] 开始初始化权限系统...
+[2026-06-23T01:25:09.327Z] [log] Request: GET /api/roles/user/1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:09.327Z] [log] Request: GET /api/permissions/user/1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:09.361Z] [log] 响应成功: /roles/user/1 {data: Array(1), status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:09.369Z] [log] 响应成功: /permissions/user/1 {data: Array(112), status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:09.369Z] [log] 权限系统初始化完成 - 角色: 1 权限: 112
+[2026-06-23T01:25:15.045Z] [debug] [vite] connecting...
+[2026-06-23T01:25:15.136Z] [debug] [vite] connected.
+[2026-06-23T01:25:15.340Z] [log] initUserState 被调用
+[2026-06-23T01:25:15.340Z] [log] localStorage 状态: {userInfo: 存在, isLoggedIn: true, expirationTimeStr: 1782199425424}
+[2026-06-23T01:25:15.340Z] [log] 当前时间: 2026/6/23 09:25:15
+[2026-06-23T01:25:15.340Z] [log] 过期时间: 2026/6/23 15:23:45
+[2026-06-23T01:25:15.340Z] [log] 登录状态有效，还剩 359 分钟过期
+[2026-06-23T01:25:15.340Z] [log] 当前登录状态: true
+[2026-06-23T01:25:15.340Z] [log] 用户信息: Proxy(Object)
+[2026-06-23T01:25:15.340Z] [log] 路由守衛: 路由到 /matching/lamination-material, 登錄狀態: true
+[2026-06-23T01:25:15.365Z] [log] Request: GET /api/lamination-material/material-types {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:15.365Z] [log] Request: GET /api/lamination-material/steps {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:15.365Z] [log] Request: POST /api/lamination-material/match {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:15.388Z] [log] 响应成功: /lamination-material/material-types {data: Array(3), status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:15.393Z] [log] 响应成功: /lamination-material/match {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:15.393Z] [log] Request: GET /api/lamination-material/products/19/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:15.393Z] [log] Request: GET /api/lamination-material/products/27/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:15.393Z] [log] Request: GET /api/lamination-material/products/24/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:15.393Z] [log] Request: GET /api/lamination-material/products/26/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:15.393Z] [log] Request: GET /api/lamination-material/products/32/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:15.393Z] [log] Request: GET /api/lamination-material/products/25/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:15.393Z] [log] Request: GET /api/lamination-material/products/23/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:15.393Z] [log] Request: GET /api/lamination-material/products/21/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:15.393Z] [log] Request: GET /api/lamination-material/products/28/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:15.393Z] [log] Request: GET /api/lamination-material/products/29/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:15.393Z] [log] Request: GET /api/lamination-material/products/36/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:15.393Z] [log] Request: GET /api/lamination-material/products/33/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:15.394Z] [log] Request: GET /api/lamination-material/products/34/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:15.394Z] [log] Request: GET /api/lamination-material/products/35/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:15.394Z] [log] Request: GET /api/lamination-material/products/20/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:15.395Z] [log] 响应成功: /lamination-material/steps {data: Array(80), status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:15.410Z] [log] 响应成功: /lamination-material/products/24/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:15.411Z] [log] 响应成功: /lamination-material/products/27/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:15.412Z] [log] 响应成功: /lamination-material/products/19/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:15.413Z] [log] 响应成功: /lamination-material/products/32/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:15.413Z] [log] 响应成功: /lamination-material/products/25/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:15.414Z] [log] 响应成功: /lamination-material/products/26/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:15.414Z] [log] 响应成功: /lamination-material/products/23/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:15.415Z] [log] 响应成功: /lamination-material/products/28/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:15.416Z] [log] 响应成功: /lamination-material/products/21/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:15.416Z] [log] 响应成功: /lamination-material/products/29/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:15.417Z] [log] 响应成功: /lamination-material/products/36/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:15.417Z] [log] 响应成功: /lamination-material/products/33/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:15.419Z] [log] 响应成功: /lamination-material/products/35/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:15.419Z] [log] 响应成功: /lamination-material/products/34/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:15.419Z] [log] 响应成功: /lamination-material/products/20/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:16.156Z] [log] 开始初始化权限系统...
+[2026-06-23T01:25:16.156Z] [log] Request: GET /api/roles/user/1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:16.156Z] [log] Request: GET /api/permissions/user/1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:16.188Z] [log] 响应成功: /roles/user/1 {data: Array(1), status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:16.212Z] [log] 响应成功: /permissions/user/1 {data: Array(112), status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:16.212Z] [log] 权限系统初始化完成 - 角色: 1 权限: 112
+[2026-06-23T01:25:45.352Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:25:45.356Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:25:45.357Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:25:45.357Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:26:15.350Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:26:15.355Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:26:15.355Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:26:15.355Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:26:45.350Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:26:45.356Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:26:45.356Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:26:45.356Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:27:15.348Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:27:15.352Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:27:15.352Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:27:15.352Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:27:45.358Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:27:45.362Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:27:45.362Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:27:45.362Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:28:15.344Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:28:15.350Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:28:15.350Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:28:15.350Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:28:45.353Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:28:45.363Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:28:45.363Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:28:45.363Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:29:15.354Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:29:15.358Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:29:15.359Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:29:15.359Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:29:45.362Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:29:45.367Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:29:45.367Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:29:45.367Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:30:15.351Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:30:15.356Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:30:15.357Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:30:15.357Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:30:45.351Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:30:45.356Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:30:45.356Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:30:45.357Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:31:15.357Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:31:15.363Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:31:15.364Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:31:15.364Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:31:45.357Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:31:45.362Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:31:45.362Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:31:45.362Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:32:15.357Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:32:15.362Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:32:15.362Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:32:15.363Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:32:23.943Z] [debug] [vite] hot updated: /src/style.css
+[2026-06-23T01:32:23.943Z] [debug] [vite] hot updated: /src/components/hotStamping/FoilConfig.vue
+[2026-06-23T01:32:24.010Z] [debug] [vite] connecting...
+[2026-06-23T01:32:24.139Z] [debug] [vite] connected.
+[2026-06-23T01:32:24.285Z] [log] initUserState 被调用
+[2026-06-23T01:32:24.285Z] [log] localStorage 状态: {userInfo: 存在, isLoggedIn: true, expirationTimeStr: 1782199425424}
+[2026-06-23T01:32:24.285Z] [log] 当前时间: 2026/6/23 09:32:24
+[2026-06-23T01:32:24.286Z] [log] 过期时间: 2026/6/23 15:23:45
+[2026-06-23T01:32:24.286Z] [log] 登录状态有效，还剩 351 分钟过期
+[2026-06-23T01:32:24.286Z] [log] 当前登录状态: true
+[2026-06-23T01:32:24.287Z] [log] 用户信息: Proxy(Object)
+[2026-06-23T01:32:24.287Z] [log] 路由守衛: 路由到 /matching/lamination-material, 登錄狀態: true
+[2026-06-23T01:32:24.319Z] [log] Request: GET /api/lamination-material/material-types {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:32:24.319Z] [log] Request: GET /api/lamination-material/steps {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:32:24.319Z] [log] Request: POST /api/lamination-material/match {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:32:24.340Z] [log] 响应成功: /lamination-material/material-types {data: Array(3), status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:32:24.340Z] [log] 响应成功: /lamination-material/steps {data: Array(80), status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:32:24.356Z] [log] 响应成功: /lamination-material/match {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:32:24.362Z] [log] Request: GET /api/lamination-material/products/19/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:32:24.362Z] [log] Request: GET /api/lamination-material/products/27/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:32:24.362Z] [log] Request: GET /api/lamination-material/products/24/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:32:24.362Z] [log] Request: GET /api/lamination-material/products/26/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:32:24.362Z] [log] Request: GET /api/lamination-material/products/32/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:32:24.363Z] [log] Request: GET /api/lamination-material/products/25/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:32:24.363Z] [log] Request: GET /api/lamination-material/products/23/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:32:24.363Z] [log] Request: GET /api/lamination-material/products/21/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:32:24.363Z] [log] Request: GET /api/lamination-material/products/28/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:32:24.363Z] [log] Request: GET /api/lamination-material/products/29/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:32:24.363Z] [log] Request: GET /api/lamination-material/products/36/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:32:24.364Z] [log] Request: GET /api/lamination-material/products/33/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:32:24.364Z] [log] Request: GET /api/lamination-material/products/34/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:32:24.364Z] [log] Request: GET /api/lamination-material/products/35/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:32:24.364Z] [log] Request: GET /api/lamination-material/products/20/detail {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:32:24.375Z] [log] 响应成功: /lamination-material/products/19/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:32:24.375Z] [log] 响应成功: /lamination-material/products/24/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:32:24.375Z] [log] 响应成功: /lamination-material/products/27/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:32:24.375Z] [log] 响应成功: /lamination-material/products/26/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:32:24.376Z] [log] 响应成功: /lamination-material/products/32/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:32:24.376Z] [log] 响应成功: /lamination-material/products/25/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:32:24.384Z] [log] 响应成功: /lamination-material/products/21/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:32:24.385Z] [log] 响应成功: /lamination-material/products/23/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:32:24.386Z] [log] 响应成功: /lamination-material/products/36/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:32:24.387Z] [log] 响应成功: /lamination-material/products/29/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:32:24.387Z] [log] 响应成功: /lamination-material/products/33/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:32:24.387Z] [log] 响应成功: /lamination-material/products/28/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:32:24.390Z] [log] 响应成功: /lamination-material/products/35/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:32:24.391Z] [log] 响应成功: /lamination-material/products/34/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:32:24.391Z] [log] 响应成功: /lamination-material/products/20/detail {data: Object, status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:32:25.102Z] [log] 开始初始化权限系统...
+[2026-06-23T01:32:25.102Z] [log] Request: GET /api/roles/user/1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:32:25.102Z] [log] Request: GET /api/permissions/user/1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:32:25.117Z] [log] 响应成功: /roles/user/1 {data: Array(1), status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:32:25.127Z] [log] 响应成功: /permissions/user/1 {data: Array(112), status: 200, statusText: OK, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:32:25.127Z] [log] 权限系统初始化完成 - 角色: 1 权限: 112
+[2026-06-23T01:32:28.558Z] [warning] The resource https://udify.app/_next/static/chunks/0yevc_10h8.kl.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
+[2026-06-23T01:32:28.558Z] [warning] The resource https://udify.app/_next/static/chunks/0ugaf5.uz3_.5.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
+[2026-06-23T01:32:54.292Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:32:54.297Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:32:54.298Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:32:54.298Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:32:55.247Z] [error] Failed to load resource: net::ERR_TIMED_OUT
+[2026-06-23T01:32:55.248Z] [error] NetworkError: Request failed due to a network error: GET https://cloud.dify.ai/console/api/system-features
+    at #o (https://udify.app/_next/static/chunks/01qpzbbm_0um0.js:1:22519)
+    at async #r (https://udify.app/_next/static/chunks/01qpzbbm_0um0.js:1:20752)
+    at async u (https://udify.app/_next/static/chunks/01qpzbbm_0um0.js:1:12148)
+    at async https://udify.app/_next/static/chunks/01qpzbbm_0um0.js:1:13243
+    at async eg (https://udify.app/_next/static/chunks/01qpzbbm_0um0.js:1:27192)
+    at async r (https://udify.app/_next/static/chunks/01qpzbbm_0um0.js:1:1755)
+    at async eI (https://udify.app/_next/static/chunks/01qpzbbm_0um0.js:1:37238)
+    at async X.call (https://udify.app/_next/static/chunks/03hi3-uxfh7gg.js:9:7301)
+    at async https://udify.app/_next/static/chunks/03hi3-uxfh7gg.js:9:1906
+    at async https://udify.app/_next/static/chunks/03hi3-uxfh7gg.js:1:2626
+    at async Proxy.<anonymous> (https://udify.app/_next/static/chunks/03hi3-uxfh7gg.js:1:6350)
+    at async queryFn (https://udify.app/_next/static/chunks/0dqni040evs-3.js:1:3626)
+[2026-06-23T01:32:55.249Z] [error] [systemFeatures] fetch failed, using defaults NetworkError: Request failed due to a network error: GET https://cloud.dify.ai/console/api/system-features
+    at #o (https://udify.app/_next/static/chunks/01qpzbbm_0um0.js:1:22519)
+    at async #r (https://udify.app/_next/static/chunks/01qpzbbm_0um0.js:1:20752)
+    at async u (https://udify.app/_next/static/chunks/01qpzbbm_0um0.js:1:12148)
+    at async https://udify.app/_next/static/chunks/01qpzbbm_0um0.js:1:13243
+    at async eg (https://udify.app/_next/static/chunks/01qpzbbm_0um0.js:1:27192)
+    at async r (https://udify.app/_next/static/chunks/01qpzbbm_0um0.js:1:1755)
+    at async eI (https://udify.app/_next/static/chunks/01qpzbbm_0um0.js:1:37238)
+    at async X.call (https://udify.app/_next/static/chunks/03hi3-uxfh7gg.js:9:7301)
+    at async https://udify.app/_next/static/chunks/03hi3-uxfh7gg.js:9:1906
+    at async https://udify.app/_next/static/chunks/03hi3-uxfh7gg.js:1:2626
+    at async Proxy.<anonymous> (https://udify.app/_next/static/chunks/03hi3-uxfh7gg.js:1:6350)
+    at async queryFn (https://udify.app/_next/static/chunks/0dqni040evs-3.js:1:3626)
+[2026-06-23T01:33:24.290Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:33:24.301Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:33:24.301Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:33:24.301Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:33:54.296Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:33:54.304Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:33:54.305Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:33:54.305Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:34:24.303Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:34:24.314Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:34:24.322Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:34:24.322Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:34:54.301Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:34:54.305Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:34:54.305Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:34:54.305Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:35:24.296Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:35:24.300Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:35:24.301Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:35:24.301Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:35:54.299Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:35:54.304Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:35:54.304Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:35:54.304Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:36:24.301Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:36:24.306Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:36:24.308Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:36:24.308Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:36:54.305Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:36:54.306Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:36:54.307Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:36:54.307Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:37:24.298Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:37:24.301Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:37:24.302Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:37:24.302Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:37:54.297Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:37:54.308Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:37:54.308Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:37:54.309Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:38:24.307Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:38:24.312Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:38:24.312Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:38:24.312Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:38:54.299Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:38:54.302Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:38:54.302Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:38:54.302Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:39:24.300Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:39:24.301Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:39:24.301Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:39:24.301Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:39:54.310Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:39:54.314Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:39:54.315Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:39:54.315Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:40:24.302Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:40:24.305Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:40:24.306Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:40:24.306Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:40:54.300Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:40:54.306Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:40:54.306Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:40:54.306Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:41:24.304Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:41:24.306Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:41:24.312Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:41:24.312Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:41:54.306Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:41:54.311Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:41:54.311Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:41:54.311Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:42:24.309Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:42:24.315Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:42:24.315Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:42:24.315Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:42:54.324Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:42:54.341Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:42:54.341Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:42:54.341Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:43:24.304Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:43:24.309Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:43:24.309Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:43:24.309Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:43:54.308Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:43:54.312Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:43:54.313Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:43:54.313Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:44:24.312Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:44:24.312Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:44:24.313Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:44:24.313Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:44:54.312Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:44:54.320Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:44:54.320Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:44:54.320Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:45:24.312Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:45:24.317Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:45:24.317Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:45:24.317Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:45:54.309Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:45:54.314Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:45:54.315Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:45:54.315Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:46:24.307Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:46:24.311Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:46:24.311Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:46:24.312Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:46:54.310Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:46:54.313Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:46:54.313Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:46:54.313Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:47:24.319Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:47:24.324Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:47:24.324Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:47:24.324Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
+[2026-06-23T01:47:54.323Z] [log] Request: GET /api/sys/announcement/unread/count?userId=1 {transitional: Object, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000}
+[2026-06-23T01:47:54.323Z] [error] Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[2026-06-23T01:47:54.323Z] [error] Response error: {data: Object, status: 500, statusText: Internal Server Error, headers: AxiosHeaders, config: Object}
+[2026-06-23T01:47:54.323Z] [error] 获取未读消息数量失败: {success: false, message: 系统错误，请联系管理员}
