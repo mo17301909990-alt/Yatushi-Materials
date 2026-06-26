@@ -1159,12 +1159,6 @@ const onDrop = (index: number) => {
   dragIndex = -1
 }
 
-// 打开参数编辑器
-const openParamEditor = (task: TaskItem) => {
-  // TODO: 打开参数编辑弹窗
-  alert('參數編輯功能開發中...')
-}
-
 // 自动匹配资源组
 const autoMatchResourceGroup = async (task: TaskItem) => {
   if (!task.taskCode) {

@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useHotStampingStore, type Product } from '../stores/hotStamping';
-import { usePermissionStore } from '../stores/permission';
-
 const hotStampingStore = useHotStampingStore();
-const permissionStore = usePermissionStore();
 
 const selectedTagSequence = ref<Array<{
   id: string;

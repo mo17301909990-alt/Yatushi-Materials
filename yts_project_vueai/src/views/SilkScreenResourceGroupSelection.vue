@@ -224,7 +224,6 @@ const evaluate = () => {
   const reasons: string[] = [];
   const hits: any[] = [];
 
-  let resource: string | null = null;
   let score = 1.0;
 
   const L = Number(params.value.len_mm || 0);
@@ -395,8 +394,6 @@ const evaluate = () => {
       score: 0.3,
     });
   }
-
-  resource = 'WC07 / 絲印（按幅面/網目/油墨細分）';
 
   // 计算难度等级
   const hardTriggers = ['UV油墨', '漸變', '金粉/銀粉', '高網目數'];
