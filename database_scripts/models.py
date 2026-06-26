@@ -11,6 +11,7 @@ class CategoryDef:
     compat_table: str = ""
     schema_type: str = ""
     subtype: str = ""
+    code_col: int = 6  # Column index for material code (1-based)
 
 
 @dataclass
@@ -30,6 +31,8 @@ class Product:
     design_info: str = ""
     applicable_interface: str = ""
     notes: str = ""
+    thickness: str = ""
+    tester: str = ""
     # 过胶材料专用字段
     usage_text: str = ""
     material_type: str = ""

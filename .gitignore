@@ -68,3 +68,4 @@ audit_script.py
 # database_scripts/p0_etl.py 是核心ETL，不忽略
 ~$
 yst/
+.gstack/
