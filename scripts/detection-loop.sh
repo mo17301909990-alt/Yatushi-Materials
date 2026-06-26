@@ -126,7 +126,6 @@ echo "╚═══════════════════════�
 echo "  Duration: ${DURATION}s"
 echo "  Fail:   $FAIL"
 echo "  Skip:   $SKIP"
-echo "  Skip:  $SKIP"
 
 if [ $FAIL -eq 0 ]; then
   echo "  Result: ✅ ALL PASS"
