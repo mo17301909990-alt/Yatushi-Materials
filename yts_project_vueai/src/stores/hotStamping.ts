@@ -159,38 +159,51 @@ export const useHotStampingStore = defineStore('hotStamping', () => {
     }
   };
 
-  return {
-    // 从 matchingStore 导出的属性和方法
-    get matchingParams() { return matchingStore.matchingParams; },
-    get firstMatch() {
-      console.log('hotStampingStore.firstMatch getter called');
-      console.log('matchingStore.firstMatchParams:', matchingStore.firstMatchParams);
-      const result = matchingStore.firstMatch;
-      console.log('hotStampingStore.firstMatch returning:', result);
-      return result;
-    },
-    get secondMatch() { return matchingStore.secondMatch; },
-    get secondMatchParams() {
-      console.log('hotStampingStore.secondMatchParams getter called');
-      console.log('matchingStore.secondMatchParams:', matchingStore.secondMatchParams);
-      const result = matchingStore.secondMatchParams;
-      console.log('hotStampingStore.secondMatchParams returning:', result);
-      return result;
-    },
-    get firstMatchParams() { return matchingStore.firstMatchParams; },
-    get thirdMatch() { return matchingStore.thirdMatch; },
-    get thirdMatchParams() { return matchingStore.thirdMatchParams; },
-    get otherMatches() { return matchingStore.otherMatches; },
-    get searchMatchResult() {
+  // 使用 computed 替代 getter，确保 Pinia setup store 正确处理响应式委托
+  const matchingParams = computed(() => matchingStore.matchingParams);
+  const firstMatch = computed(() => {
+    console.log('hotStampingStore.firstMatch getter called');
+    console.log('matchingStore.firstMatchParams:', matchingStore.firstMatchParams);
+    const result = matchingStore.firstMatch;
+    console.log('hotStampingStore.firstMatch returning:', result);
+    return result;
+  });
+  const secondMatch = computed(() => matchingStore.secondMatch);
+  const secondMatchParams = computed(() => {
+    console.log('hotStampingStore.secondMatchParams getter called');
+    console.log('matchingStore.secondMatchParams:', matchingStore.secondMatchParams);
+    const result = matchingStore.secondMatchParams;
+    console.log('hotStampingStore.secondMatchParams returning:', result);
+    return result;
+  });
+  const firstMatchParams = computed(() => matchingStore.firstMatchParams);
+  const thirdMatch = computed(() => matchingStore.thirdMatch);
+  const thirdMatchParams = computed(() => matchingStore.thirdMatchParams);
+  const otherMatches = computed(() => matchingStore.otherMatches);
+  const searchMatchResult = computed({
+    get: () => {
       console.log('hotStampingStore.searchMatchResult getter called');
       const result = matchingStore.searchMatchResult;
       console.log('hotStampingStore.searchMatchResult returning:', result);
       return result;
     },
-    set searchMatchResult(value) {
+    set: (value) => {
       console.log('hotStampingStore.searchMatchResult setter called with:', value);
       matchingStore.setSearchMatchResult(value);
     },
+  });
+
+  return {
+    // 从 matchingStore 导出的属性和方法（computed 确保响应式）
+    matchingParams,
+    firstMatch,
+    secondMatch,
+    secondMatchParams,
+    firstMatchParams,
+    thirdMatch,
+    thirdMatchParams,
+    otherMatches,
+    searchMatchResult,
     updateMatchingParams: matchingStore.updateMatchingParams,
     clearSearchResult: matchingStore.clearSearchResult,
     setSecondMatchResult: matchingStore.setSecondMatchResult,
@@ -248,7 +261,7 @@ export const useHotStampingStore = defineStore('hotStamping', () => {
     // 新增的方法
     getPapersByType,
     updatePaper,
-    
+
     // 设置搜索结果
     setSearchResults: (results: any[]) => {
       searchResults.value = results;

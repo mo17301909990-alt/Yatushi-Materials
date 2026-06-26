@@ -46,13 +46,24 @@ export default defineConfig({
   },
   test: {
     globals: true,
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src')
+      }
+    },
     environment: 'jsdom',
     setupFiles: './src/test-setup.ts',
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
       include: ['src/**/*.{ts,vue}'],
-      exclude: ['src/**/*.spec.ts', 'src/**/__tests__/**']
+      exclude: ['src/**/*.spec.ts', 'src/**/__tests__/**'],
+      thresholds: {
+        branches: 20,
+        functions: 15,
+        lines: 25,
+        statements: 20
+      }
     }
   }
 })

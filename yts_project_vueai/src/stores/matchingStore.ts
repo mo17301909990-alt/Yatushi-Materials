@@ -406,6 +406,7 @@ export const useMatchingStore = defineStore('matching', () => {
     thirdMatch,
     otherMatches,
     searchMatchResult,
+    secondMatchResult,
     secondMatchParams,
     firstMatchParams,
     thirdMatchParams,
