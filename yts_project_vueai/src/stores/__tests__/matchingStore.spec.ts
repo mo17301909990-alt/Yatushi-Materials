@@ -190,7 +190,8 @@ describe('matching store', () => {
       const store = useMatchingStore()
       store.setFirstMatchParams({ paramName: '型号', paramValue: 'FO-100' })
       store.setSecondMatchParams(null)
-      expect(store.firstMatchParams).not.toBeNull()
+      expect(store.firstMatchParams!.paramName).toBe('型号')
+      expect(store.firstMatchParams!.paramValue).toBe('FO-100')
     })
   })
 
@@ -304,7 +305,7 @@ describe('matching store', () => {
       store.setSecondMatchParams({ paramName: '型号', paramValue: 'FO-500' })
       store.setSecondMatchResult(makeMatchResult())
       store.clearSecondMatchResult()
-      expect(store.secondMatchParams).not.toBeNull()
+      expect(store.secondMatchParams!.paramName).toBe('型号')
     })
   })
 
@@ -490,8 +491,8 @@ describe('matching store', () => {
       store.setSearchMatchResult(makeMatchResult())
       store.setSecondMatchResult(makeMatchResult({ id: 'second' }))
       store.updateMatchingParams({ surfaceType: '新值' })
-      expect(store.searchMatchResult).not.toBeNull()
-      expect(store.secondMatch).not.toBeNull()
+      expect(store.searchMatchResult!.name).toBe('金箔紙 A')
+      expect(store.secondMatch!.id).toBe('second')
     })
 
     it('setThirdMatchResult null 不影响其他结果', () => {
@@ -499,7 +500,7 @@ describe('matching store', () => {
       store.setSearchMatchResult(makeMatchResult())
       store.setThirdMatchResult(makeMatchResult({ id: 'third' }))
       store.setThirdMatchResult(null)
-      expect(store.searchMatchResult).not.toBeNull()
+      expect(store.searchMatchResult!.id).toBe('1')
     })
 
     it('多次清除操作均安全', () => {

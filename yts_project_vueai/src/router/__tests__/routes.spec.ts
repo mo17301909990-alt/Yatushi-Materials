@@ -110,7 +110,7 @@ describe('Route Meta — requiresAuth assignment', () => {
     ]
     for (const route of router.getRoutes()) {
       if (publicPaths.includes(route.path)) {
-        expect(route.meta?.requiresAuth).toBeFalsy()
+        expect(route.meta?.requiresAuth).not.toBe(true)
       }
     }
   })
