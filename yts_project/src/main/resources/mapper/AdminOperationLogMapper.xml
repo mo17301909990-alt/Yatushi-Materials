@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.it.yts_project.mapper.AdminOperationLogMapper">
+
+    <insert id="insert" parameterType="com.it.yts_project.model.AdminOperationLog" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO admin_operation_log (operator_id, operator_name, operated_at, operation_type, module, target_type, target_id, target_label, change_summary, change_detail, ip, user_agent)
+        VALUES (#{operatorId}, #{operatorName}, #{operatedAt}, #{operationType}, #{module}, #{targetType}, #{targetId}, #{targetLabel}, #{changeSummary}, #{changeDetail}, #{ip}, #{userAgent})
+    </insert>
+
+    <sql id="whereClause">
+        <where>
+            <if test="operatorId != null">
+                AND operator_id = #{operatorId}
+            </if>
+            <if test="module != null and module != ''">
+                AND module = #{module}
+            </if>
+            <if test="operationType != null and operationType != ''">
+                AND operation_type = #{operationType}
+            </if>
+            <if test="from != null">
+                AND operated_at &gt;= #{from}
+            </if>
+            <if test="to != null">
+                AND operated_at &lt;= #{to}
+            </if>
+        </where>
+    </sql>
+
+    <select id="list" resultType="com.it.yts_project.model.AdminOperationLog">
+        SELECT id, operator_id AS operatorId, operator_name AS operatorName, operated_at AS operatedAt,
+               operation_type AS operationType, module, target_type AS targetType, target_id AS targetId,
+               target_label AS targetLabel, change_summary AS changeSummary, change_detail AS changeDetail,
+               ip, user_agent AS userAgent
+        FROM admin_operation_log
+        <include refid="whereClause"/>
+        ORDER BY operated_at DESC
+        <if test="limit != null and limit > 0">
+            LIMIT #{limit}
+        </if>
+        <if test="offset != null and offset > 0">
+            OFFSET #{offset}
+        </if>
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT COUNT(*) FROM admin_operation_log
+        <include refid="whereClause"/>
+    </select>
+</mapper>

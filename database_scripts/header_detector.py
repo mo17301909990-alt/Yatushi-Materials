@@ -141,16 +141,21 @@ class HeaderDetector:
 
     # ── Data row / pair extraction ──────────────────────────────────
 
-    def find_data_rows(self, ws, step_row):
+    def find_data_rows(self, ws, step_row, code_col=6):
         """
         定位工作表中的所有数据行。
 
         数据行必须满足：
         - 第 9 列（物料名称）非空
-        - 第 6 列（测试编号）非空且不是 '/' 或 '-'
-        - 第 6 列以 '#' 开头（主物料）或匹配物料编号模式
-        - 跳过文档说明行（第 6 列文本超过 200 字符）
+        - code_col 列（物料编码）非空且不是 '/' 或 '-'
+        - code_col 列以 '#' 开头（主物料）或匹配物料编号模式
+        - 跳过文档说明行（code_col 列文本超过 200 字符）
         - 去重
+
+        Args:
+            ws: worksheet
+            step_row: 步骤表头行号
+            code_col: 物料编码所在列号（1-based），默认 6（F列），LEO 格式为 7（G列）
 
         Returns:
             list[DataRow]: 每项含 row, code, name, is_primary
@@ -159,41 +164,63 @@ class HeaderDetector:
         seen_codes = set()
 
         for row in range(step_row + 1, ws.max_row + 1):
-            col6 = self.cell_text(ws, row, 6)
-            col9 = self.cell_text(ws, row, 9)
+            code_val = self.cell_text(ws, row, code_col)
+            name_val = self.cell_text(ws, row, 9)
 
-            if not col9 or col9 in ("/", "-"):
+            if not name_val or name_val in ("/", "-"):
                 continue
 
-            if not col6 or col6 == "/" or col6 == "-":
+            if not code_val or code_val == "/" or code_val == "-":
                 continue
 
-            if len(col6) > 200:
+            if len(code_val) > 200:
                 continue
 
-            is_primary = col6.startswith("#")
+            is_primary = code_val.startswith("#")
+            # 放宽正则以支持 LEO 格式编码（如 P-MIS-140102、MIS-041022）
             code_pattern = re.match(
-                r'^#?[A-Za-z]+-\d+|^[A-Za-z]+-\d+|^[A-Za-z]+\d+', col6
+                r'^#?[A-Za-z]+-\d+|^#?[A-Za-z][A-Za-z0-9-]*\d+', code_val
             )
 
             if not is_primary and not code_pattern:
                 continue
 
-            first_code = col6.split(" / ")[0].strip().lstrip("#")
+            first_code = code_val.split(" / ")[0].strip().lstrip("#")
             if first_code in seen_codes:
                 continue
             seen_codes.add(first_code)
 
             data_rows.append(DataRow(
                 row=row,
-                code=col6,
-                name=col9,
+                code=code_val,
+                name=name_val,
                 is_primary=is_primary,
             ))
 
         return data_rows
 
-    def extract_compatibility_pairs(self, ws, row_num, step_row, cat_row=None):
+    def get_category_for_column(self, ws, cat_row, col):
+        """
+        从分类表头行获取指定列所属的大类名。
+        处理合并单元格：向后查找到第一个非空单元格。
+
+        由于 openpyxl 中合并区域只有左上角保留值，其余单元格返回 None，
+        因此需要从当前列往前回溯找到最近的非空分类名。
+
+        Returns:
+            str: 大类名（印刷/烫金/过胶/丝印/植毛/啤/手工/其他），或空字符串
+        """
+        if cat_row is None:
+            return ""
+        for c in range(col, 0, -1):
+            v = ws.cell(cat_row, c).value
+            if v is not None:
+                s = str(v).strip()
+                if s:
+                    return s
+        return ""
+
+    def extract_compatibility_pairs(self, ws, row_num, step_row, cat_row=None, code_col=6):
         """
         从第 40+ 列提取某数据行的兼容性数据对。
 
@@ -201,8 +228,14 @@ class HeaderDetector:
             Row cat_row  : 组分类 (印刷、烫金等)
             Row step_row : 单个工序名称
 
+        Args:
+            code_col: 物料编码列号，供子类/扩展使用
+
         Returns:
-            list[tuple]: (step_name, status) 列表，仅包含 V/X/▷/O 值。
+            list[tuple]: (step_name, status, category) 列表，
+                         step_name 来自 step_row 的工序名，
+                         status 为 V/X/▷/O 值，
+                         category 为所属大类名（仅当 cat_row 有效时）。
         """
         pairs = []
 
@@ -217,18 +250,7 @@ class HeaderDetector:
             if raw in ("V", "X", "▷", "O"):
                 step_name = self.cell_text(ws, step_row, col)
                 if step_name:
-                    if cat_row:
-                        cat_name = self.cell_text(ws, cat_row, col)
-                        if cat_name and cat_name != step_name:
-                            if len(cat_name) <= 4 and cat_name in self.config.category_keywords:
-                                full_name = f"{cat_name}/{step_name}"
-                            else:
-                                full_name = step_name
-                        else:
-                            full_name = step_name
-                    else:
-                        full_name = step_name
-
-                    pairs.append((full_name, raw))
+                    category = self.get_category_for_column(ws, cat_row, col) if cat_row else ""
+                    pairs.append((step_name, raw, category))
 
         return pairs

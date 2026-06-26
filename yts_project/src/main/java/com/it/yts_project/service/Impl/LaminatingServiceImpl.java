@@ -229,6 +229,20 @@ public class LaminatingServiceImpl implements LaminatingService {
     }
     
     @Override
+    public void batchSaveCompatibilityFast(List<LaminationCompatibility> compatibilities) {
+        if (compatibilities == null || compatibilities.isEmpty()) {
+            return;
+        }
+        // 仅确保 interfaceTypeId 为 0，其余校验由调用方在导入前完成
+        for (LaminationCompatibility compatibility : compatibilities) {
+            if (compatibility.getInterfaceTypeId() == null) {
+                compatibility.setInterfaceTypeId(0);
+            }
+        }
+        compatibilityMapper.batchSave(compatibilities);
+    }
+
+    @Override
     public void deleteCompatibility(Integer id) {
         compatibilityMapper.deleteById(id);
     }

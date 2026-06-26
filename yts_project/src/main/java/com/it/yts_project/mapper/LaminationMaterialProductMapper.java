@@ -50,4 +50,34 @@ public interface LaminationMaterialProductMapper {
     int batchInsertCompatibilities(@Param("list") List<LaminationMaterialCompatibility> list);
 
     List<String> getAllPostProcessingSteps();
+
+    // ========== 匹配查询 ==========
+
+    /**
+     * 搜索产品（可多材料类型 + 多工序筛选 + 分页）
+     */
+    List<LaminationMaterialProduct> searchProductsWithStep(
+            @Param("keyword") String keyword,
+            @Param("materialTypes") List<String> materialTypes,
+            @Param("steps") List<String> steps,
+            @Param("offset") Integer offset,
+            @Param("limit") Integer limit);
+
+    /**
+     * 统计产品数量（可多材料类型 + 多工序筛选）
+     */
+    Long countProductsWithStep(
+            @Param("keyword") String keyword,
+            @Param("materialTypes") List<String> materialTypes,
+            @Param("steps") List<String> steps);
+
+    /**
+     * 获取所有后加工工序步骤名称（去重）
+     */
+    List<String> getDistinctPostProcessingSteps();
+
+    /**
+     * 获取所有材料类型（去重）
+     */
+    List<String> getDistinctMaterialTypes();
 }

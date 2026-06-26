@@ -1,156 +1,172 @@
-# CLAUDE.md
+# 印刷厂物料匹配系统 — Yatushi Materials
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+> 叫我 **CC**。印刷厂管理系统 AI 搭档。
+> 当前成熟度：**L1.5**（烫金匹配线上运行 → 全品类 ETL + AI Agent）
 
-## 项目概览
+---
 
-印刷厂管理系统 — 烫金/裱纸/丝印/过胶/LED UV 等工序的 BOM 构建、物料兼容性匹配、权限管理。
+## 一、项目身份
+
+印刷厂管理系统，覆盖烫金/裱纸/丝印/过胶/LED UV 等工序的 BOM 构建、物料兼容性匹配、权限管理。
 
 - **后端** `yts_project/`：Java 17 + Spring Boot 3.3.10 + MyBatis + PostgreSQL
 - **前端** `yts_project_vueai/`：Vue 3 + TypeScript + Vite + Element Plus + Pinia + Tailwind CSS
+- **AI**：阿里 DashScope（AiChatOrchestrator 3 层渐进上下文 + IntentDetector + SkillRouter）
+- **远程**：`git@github.com:mo17301909990-alt/Yatushi-Materials.git`
 
-## 构建 & 运行
+---
 
-### 后端
+## 二、架构原则
+
+1. **DB 是唯一真相** — 兼容性规则、价格、配置都从数据库读，不硬编码业务规则到 Java 代码
+2. **AI 是翻译层，不是决策层** — 大模型只做意图识别+参数解析，匹配逻辑走规则表，不靠 AI 编造
+3. **ETL 先于匹配** — 原始资料必须先通过 ETL Pipeline 入库，才能被匹配系统使用
+4. **写操作必须有人审** — Agent 提变更预览 → 人工确认 → 执行 → 审计，不跳步
+5. **Schema-First 数据定义** — 新增数据表先写 `create_*.sql` → 再写 Mapper XML → 再写 Service
+6. **声明式规则优先** — 兼容性匹配规则逐步从 SQL JOIN + Java 条件分支迁移到 YAML 声明式配置（configurable-rule-engine），让业务人员可配置，不改代码
+7. **Service 拆分原则** — Service 超 300 行必须拆。Excel 处理逻辑不混入业务 Service，统一归入 `util/excel` 包
+
+---
+
+## 三、红线（不可触碰）
+
+| # | 红线 | 后果 |
+|---|------|------|
+| 1 | 改生产数据库（101.126.27.148） | 数据灾难 |
+| 2 | 改 DB 不写迁移 SQL | 团队不同步 |
+| 3 | force push 到 main | 历史丢失 |
+| 4 | 密码/Key 硬编码到代码里（含 `:-fallback` 默认值） | 安全泄露 |
+| 5 | 用 `@Autowired` 字段注入 | 违反项目规范 |
+| 6 | Controller 层写 try-catch 业务逻辑 | 全局异常处理器接管 |
+| 7 | 用户说"同意"就直接写代码 | 必须走 `dispatch` |
+| 8 | 跳过 Done Criteria 强检查就提交 | 质量门禁失效 |
+
+---
+
+## 四、构建 & 运行
+
 ```bash
-cd yts_project
-./mvnw spring-boot:run                  # 本地启动 (port 8093)
-mvn clean package -DskipTests           # 打包 JAR
-mvn test                                # 跑全部测试
-mvn test -Dtest=TestClass#method        # 跑单个测试
+# 后端
+cd yts_project && ./mvnw spring-boot:run          # 本地启动 (port 8092)
+mvn clean package -DskipTests                      # 打包 JAR
+mvn test                                           # 跑全部测试
+
+# 前端
+cd yts_project_vueai && npm install                # 装依赖
+npm run dev                                        # 开发服务器 (含代理)
+npm run build                                      # 生产构建
+
+# ETL 数据管道
+cd database_scripts && python p0_etl.py             # 全量导入 G 盘资料
+python p0_etl.py --validate                        # 校验表行数
 ```
 
-### 前端
-```bash
-cd yts_project_vueai
-npm install                             # 装依赖
-npm run dev                             # 开发服务器 (含代理)
-npm run build                           # 生产构建
-npm run preview                         # 预览构建产物
+### 本地数据库
+```
+gold_foil_db | localhost:5432 | postgres | HryENprJrxThYSDz | PostgreSQL 16
+```
+生产/开发环境当前不可达，仅本地可用。
+
+---
+
+## 五、完成标准（Done Criteria + 强检查）
+
+| 改了啥 | 必须过的检查 |
+|--------|------------|
+| 后端 Java | `mvn compile` 静默通过 |
+| 逻辑变更 | 对应测试通过（`mvn test -Dtest=TestClass#method`） |
+| 前端代码 | `npm run build` 通过（TypeScript 无错误） |
+| API 路由 | 统一返回 `R<T>` 格式 |
+| 数据库表 | 对应建表 SQL + 回滚 SQL |
+| 敏感信息 | 环境变量配置，不用 `:-fallback` 明文 |
+| XML Mapper | `mvn compile` 通过（无 `BuilderException`） |
+| Vite 代理 | 改 `vite.config.ts` 后同步检查所有 Controller `/api` 前缀 |
+
+**强检查规则**：每次 dispatch 完成后，必须运行对应改动的验证命令并看到通过输出。不允许"确认已跑过"口头承诺。命令写在 dispatch 的 verify 步骤中。
+
+---
+
+## 六、改前查 / 改后验
+
+### 改前
+```
+□ 查 gotchas/ 有没有类似踩坑记录（grep -r "关键字" .claude/gotchas/）
+□ 查 CLAUDE.md 近期 Gotchas 区
+□ 读涉及文件的完整内容（禁止半猜半写）
+□ 确认当前分支正确（不在 main 上直接改）
 ```
 
-## 本地数据库（已恢复）
-
-数据来自备份文件 `gold_foil_db_2026-05-15_20-56-28_pgsql_data.sql`（3.8MB，103 条 COPY 语句）。
-恢复时间：2026-06-07，89 张表共 31,380 行数据。
-
+### 改后
 ```
-数据库: gold_foil_db
-主机:   localhost:5432
-用户:   postgres
-密码:   HryENprJrxThYSDz
-驱动:   PostgreSQL 16
+后端:  □ mvn compile 通过  □ 有逻辑变更 → 对应测试  □ 改了 API → curl 测通
+前端:  □ npm run build 通过  □ 组件/页面改动 → 浏览器看效果
+DB:    □ 迁移 SQL + 回滚 SQL 都有  □ 已有数据不受影响
+规则:  □ YAML 规则改完 → 用兼容性测试套验证  □ 规则版本号递增
+拆分:  □ 新 Service 不超过 300 行  □ Excel 逻辑不进业务 Service
 ```
 
-连接示例：
-```bash
-PGPASSWORD=HryENprJrxThYSDz psql -h localhost -U postgres -d gold_foil_db
-```
+---
 
-**前 10 大表（按行数）：**
-| 表 | 行数 |
-|----|------|
-| material_process_compatibility | 10,071 |
-| admin_operation_log | 1,480 |
-| hot_stamping_compatibility | 1,421 |
-| specifications | 1,147 |
-| products | 1,147 |
-| pricing | 1,108 |
-| leo_gp_numbers | 1,098 |
-| products_snapshot | 1,074 |
-| pricing_snapshot | 1,060 |
-| gold_foil_type / old_* 系列 | ~1,017 每表 |
+## 七、调度规则（Agent 路由）
 
-## 数据库配置（后端）
-
-| 环境 | 地址 | 说明 |
+| 任务 | 路由 | 说明 |
 |------|------|------|
-| `application.properties` | 101.126.27.148:5432 | 生产（当前不可达） |
-| `application-dev.properties` | 10.2.2.232:5432 | 开发（当前不可达） |
-| 本地（已恢复） | localhost:5432 | 当前可用 |
+| 查信息/跑命令/读代码 | **我直接干** | 一行命令解决的不废话 |
+| 烫金匹配规则 | `烫金匹配专员` | 兼容性规则 CRUD |
+| 丝印/UV/后加工数据 | `丝印UV专员` | 硅胶/UV/过胶数据 ETL 与管理 |
+| ETL Pipeline | `etl-data-pipeline` | 建表→导入→校验→质量报告 |
+| 权限/用户 | `权限管理` | 开户/授权/审计/角色 |
+| Java 后端代码 | `java-backend` | Controller/Service/Mapper/XML |
+| Vue 前端页面 | `vue-frontend` | 页面/组件/Store/路由 |
+| 兼容性规则引擎 | `rule-engine` | YAML 规则配置/版本管理/Guava Cache |
+| Service 拆分重构 | `service-decomposer` | 超大 Service 拆分/Excel 逻辑抽离 |
+| 质量门禁配置 | `quality-gate` | Hook 配置/Done Criteria 强检查/测试覆盖 |
+| 代码审查 | `code-review` | 编译→类型检查→逻辑审查 |
+| Bug 排查 | `investigate` | 定位→复现→修复→记录 gotcha |
+| 安全审计 | `guard` | Controller 权限扫描/密码硬编码检查 |
+| 提交推送 | `commit-push-pr` | 分支→commit→push→PR |
 
-### 前端
-- `.env.development` / `.env.production` — API 端点
-- `vite.config.ts` — 开发代理指向 localhost:8093
+**Fallback**：路由表无匹配 → 自动进入 `review` 流程，审核后再定方案。
 
-## 架构
+---
 
-### 后端分层
+## 八、知识飞轮（青铜→白银→黄金）
+
 ```
-controller/ → service/ → mapper/ → MyBatis XML → PostgreSQL
-                                        ↑
-                                  config/ (安全/权限/CORS)
-                                        ↑
-                                  aspect/ (AOP 操作日志)
+踩坑/修 Bug
+  ↓ 记录到 .claude/gotchas/YYYY-MM-DD-简述.md      ← 青铜级（单次记录）
+  ↓ 同类问题出现 3 次
+  ↓ 提炼为 .claude/ai-knowledge/ 领域知识文档          ← 白银级（可复用知识）
+  ↓ 经过 3 次验证确认有效
+  ↓ 固化到规则引擎配置或 Service 逻辑中                 ← 黄金级（不需人记）
 ```
-- **controller/**: 30+ REST 控制器，请求校验、响应格式化
-- **service/**: 业务逻辑层，事务管理；含 `DashScopeChatService`（阿里通义千问 AI 对接）
-- **mapper/**: MyBatis 接口 + `resources/mapper/` XML 映射
-- **config/**: Spring Security + Kerberos 认证、CORS、RBAC 引导、字段级权限解析
-- **aspect/**: `AdminOperationLogAspect` — 通过注解拦截操作记录日志
 
-### 核心业务模块（按 Controller 划分）
-| 模块 | 控制器 |
-|------|--------|
-| 烫金 | `HotStamping*Controller` (compatibility, pattern, type) |
-| 裱纸/过胶 | `LaminatingController`, `ClothPaper*Controller` |
-| 后道工艺 | `PostProcessingPrintController`, `PostProcessingPrintUvController`, `PostProcessingLeduvglitterController` |
-| 产品管理 | `ProductsController`, `ProductController`, `ProductImportController` |
-| 权限 | `PermissionController` (RBAC CRUD) |
-| AI | `AiController` → DashScopeChatService |
-| 物料 | `ResourceGroupSelectController`, `MaterialRuleStatisticsController` |
-| 公告/字典 | `NoticeDictionaryController`, `BatchNoticeUpdateController` |
+每次 dispatch 完成后，由 CC 判断当前修复是否触发升级条件。
 
-### 前端结构
-```
-api/modules/ → views/ → components/
-stores/ (Pinia) → router/ → App.vue
-```
-- **api/modules/**: Axios 封装的后端 API 调用
-- **views/**: 页面级组件（admin/, auth/, matchPreference/, guide/, message/）
-- **stores/**: Pinia 状态管理
-- **components/**: 通用 UI 组件
-- **directives/**: 自定义指令
+---
 
-## Git 分支
-- `saojinzhi`（当前） — 烧金纸相关开发
-- `zj105` — 主分支/基线
-- `liandonggengxing` — 联动更新功能
-- `zhuyishixiang` — 注意事项/修复
-- `雅图仕权限版` — 客户定制权限版本
+## 九、项目管线
 
-远程仓库：`https://gitee.com/peng-yuyan-3/yst.git`
+### ETL 管线：`phase0(建表) → phase1(导入) → data-quality(校验) → export(报表)`
+### 飞轮回路：`ai-match-feedback` / `compatibility-audit` / `data-quality` / `permission-security`
+### 健康检查：`dev-quality-check` 每 6h（`mvn compile + npm run build`），失败跑 `record-error.sh`
 
-## 文档（中文）
-根目录下大量中文 Markdown 文档：
-- 系统架构图.md / 系统设计思路文档.md / 项目交接文档-完整版.md
-- 操作手册.md / 操作手册_用户版.md
-- PERMISSION_SYSTEM_GUIDE.md / DEPLOYMENT_STEPS.md
+---
 
-## Done Criteria
+## 十、近期 Gotchas
 
-- [ ] 后端改动 → `mvn compile` 通过
-- [ ] 逻辑变更 → 对应测试通过（`mvn test -Dtest=TestClass#method`）
-- [ ] 前端改动 → `npm run build` 通过（TypeScript 无错误）
-- [ ] API route 变更 → 对应 Zod/参数校验 + 统一返回格式 `R<T>`
-- [ ] 数据库变更 → 对应迁移 SQL + 回滚 SQL
-- [ ] 敏感信息（密码/key）不硬编码 → 用环境变量或配置文件
+| 日期 | 问题 | 根因 | 预防 |
+|------|------|------|------|
+| 2026-06-18 | Vite 代理 rewrite 被误删 + Controller 路径不统一 | `vite.config.ts` rewrite 被删 + `UserController` 缺 `/api` 前缀 | 改 proxy 必须同步检查全量 Controller 路径 |
+| 2026-06-18 | AdminOperationLogMapper 残留导致启动失败 | `target/` 残留旧 Mapper XML | 启动前跑 `mvn clean` |
+| 2026-06-18 | `<batchInsert>` 非法 XML 元素 | MyBatis XML 误用非标准标签 | 新 Mapper XML 确认只用标准元素 |
 
-## 项目路由
+---
 
-| 任务 | 调用 |
-|------|------|
-| 查信息/跑命令 | 我直接干 |
-| 代码改动 | `build` / `dispatch` |
-| 审计/代码审查 | `grill` / `global-code-reviewer` |
-| Bug 排查 | `investigate` |
-| 端到端验证 | `qa` |
-| 构建 | `build` |
-| 提交推送 | `commit-push-pr` |
-| 错误匹配 | `error-pattern` |
+## 十一、注意事项
 
-## 注意事项
-- **POI/EasyExcel 版本敏感**：pom.xml 中 POI 锁定 5.2.3 + xmlbeans 5.1.1，exclude poi-ooxml-lite 和 poi-ooxml-schemas，依赖冲突会抛 NoSuchFieldError: Factory
-- **数据库脚本**：根目录 `*fix*.sql` / `*optimization*.sql` / `database_scripts/` 下大量历史迁移和修复脚本
-- 根目录有 `hs_err_pid*.log` 和 `replay_pid*.log`（JVM crash 日志），可清理
-- 数据备份文件：`gold_foil_db_2026-05-15_20-56-28_pgsql_data.sql/` 目录下
+- **POI/EasyExcel 版本敏感**：POI 5.2.3 + xmlbeans 5.1.1，依赖冲突抛 `NoSuchFieldError: Factory`
+- **启动必须设 DASHSCOPE_API_KEY**：`DASHSCOPE_API_KEY=xxx mvn spring-boot:run`
+- **Stop Hook 路径**：已指向本项目根目录（`settings.json`），勿改
+- **密码无 fallback**：`application.properties` 不应含 `:-` 默认值，环境变量缺失直接报错退出
+- **根目录大量中文文档**（架构图、操作手册、交接文档），开发前先看

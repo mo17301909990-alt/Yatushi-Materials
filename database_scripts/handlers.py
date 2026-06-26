@@ -98,15 +98,23 @@ def _insert_product(conn, table, product_data):
     return None
 
 
-def _insert_compatibility(conn, table, product_id, step_name, status):
+def _insert_compatibility(conn, table, product_id, step_name, status, step_category=None):
     """Insert a compatibility row. Skip if duplicate."""
     try:
-        exec_sql(
-            conn,
-            f"INSERT INTO {table} (product_id, post_processing_step, compatibility_status) "
-            f"VALUES (%s, %s, %s)",
-            (product_id, step_name, status),
-        )
+        if step_category:
+            exec_sql(
+                conn,
+                f"INSERT INTO {table} (product_id, post_processing_step, compatibility_status, step_category) "
+                f"VALUES (%s, %s, %s, %s)",
+                (product_id, step_name, status, step_category),
+            )
+        else:
+            exec_sql(
+                conn,
+                f"INSERT INTO {table} (product_id, post_processing_step, compatibility_status) "
+                f"VALUES (%s, %s, %s)",
+                (product_id, step_name, status),
+            )
         return True
     except Exception:
         return False
@@ -129,7 +137,7 @@ class SchemaHandler:
     def insert_product(self, conn, product: Product, cat: CategoryDef) -> int | None:
         raise NotImplementedError
 
-    def insert_compat(self, conn, product_id: int, step: str, status: str, cat: CategoryDef):
+    def insert_compat(self, conn, product_id: int, step: str, status: str, cat: CategoryDef, step_category: str = None):
         raise NotImplementedError
 
 
@@ -148,6 +156,9 @@ CREATE TABLE IF NOT EXISTS {table} (
     category VARCHAR(200) DEFAULT NULL,
     color VARCHAR(200) DEFAULT NULL,
     responsible_person VARCHAR(200) DEFAULT NULL,
+    thickness VARCHAR(100) DEFAULT NULL,
+    shape VARCHAR(200) DEFAULT NULL,
+    tester VARCHAR(200) DEFAULT NULL,
     min_sheet_size VARCHAR(200) DEFAULT NULL,
     max_sheet_size VARCHAR(200) DEFAULT NULL,
     min_spacing VARCHAR(100) DEFAULT NULL,
@@ -167,6 +178,7 @@ CREATE TABLE IF NOT EXISTS {table} (
     product_id INTEGER NOT NULL REFERENCES {product_table}(id),
     post_processing_step VARCHAR(500) NOT NULL,
     compatibility_status VARCHAR(10) NOT NULL,
+    step_category VARCHAR(50) DEFAULT NULL,
     remark TEXT DEFAULT NULL,
     display_order INTEGER DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -198,6 +210,7 @@ CREATE TABLE IF NOT EXISTS lamination_material_compatibility (
     product_id INTEGER NOT NULL REFERENCES lamination_material_products(id),
     post_processing_step VARCHAR(500) NOT NULL,
     compatibility_status VARCHAR(10) NOT NULL,
+    step_category VARCHAR(50) DEFAULT NULL,
     remark TEXT DEFAULT NULL,
     display_order INTEGER DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -226,6 +239,19 @@ class StandardHandler(SchemaHandler):
         conn.commit()
 
     def extract_product(self, ws, row_num) -> Product:
+        # 设计限制区 Q~Z (col 17~26) 综合
+        design_parts = []
+        for col in range(17, 27):
+            v = _detector.cell_text(ws, row_num, col)
+            if v:
+                design_parts.append(v)
+        # 适用接口 AH~AN (col 34~40) 综合
+        iface_parts = []
+        for col in range(34, 41):
+            v = _detector.cell_text(ws, row_num, col)
+            if v:
+                iface_parts.append(v)
+
         return Product(
             material_code=_detector.cell_text(ws, row_num, 6),
             supplier_code=_detector.cell_text(ws, row_num, 7),
@@ -233,15 +259,25 @@ class StandardHandler(SchemaHandler):
             material_name=_detector.cell_text(ws, row_num, 9),
             usage=_detector.cell_text(ws, row_num, 10),
             category=_detector.cell_text(ws, row_num, 11),
-            responsible_person=_detector.cell_text(ws, row_num, 13),
+            thickness=_detector.cell_text(ws, row_num, 12),
+            # col 13 (M) = 尺寸/规格, 无独立 DB 字段对应 — 跳过
             color=_detector.cell_text(ws, row_num, 14),
+            shape=_detector.cell_text(ws, row_num, 15),
+            tester=_detector.cell_text(ws, row_num, 16),
+            min_sheet_size=_detector.cell_text(ws, row_num, 17),
+            max_sheet_size=_detector.cell_text(ws, row_num, 18),
+            min_spacing=_detector.cell_text(ws, row_num, 23),
+            max_spacing=_detector.cell_text(ws, row_num, 24),
+            design_info=" / ".join(design_parts) if design_parts else "",
+            applicable_interface=" / ".join(iface_parts) if iface_parts else "",
+            notes=_detector.cell_text(ws, row_num, 112),
         )
 
     def insert_product(self, conn, product: Product, cat: CategoryDef) -> int | None:
         return _insert_product(conn, cat.product_table, product)
 
-    def insert_compat(self, conn, product_id: int, step: str, status: str, cat: CategoryDef):
-        return _insert_compatibility(conn, cat.compat_table, product_id, step, status)
+    def insert_compat(self, conn, product_id: int, step: str, status: str, cat: CategoryDef, step_category: str = None):
+        return _insert_compatibility(conn, cat.compat_table, product_id, step, status, step_category)
 
 
 # ────────────────────────────────────────────────────────────────
@@ -279,8 +315,8 @@ class LaminationHandler(SchemaHandler):
     def insert_product(self, conn, product: Product, cat: CategoryDef) -> int | None:
         return _insert_product(conn, "lamination_material_products", product)
 
-    def insert_compat(self, conn, product_id: int, step: str, status: str, cat: CategoryDef):
-        return _insert_compatibility(conn, "lamination_material_compatibility", product_id, step, status)
+    def insert_compat(self, conn, product_id: int, step: str, status: str, cat: CategoryDef, step_category: str = None):
+        return _insert_compatibility(conn, "lamination_material_compatibility", product_id, step, status, step_category)
 
 
 # ────────────────────────────────────────────────────────────────

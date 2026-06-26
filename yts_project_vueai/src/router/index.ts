@@ -38,6 +38,34 @@ import WorkCenterResourceGroupManagement from '../views/admin/WorkCenterResource
 import ResourceGroupDetail from '../views/admin/ResourceGroupDetail.vue'
 import MessageCenter from '../views/message/MessageCenter.vue'
 import ResourceGroupSelector from '../views/ResourceGroupSelector.vue'
+import AgentProcess from '../views/agent/AgentProcess.vue'
+import AgentChat from '../views/agent/AgentChat.vue'
+import SmartVersion from '../views/SmartVersion.vue'
+import NoticeDictionaryManagement from '../views/admin/material/NoticeDictionaryManagement.vue'
+import SeriesPriorityRuleManagement from '../views/admin/material/SeriesPriorityRuleManagement.vue'
+import MatrixExportImportManagement from '../views/admin/material/MatrixExportImportManagement.vue'
+import HotStampingMaterialGuide from '../views/guide/HotStampingMaterialGuide.vue'
+import ProductImportManagement from '../views/admin/import/ProductImportManagement.vue'
+import UvOilMatteMatching from '../views/matching/UvOilMatteMatching.vue'
+import WaterVarnishMatteMatching from '../views/matching/WaterVarnishMatteMatching.vue'
+import SiliconeGlowInkMatching from '../views/matching/SiliconeGlowInkMatching.vue'
+import SiliconeWhiteUvMatching from '../views/matching/SiliconeWhiteUvMatching.vue'
+import SiliconeGlitteringStarMatching from '../views/matching/SiliconeGlitteringStarMatching.vue'
+import SiliconeScreenUvMatching from '../views/matching/SiliconeScreenUvMatching.vue'
+import SiliconeLedUvSprayMatching from '../views/matching/SiliconeLedUvSprayMatching.vue'
+import SiliconeWaterBaseTransparentMatching from '../views/matching/SiliconeWaterBaseTransparentMatching.vue'
+import SiliconeCoarseUvMatching from '../views/matching/SiliconeCoarseUvMatching.vue'
+import SiliconeOrangePeelUvMatching from '../views/matching/SiliconeOrangePeelUvMatching.vue'
+import SiliconeSandblastUvMatching from '../views/matching/SiliconeSandblastUvMatching.vue'
+import SiliconeWrinkleUvMatching from '../views/matching/SiliconeWrinkleUvMatching.vue'
+import SiliconeWatercolorInkMatching from '../views/matching/SiliconeWatercolorInkMatching.vue'
+import SiliconeMicaPearlMatching from '../views/matching/SiliconeMicaPearlMatching.vue'
+import LaminationMaterialMatching from '../views/matching/LaminationMaterialMatching.vue'
+import LeoBookBoardMatching from '../views/matching/LeoBookBoardMatching.vue'
+import LeoFlatMatching from '../views/matching/LeoFlatMatching.vue'
+import LeoNonFlatMatching from '../views/matching/LeoNonFlatMatching.vue'
+import LeoMatching from '../views/matching/LeoMatching.vue'
+import SiliconeMatching from '../views/matching/SiliconeMatching.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -278,6 +306,174 @@ const router = createRouter({
       path: '/resource-group-selector',
       name: 'ResourceGroupSelector',
       component: ResourceGroupSelector,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/agent/process',
+      name: 'AgentProcess',
+      component: AgentProcess,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/agent/chat',
+      name: 'AgentChat',
+      component: AgentChat,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/smart-version',
+      name: 'SmartVersion',
+      component: SmartVersion,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/admin/material/notice-dictionary',
+      name: 'NoticeDictionaryManagement',
+      component: NoticeDictionaryManagement,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/admin/material/series-priority-rule',
+      name: 'SeriesPriorityRuleManagement',
+      component: SeriesPriorityRuleManagement,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/admin/material/matrix-export-import',
+      name: 'MatrixExportImportManagement',
+      component: MatrixExportImportManagement,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/guide/hot-stamping-material',
+      name: 'HotStampingMaterialGuide',
+      component: HotStampingMaterialGuide,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/admin/product-import-management',
+      name: 'ProductImportManagement',
+      component: ProductImportManagement,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/matching/uv-oil-matte',
+      name: 'UvOilMatteMatching',
+      component: UvOilMatteMatching,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/matching/water-varnish-matte',
+      name: 'WaterVarnishMatteMatching',
+      component: WaterVarnishMatteMatching,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/matching/silicone-glow-ink',
+      name: 'SiliconeGlowInkMatching',
+      component: SiliconeGlowInkMatching,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/matching/silicone-white-uv',
+      name: 'SiliconeWhiteUvMatching',
+      component: SiliconeWhiteUvMatching,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/matching/silicone-glittering-star',
+      name: 'SiliconeGlitteringStarMatching',
+      component: SiliconeGlitteringStarMatching,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/matching/silicone-screen-uv',
+      name: 'SiliconeScreenUvMatching',
+      component: SiliconeScreenUvMatching,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/matching/silicone-led-uv-spray',
+      name: 'SiliconeLedUvSprayMatching',
+      component: SiliconeLedUvSprayMatching,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/matching/silicone-water-base-transparent',
+      name: 'SiliconeWaterBaseTransparentMatching',
+      component: SiliconeWaterBaseTransparentMatching,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/matching/silicone-coarse-uv',
+      name: 'SiliconeCoarseUvMatching',
+      component: SiliconeCoarseUvMatching,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/matching/silicone-orange-peel-uv',
+      name: 'SiliconeOrangePeelUvMatching',
+      component: SiliconeOrangePeelUvMatching,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/matching/silicone-sandblast-uv',
+      name: 'SiliconeSandblastUvMatching',
+      component: SiliconeSandblastUvMatching,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/matching/silicone-wrinkle-uv',
+      name: 'SiliconeWrinkleUvMatching',
+      component: SiliconeWrinkleUvMatching,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/matching/silicone-watercolor-ink',
+      name: 'SiliconeWatercolorInkMatching',
+      component: SiliconeWatercolorInkMatching,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/matching/silicone-mica-pearl',
+      name: 'SiliconeMicaPearlMatching',
+      component: SiliconeMicaPearlMatching,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/matching/lamination-material',
+      name: 'LaminationMaterialMatching',
+      component: LaminationMaterialMatching,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/matching/leo-book-board',
+      name: 'LeoBookBoardMatching',
+      component: LeoBookBoardMatching,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/matching/leo-flat',
+      name: 'LeoFlatMatching',
+      component: LeoFlatMatching,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/matching/leo-non-flat',
+      name: 'LeoNonFlatMatching',
+      component: LeoNonFlatMatching,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/matching/leo',
+      name: 'LeoMatching',
+      component: LeoMatching,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/matching/silicone',
+      name: 'SiliconeMatching',
+      component: SiliconeMatching,
       meta: { requiresAuth: true }
     },
   ]

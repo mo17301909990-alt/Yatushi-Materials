@@ -2,6 +2,7 @@ package com.it.yts_project.mapper;
 
 import com.it.yts_project.model.HotStampingPatternBase;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -21,6 +22,9 @@ public interface HotStampingPatternBaseMapper {
     @Select("SELECT * FROM hot_stamping_pattern_base ORDER BY sort_order, id")
     List<HotStampingPatternBase> getAllPatterns();
 
+    @Select("SELECT COUNT(*) FROM hot_stamping_pattern_base")
+    long countAllPatterns();
+
     /**
      * 根据ID获取烫金图案基础信息
      */
@@ -31,4 +35,9 @@ public interface HotStampingPatternBaseMapper {
      * 根据ID列表获取烫金图案基础信息
      */
     List<HotStampingPatternBase> getByIds(List<Integer> ids);
+
+    /**
+     * 更新注意事项ID列表
+     */
+    void updateNoticeIds(@Param("id") Integer id, @Param("noticeIds") List<Integer> noticeIds);
 }

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.yts_project.mapper.SeriesPriorityRuleMapper">
+
+    <resultMap id="BaseResultMap" type="com.it.yts_project.dto.SeriesPriorityRuleDTO">
+        <id column="id" property="id"/>
+        <result column="rule_code" property="ruleCode"/>
+        <result column="rule_name" property="ruleName"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="is_active" property="isActive"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT id, rule_code, rule_name, sort_order, is_active
+        FROM series_priority_rule
+        ORDER BY sort_order ASC, id ASC
+    </select>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT id, rule_code, rule_name, sort_order, is_active
+        FROM series_priority_rule
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.it.yts_project.dto.SeriesPriorityRuleDTO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO series_priority_rule (rule_code, rule_name, sort_order, is_active)
+        VALUES (#{ruleCode}, #{ruleName}, #{sortOrder}, #{isActive})
+    </insert>
+
+    <update id="updateById">
+        UPDATE series_priority_rule SET updated_at = CURRENT_TIMESTAMP
+            <if test="ruleName != null">, rule_name = #{ruleName}</if>
+            <if test="sortOrder != null">, sort_order = #{sortOrder}</if>
+            <if test="isActive != null">, is_active = #{isActive}</if>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM series_priority_rule WHERE id = #{id}
+    </delete>
+</mapper>

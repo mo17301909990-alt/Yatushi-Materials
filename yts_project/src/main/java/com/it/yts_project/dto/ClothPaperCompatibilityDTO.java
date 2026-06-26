@@ -4,6 +4,7 @@ import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 布面纸兼容性DTO
@@ -30,7 +31,9 @@ public class ClothPaperCompatibilityDTO {
     
     @ExcelIgnore
     private LocalDateTime updatedAt;
-    
+
+    private List<Integer> noticeIds;  // 关联的注意事项ID数组
+
     // 关联查询字段
     @ExcelProperty("適用界面類型名稱")
     private String clothPaperTypeName;  // 布面纸类型名称

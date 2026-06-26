@@ -187,6 +187,37 @@ CATEGORIES["lamination_material"] = CategoryDef(
     schema_type="lamination",
 )
 
+# --- LEO 纸品 (物料编码在第 7 列 G) ---
+CATEGORIES["leo_book_board"] = CategoryDef(
+    dir="LEO纸品",
+    glob="*书板贴纸*",
+    data_count=15,
+    product_table="leo_book_board_product",
+    compat_table="leo_book_board_compatibility",
+    schema_type="silicone",  # 用 standard handler
+    code_col=7,  # LEO 编码在 G 列
+)
+
+CATEGORIES["leo_flat"] = CategoryDef(
+    dir="LEO纸品",
+    glob="*平面产品贴纸*",
+    data_count=9,
+    product_table="leo_flat_product",
+    compat_table="leo_flat_compatibility",
+    schema_type="silicone",
+    code_col=7,
+)
+
+CATEGORIES["leo_non_flat"] = CategoryDef(
+    dir="LEO纸品",
+    glob="*非平面产品贴纸*",
+    data_count=12,
+    product_table="leo_non_flat_product",
+    compat_table="leo_non_flat_compatibility",
+    schema_type="silicone",
+    code_col=7,
+)
+
 # ──────────────────────────────────────────────
 # Database Operations
 # ──────────────────────────────────────────────
@@ -287,8 +318,8 @@ def process_category(conn, category_key, cat_info, dry_run=False):
         cat_row = detector.find_category_header_row(ws)
         log(f"    Step header at row {step_row}, category header at row {cat_row}")
 
-        # Find data rows
-        data_rows = detector.find_data_rows(ws, step_row)
+        # Find data rows (use cat.code_col for LEO format)
+        data_rows = detector.find_data_rows(ws, step_row, code_col=cat_info.code_col)
         log(f"    Found {len(data_rows)} data rows")
 
         if not data_rows:
@@ -303,7 +334,7 @@ def process_category(conn, category_key, cat_info, dry_run=False):
             if dry_run:
                 log(f"    [DRY-RUN] Row {row}: {dr.code[:40]} -> {product.material_name}")
                 stats.products += 1
-                pairs = detector.extract_compatibility_pairs(ws, row, step_row, cat_row)
+                pairs = detector.extract_compatibility_pairs(ws, row, step_row, cat_row, code_col=cat_info.code_col)
                 log(f"      {len(pairs)} compatibility entries")
                 stats.compat += len(pairs)
                 continue
@@ -312,9 +343,9 @@ def process_category(conn, category_key, cat_info, dry_run=False):
             if pid:
                 stats.products += 1
 
-                pairs = detector.extract_compatibility_pairs(ws, row, step_row, cat_row)
-                for step_name, status in pairs:
-                    handler.insert_compat(conn, pid, step_name, status, cat_info)
+                pairs = detector.extract_compatibility_pairs(ws, row, step_row, cat_row, code_col=cat_info.code_col)
+                for step_name, status, category in pairs:
+                    handler.insert_compat(conn, pid, step_name, status, cat_info, category)
                     stats.compat += 1
             else:
                 stats.duplicates += 1

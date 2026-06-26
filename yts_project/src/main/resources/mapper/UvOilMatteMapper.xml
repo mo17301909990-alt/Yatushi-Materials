@@ -12,6 +12,8 @@
         <result property="usage" column="usage"/>
         <result property="category" column="category"/>
         <result property="color" column="color"/>
+        <result property="thickness" column="thickness"/>
+        <result property="shape" column="shape"/>
         <result property="responsiblePerson" column="responsible_person"/>
         <result property="minSheetSize" column="min_sheet_size"/>
         <result property="maxSheetSize" column="max_sheet_size"/>
@@ -57,12 +59,14 @@
     <insert id="insertProduct" parameterType="com.it.yts_project.model.UvOilMatteProduct" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO uv_oil_matte_product (
             material_code, supplier_code, stock_code, material_name, usage,
-            category, color, responsible_person, min_sheet_size, max_sheet_size,
-            min_spacing, design_info, applicable_interface, notes, is_active
+            category, color, thickness, shape, responsible_person,
+            min_sheet_size, max_sheet_size, min_spacing, design_info,
+            applicable_interface, notes, is_active
         ) VALUES (
             #{materialCode}, #{supplierCode}, #{stockCode}, #{materialName}, #{usage},
-            #{category}, #{color}, #{responsiblePerson}, #{minSheetSize}, #{maxSheetSize},
-            #{minSpacing}, #{designInfo}, #{applicableInterface}, #{notes}, #{isActive}
+            #{category}, #{color}, #{thickness}, #{shape}, #{responsiblePerson},
+            #{minSheetSize}, #{maxSheetSize}, #{minSpacing}, #{designInfo},
+            #{applicableInterface}, #{notes}, #{isActive}
         )
     </insert>
 
@@ -75,6 +79,8 @@
             usage = #{usage},
             category = #{category},
             color = #{color},
+            thickness = #{thickness},
+            shape = #{shape},
             responsible_person = #{responsiblePerson},
             min_sheet_size = #{minSheetSize},
             max_sheet_size = #{maxSheetSize},
@@ -143,6 +149,156 @@
         FROM uv_oil_matte_compatibility c
         LEFT JOIN uv_oil_matte_product p ON c.product_id = p.id
         WHERE c.product_id = #{productId} AND c.post_processing_step = #{postProcessingStep}
+    </select>
+
+    <!-- ========== 匹配查询 ========== -->
+
+    <!-- 匹配查询结果映射（含兼容性状态） -->
+    <resultMap id="ProductMatchResultMap" type="com.it.yts_project.dto.UvOilMatteProductDTO">
+        <id property="id" column="id"/>
+        <result property="materialCode" column="material_code"/>
+        <result property="supplierCode" column="supplier_code"/>
+        <result property="stockCode" column="stock_code"/>
+        <result property="materialName" column="material_name"/>
+        <result property="usage" column="usage"/>
+        <result property="category" column="category"/>
+        <result property="color" column="color"/>
+        <result property="thickness" column="thickness"/>
+        <result property="shape" column="shape"/>
+        <result property="responsiblePerson" column="responsible_person"/>
+        <result property="minSheetSize" column="min_sheet_size"/>
+        <result property="maxSheetSize" column="max_sheet_size"/>
+        <result property="minSpacing" column="min_spacing"/>
+        <result property="designInfo" column="design_info"/>
+        <result property="applicableInterface" column="applicable_interface"/>
+        <result property="notes" column="notes"/>
+        <result property="isActive" column="is_active"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="compatibilityStatus" column="compatibility_status"/>
+    </resultMap>
+
+    <select id="searchProductsWithStep" resultMap="ProductMatchResultMap">
+        SELECT DISTINCT p.*
+        <if test="stepName != null and stepName != ''">
+            , c.compatibility_status
+        </if>
+        FROM uv_oil_matte_product p
+        <if test="stepName != null and stepName != ''">
+            INNER JOIN uv_oil_matte_compatibility c ON p.id = c.product_id
+        </if>
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (p.material_name LIKE CONCAT('%', #{keyword}, '%')
+                   OR p.material_code LIKE CONCAT('%', #{keyword}, '%')
+                   OR p.stock_code LIKE CONCAT('%', #{keyword}, '%')
+                   OR p.notes LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="stepName != null and stepName != ''">
+                AND c.post_processing_step = #{stepName}
+            </if>
+        </where>
+        ORDER BY p.material_code ASC, p.id ASC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countProductsWithStep" resultType="java.lang.Long">
+        SELECT COUNT(DISTINCT p.id) FROM uv_oil_matte_product p
+        <if test="stepName != null and stepName != ''">
+            INNER JOIN uv_oil_matte_compatibility c ON p.id = c.product_id
+        </if>
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (p.material_name LIKE CONCAT('%', #{keyword}, '%')
+                   OR p.material_code LIKE CONCAT('%', #{keyword}, '%')
+                   OR p.stock_code LIKE CONCAT('%', #{keyword}, '%')
+                   OR p.notes LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="stepName != null and stepName != ''">
+                AND c.post_processing_step = #{stepName}
+            </if>
+        </where>
+    </select>
+
+    <select id="getDistinctPostProcessingSteps" resultType="java.lang.String">
+        SELECT DISTINCT post_processing_step FROM uv_oil_matte_compatibility ORDER BY post_processing_step ASC
+    </select>
+
+    <select id="getDistinctStepsWithCategory" resultType="java.util.Map">
+        SELECT step_category AS "category", post_processing_step AS "step"
+        FROM uv_oil_matte_compatibility
+        WHERE step_category IS NOT NULL
+        GROUP BY step_category, post_processing_step
+        ORDER BY step_category, post_processing_step
+    </select>
+
+    <!-- ========== 多步骤匹配查询 ========== -->
+
+    <select id="searchMultiStepProductIds" resultType="java.lang.Integer">
+        SELECT p.id
+        FROM uv_oil_matte_product p
+        INNER JOIN uv_oil_matte_compatibility c ON p.id = c.product_id
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (p.material_name LIKE CONCAT('%', #{keyword}, '%')
+                   OR p.material_code LIKE CONCAT('%', #{keyword}, '%')
+                   OR p.stock_code LIKE CONCAT('%', #{keyword}, '%')
+                   OR p.notes LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            AND c.post_processing_step IN
+            <foreach collection="steps" item="step" open="(" separator="," close=")">
+                #{step}
+            </foreach>
+        </where>
+        GROUP BY p.id
+        HAVING COUNT(DISTINCT c.post_processing_step) = #{stepCount}
+        ORDER BY MAX(p.material_code) ASC, p.id ASC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countMultiStepProducts" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM (
+            SELECT p.id
+            FROM uv_oil_matte_product p
+            INNER JOIN uv_oil_matte_compatibility c ON p.id = c.product_id
+            <where>
+                <if test="keyword != null and keyword != ''">
+                    AND (p.material_name LIKE CONCAT('%', #{keyword}, '%')
+                       OR p.material_code LIKE CONCAT('%', #{keyword}, '%')
+                       OR p.stock_code LIKE CONCAT('%', #{keyword}, '%')
+                       OR p.notes LIKE CONCAT('%', #{keyword}, '%'))
+                </if>
+                AND c.post_processing_step IN
+                <foreach collection="steps" item="step" open="(" separator="," close=")">
+                    #{step}
+                </foreach>
+            </where>
+            GROUP BY p.id
+            HAVING COUNT(DISTINCT c.post_processing_step) = #{stepCount}
+        ) tmp
+    </select>
+
+    <select id="findProductsByIds" resultMap="ProductResultMap">
+        SELECT * FROM uv_oil_matte_product
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        ORDER BY material_code ASC, id ASC
+    </select>
+
+    <select id="findCompatibilityStatusForProducts" resultType="java.util.Map">
+        SELECT product_id, post_processing_step, compatibility_status
+        FROM uv_oil_matte_compatibility
+        WHERE product_id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND post_processing_step IN
+        <foreach collection="steps" item="step" open="(" separator="," close=")">
+            #{step}
+        </foreach>
+        ORDER BY product_id, post_processing_step
     </select>
 
 </mapper>

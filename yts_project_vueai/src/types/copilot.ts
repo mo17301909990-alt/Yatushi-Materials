@@ -92,6 +92,23 @@ export interface ProductCardData {
   postProcesses: string[]
 }
 
+export interface CompatibilityItem {
+  materialName: string
+  status: 'compatible' | 'incompatible' | 'partial'
+  verifyCount: number
+}
+
+export interface UnifiedCompatibility {
+  id?: number;
+  materialCode?: string;
+  materialName?: string;
+  moduleType?: string;
+  processOperation?: string;
+  compatibilityStatus?: string;
+  conditionDesc?: string;
+  sourceTable?: string;
+}
+
 export interface CompatibilityTableData {
   headers: string[]
   rows: string[][]

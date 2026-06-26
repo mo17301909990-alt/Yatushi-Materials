@@ -45,7 +45,7 @@ export const adminChangeApi = {
   /** 预览变更 */
   preview(params: { entityType: string; entityId: number; changes: Record<string, unknown> }) {
     return request({
-      url: '/api/agent/admin/preview',
+      url: '/agent/admin/preview',
       method: 'post',
       data: params,
     }) as Promise<AdminChangePreview>
@@ -58,9 +58,10 @@ export const adminChangeApi = {
     changes: Record<string, unknown>
     risk?: string
     reason?: string
+    confirmed?: boolean
   }) {
     return request({
-      url: '/api/agent/admin/execute',
+      url: '/agent/admin/execute',
       method: 'post',
       data: params,
     }) as Promise<AdminChangeResult>
@@ -69,7 +70,7 @@ export const adminChangeApi = {
   /** 回滚变更 */
   rollback(recordId: number) {
     return request({
-      url: `/api/agent/admin/rollback/${recordId}`,
+      url: `/agent/admin/rollback/${recordId}`,
       method: 'post',
     }) as Promise<AdminChangeResult>
   },
@@ -77,7 +78,7 @@ export const adminChangeApi = {
   /** 查询变更历史 */
   queryChanges(params: { entityType?: string; status?: string; pageNo?: number; pageSize?: number }) {
     return request({
-      url: '/api/agent/admin/changes',
+      url: '/agent/admin/changes',
       method: 'get',
       params,
     }) as Promise<AdminChangeQueryResult>
@@ -86,7 +87,7 @@ export const adminChangeApi = {
   /** 查询单条变更详情 */
   getChangeDetail(recordId: number) {
     return request({
-      url: `/api/agent/admin/changes/${recordId}`,
+      url: `/agent/admin/changes/${recordId}`,
       method: 'get',
     }) as Promise<{ record: AdminChangeRecordInfo; snapshots: unknown[] }>
   },

@@ -57,6 +57,16 @@ public class UvOilMatteProduct {
     private String color;
 
     /**
+     * 厚度
+     */
+    private String thickness;
+
+    /**
+     * 形状
+     */
+    private String shape;
+
+    /**
      * 测试员(中文名)
      */
     private String responsiblePerson;

@@ -96,6 +96,11 @@ public interface WearResistantGoldPaperMappingMapper {
      * 获取所有可用的耐磨金纸类型
      */
     List<String> getAllGoldPaperTypes();
+
+    /**
+     * 更新注意事项ID列表
+     */
+    void updateNoticeIds(@Param("id") Integer id, @Param("noticeIds") List<Integer> noticeIds);
 }
 
 

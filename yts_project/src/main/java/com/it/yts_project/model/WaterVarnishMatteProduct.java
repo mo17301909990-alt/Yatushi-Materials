@@ -42,6 +42,12 @@ public class WaterVarnishMatteProduct {
     /** 測試員(中文名) */
     private String responsiblePerson;
 
+    /** 厚度 */
+    private String thickness;
+
+    /** 形状 */
+    private String shape;
+
     /** 用紙尺寸-最小(mm) */
     private String minSheetSize;
 

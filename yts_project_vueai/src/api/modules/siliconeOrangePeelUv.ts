@@ -6,37 +6,13 @@ export interface SiliconeOrangePeelUvProduct {
   supplierCode?: string;
   stockCode?: string;
   materialName?: string;
-  usageText?: string;
-  materialType?: string;
-  thickness?: string;
-  sizeInfo?: string;
+  usage?: string;
+  category?: string;
   color?: string;
-  shape?: string;
   responsiblePerson?: string;
-  minPaperSize?: string;
-  maxPaperSize?: string;
-  minDot?: string;
-  maxDot?: string;
-  minLine?: string;
-  maxLine?: string;
+  minSheetSize?: string;
+  maxSheetSize?: string;
   minSpacing?: string;
-  maxSpacing?: string;
-  minPatternArea?: string;
-  maxPatternArea?: string;
-  structureApplication?: string;
-  singleSide?: string;
-  doubleSide?: string;
-  coverPage?: string;
-  bookSpine?: string;
-  pitPosition?: string;
-  innerPage?: string;
-  interfacePaperBaseThickness?: string;
-  interfacePaperSuitable?: string;
-  interfacePaperUnsuitable?: string;
-  interfaceInkSuitable?: string;
-  interfaceInkUnsuitable?: string;
-  interfaceCoatingSuitable?: string;
-  interfaceCoatingUnsuitable?: string;
   designInfo?: string;
   applicableInterface?: string;
   notes?: string;
@@ -55,88 +31,48 @@ export interface SiliconeOrangePeelUvCompatibility {
   productName?: string;
 }
 
+export interface SiliconeOrangePeelUvMatchParams {
+  keyword?: string;
+  stepName?: string;
+  page?: number;
+  size?: number;
+}
+
+export interface PagedItems<T> {
+  items: T[];
+  total: number;
+  pageSize: number;
+  currentPage: number;
+  totalPages: number;
+}
+
 export const siliconeOrangePeelUvApi = {
-  // ========== 产品管理 ==========
+  getAllProducts() { return request.get('/silicone_orange_peel_uv/products'); },
+  getProductById(id: number) { return request.get(`/silicone_orange_peel_uv/products/${id}`); },
+  searchProducts(keyword: string) { return request.get('/silicone_orange_peel_uv/products/search', { params: { keyword } }); },
+  createProduct(product: SiliconeOrangePeelUvProduct) { return request.post('/silicone_orange_peel_uv/products', product); },
+  updateProduct(id: number, product: SiliconeOrangePeelUvProduct) { return request.put(`/silicone_orange_peel_uv/products/${id}`, product); },
+  deleteProduct(id: number) { return request.delete(`/silicone_orange_peel_uv/products/${id}`); },
 
-  /** 获取所有激活的产品 */
-  getActiveProducts() {
-    return request.get('/api/silicone_orange_peel_uv/products');
-  },
-
-  /** 获取所有产品（含未激活） */
-  getAllProducts() {
-    return request.get('/api/silicone_orange_peel_uv/products/all');
-  },
-
-  /** 根据ID获取产品 */
-  getProductById(id: number) {
-    return request.get(`/api/silicone_orange_peel_uv/products/${id}`);
-  },
-
-  /** 搜索产品 */
-  searchProducts(keyword: string) {
-    return request.get('/api/silicone_orange_peel_uv/products/search', { params: { keyword } });
-  },
-
-  /** 新增产品 */
-  createProduct(data: SiliconeOrangePeelUvProduct) {
-    return request.post('/api/silicone_orange_peel_uv/products', data);
-  },
-
-  /** 更新产品 */
-  updateProduct(id: number, data: SiliconeOrangePeelUvProduct) {
-    return request.put(`/api/silicone_orange_peel_uv/products/${id}`, data);
-  },
-
-  /** 删除产品 */
-  deleteProduct(id: number) {
-    return request.delete(`/api/silicone_orange_peel_uv/products/${id}`);
-  },
-
-  // ========== 兼容性管理 ==========
-
-  /** 获取所有兼容性列表 */
-  getAllCompatibilities() {
-    return request.get('/api/silicone_orange_peel_uv/compatibilities');
-  },
-
-  /** 根据产品ID获取兼容性列表 */
   getCompatibilitiesByProductId(productId: number) {
-    return request.get(`/api/silicone_orange_peel_uv/compatibilities/product/${productId}`);
+    return request.get('/silicone_orange_peel_uv/compatibilities', { params: { productId } });
+  },
+  getCompatibilityById(id: number) { return request.get(`/silicone_orange_peel_uv/compatibilities/${id}`); },
+  createCompatibility(compatibility: SiliconeOrangePeelUvCompatibility) { return request.post('/silicone_orange_peel_uv/compatibilities', compatibility); },
+  updateCompatibility(id: number, compatibility: SiliconeOrangePeelUvCompatibility) {
+    return request.put(`/silicone_orange_peel_uv/compatibilities/${id}`, compatibility);
+  },
+  deleteCompatibility(id: number) { return request.delete(`/silicone_orange_peel_uv/compatibilities/${id}`); },
+  batchSaveCompatibilities(compatibilities: SiliconeOrangePeelUvCompatibility[]) {
+    return request.post('/silicone_orange_peel_uv/compatibilities/batch', compatibilities);
+  },
+  batchDeleteCompatibilities(ids: number[]) {
+    return request.delete('/silicone_orange_peel_uv/compatibilities/batch', { data: ids });
   },
 
-  /** 根据ID获取兼容性 */
-  getCompatibilityById(id: number) {
-    return request.get(`/api/silicone_orange_peel_uv/compatibilities/${id}`);
+  match(params: SiliconeOrangePeelUvMatchParams) {
+    return request.post<PagedItems<SiliconeOrangePeelUvProduct>>('/silicone_orange_peel_uv/match', params);
   },
-
-  /** 新增兼容性 */
-  createCompatibility(data: SiliconeOrangePeelUvCompatibility) {
-    return request.post('/api/silicone_orange_peel_uv/compatibilities', data);
-  },
-
-  /** 更新兼容性 */
-  updateCompatibility(id: number, data: SiliconeOrangePeelUvCompatibility) {
-    return request.put(`/api/silicone_orange_peel_uv/compatibilities/${id}`, data);
-  },
-
-  /** 批量保存兼容性 */
-  batchSaveCompatibilities(data: SiliconeOrangePeelUvCompatibility[]) {
-    return request.post('/api/silicone_orange_peel_uv/compatibilities/batch', data);
-  },
-
-  /** 删除兼容性 */
-  deleteCompatibility(id: number) {
-    return request.delete(`/api/silicone_orange_peel_uv/compatibilities/${id}`);
-  },
-
-  /** 根据产品ID删除所有兼容性 */
-  deleteCompatibilitiesByProductId(productId: number) {
-    return request.delete(`/api/silicone_orange_peel_uv/compatibilities/product/${productId}`);
-  },
-
-  /** 获取所有后加工工序名称 */
-  getAllPostProcessingSteps() {
-    return request.get('/api/silicone_orange_peel_uv/post-processing-steps');
-  }
+  getSteps() { return request.get<string[]>('/silicone_orange_peel_uv/steps'); },
+  getProductDetail(id: number) { return request.get(`/silicone_orange_peel_uv/products/${id}/detail`); },
 };

@@ -20,7 +20,7 @@ export const preProcessingStepsApi = {
    */
   getAllActiveOptions(): Promise<PreProcessingStepsOption[]> {
     console.log('Calling getAllActiveOptions API');
-    return request.get('/api/pre-processing-steps/options');
+    return request.get('/pre-processing-steps/options');
   },
 
   /**
@@ -30,7 +30,7 @@ export const preProcessingStepsApi = {
    */
   getById(id: number): Promise<PreProcessingStepsOption> {
     console.log('Calling getById API with id:', id);
-    return request.get(`/api/pre-processing-steps/options/${id}`);
+    return request.get(`/pre-processing-steps/options/${id}`);
   },
 
   /**
@@ -39,6 +39,6 @@ export const preProcessingStepsApi = {
    */
   getAllOptions(): Promise<PreProcessingStepsOption[]> {
     console.log('Calling getAllOptions API');
-    return request.get('/api/pre-processing-steps/options/all');
+    return request.get('/pre-processing-steps/options/all');
   }
 };

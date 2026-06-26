@@ -22,49 +22,49 @@ export const compatibilityApi = {
    * 获取兼容的烫金类型
    */
   getCompatibleHotStampingTypes(params: CompatibilityQueryParams) {
-    return request.post<HotStampingCompatibility[]>('/api/compatibility/hot-stamping-types', params);
+    return request.post<HotStampingCompatibility[]>('/compatibility/hot-stamping-types', params);
   },
 
   /**
    * 智能推荐烫金类型
    */
   getRecommendedHotStampingTypes(params: CompatibilityQueryParams) {
-    return request.post<string[]>('/api/compatibility/recommend', params);
+    return request.post<string[]>('/compatibility/recommend', params);
   },
 
   /**
    * 验证烫金类型兼容性
    */
   validateCompatibility(params: CompatibilityQueryParams, hotStampingType: string) {
-    return request.post<boolean>(`/api/compatibility/validate?hotStampingType=${hotStampingType}`, params);
+    return request.post<boolean>(`/compatibility/validate?hotStampingType=${hotStampingType}`, params);
   },
 
   /**
    * 获取所有烫金纸性能类型
    */
   getAllPaperPerformanceTypes() {
-    return request.get<PaperPerformanceType[]>('/api/compatibility/paper-performance-types');
+    return request.get<PaperPerformanceType[]>('/compatibility/paper-performance-types');
   },
 
   /**
    * 获取所有产品类型
    */
   getAllProductTypes() {
-    return request.get<ProductType[]>('/api/compatibility/product-types');
+    return request.get<ProductType[]>('/compatibility/product-types');
   },
 
   /**
    * 获取所有烫金类型
    */
   getAllHotStampingTypes() {
-    return request.get<HotStampingType[]>('/api/compatibility/hot-stamping-types');
+    return request.get<HotStampingType[]>('/compatibility/hot-stamping-types');
   },
 
   /**
    * 获取兼容性筛选选项
    */
   getFilterOptions() {
-    return request.get<CompatibilityFilterOptions>('/api/compatibility/filter-options');
+    return request.get<CompatibilityFilterOptions>('/compatibility/filter-options');
   },
 
   // ========== 过胶兼容性相关API ==========
@@ -73,7 +73,7 @@ export const compatibilityApi = {
    * 根据参数查询过胶兼容性
    */
   getLaminationCompatibility(params: LaminationCompatibilityQueryParams) {
-    return request.post<LaminationCompatibility[]>('/api/compatibility/lamination-compatibility', params);
+    return request.post<LaminationCompatibility[]>('/compatibility/lamination-compatibility', params);
   },
 
   /**
@@ -85,7 +85,7 @@ export const compatibilityApi = {
     params.append('foilSeries', foilSeries);
     if (postProcessingStepId) params.append('postProcessingStepId', postProcessingStepId.toString());
 
-    return request.get<LaminationMaterialOptions[]>(`/api/compatibility/compatible-materials?${params.toString()}`);
+    return request.get<LaminationMaterialOptions[]>(`/compatibility/compatible-materials?${params.toString()}`);
   },
 
   /**
@@ -97,21 +97,21 @@ export const compatibilityApi = {
     params.append('foilSeries', foilSeries);
     if (laminationMaterialId) params.append('laminationMaterialId', laminationMaterialId.toString());
 
-    return request.get<PostProcessingOptions[]>(`/api/compatibility/compatible-post-processing?${params.toString()}`);
+    return request.get<PostProcessingOptions[]>(`/compatibility/compatible-post-processing?${params.toString()}`);
   },
 
   /**
    * 获取所有过胶材质选项
    */
   getAllLaminationMaterials() {
-    return request.get<LaminationMaterialOptions[]>('/api/compatibility/lamination-materials');
+    return request.get<LaminationMaterialOptions[]>('/compatibility/lamination-materials');
   },
 
   /**
    * 获取所有后加工步骤选项
    */
   getAllPostProcessingSteps() {
-    return request.get<PostProcessingOptions[]>('/api/compatibility/post-processing-steps');
+    return request.get<PostProcessingOptions[]>('/compatibility/post-processing-steps');
   },
 
   /**
@@ -124,7 +124,7 @@ export const compatibilityApi = {
     params.append('postProcessingStepId', postProcessingStepId.toString());
     params.append('laminationMaterialId', laminationMaterialId.toString());
 
-    return request.get<'V' | 'X'>(`/api/compatibility/check-lamination-compatibility?${params.toString()}`);
+    return request.get<'V' | 'X'>(`/compatibility/check-lamination-compatibility?${params.toString()}`);
   },
 
   /**
@@ -141,7 +141,7 @@ export const compatibilityApi = {
         description: string;
         sortOrder: number;
       }[] | null;
-    }[]>('/api/compatibility/hot-stamping-type-groups');
+    }[]>('/compatibility/hot-stamping-type-groups');
   },
 
   /**
@@ -157,6 +157,6 @@ export const compatibilityApi = {
       sortOrder: number;
       createdAt: string;
       updatedAt: string;
-    }[]>(`/api/compatibility/position-options/${stampingType}`);
+    }[]>(`/compatibility/position-options/${stampingType}`);
   }
 };

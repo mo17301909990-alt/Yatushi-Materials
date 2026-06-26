@@ -69,6 +69,7 @@ export interface BatchOperation {
   ids: number[];
   operation: 'edit' | 'copy' | 'delete';
   data?: Partial<SmartCompatibilityRule>;
+  modifications?: Record<string, any>;
 }
 
 export interface CompatibilityMatrix {

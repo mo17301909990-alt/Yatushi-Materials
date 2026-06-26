@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 印刷UV后加工表实体类
@@ -62,4 +63,11 @@ public class PostProcessingPrintUv {
      */
     @ExcelIgnore
     private LocalDateTime updatedAt;
+
+    /**
+     * 关联的注意事项ID列表
+     * 对应数据库字段: notice_ids (INTEGER[])
+     */
+    @ExcelIgnore
+    private List<Integer> noticeIds;
 }

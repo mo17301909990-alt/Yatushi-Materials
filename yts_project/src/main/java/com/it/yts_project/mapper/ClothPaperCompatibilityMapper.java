@@ -108,4 +108,16 @@ public interface ClothPaperCompatibilityMapper {
      * @return 燙金紙系列
      */
     String getProjectIdByName(@Param("productName") String productName);
+
+    /**
+     * 根据ID获取兼容性记录
+     * @param id 主键ID
+     * @return 兼容性记录
+     */
+    ClothPaperCompatibilityDTO getById(@Param("id") Integer id);
+
+    /**
+     * 更新注意事项ID列表
+     */
+    void updateNoticeIds(@Param("id") Integer id, @Param("noticeIds") List<Integer> noticeIds);
 }

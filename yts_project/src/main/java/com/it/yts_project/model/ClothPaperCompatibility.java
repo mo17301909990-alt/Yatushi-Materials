@@ -2,6 +2,7 @@ package com.it.yts_project.model;
 
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 布面纸兼容性实体类
@@ -16,7 +17,8 @@ public class ClothPaperCompatibility {
     private String paperType;  // 纸张类型
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    
+    private List<Integer> noticeIds;  // 关联的注意事项ID数组
+
     // 关联查询字段
     private String clothPaperTypeName;  // 布面纸类型名称
     private String clothPaperCategory;  // 布面纸分类

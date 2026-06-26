@@ -1,7 +1,9 @@
 package com.it.yts_project.service.Impl;
 
+import com.it.yts_project.dto.ClothPaperTypeDTO;
 import com.it.yts_project.mapper.PostProcessingLeduvglitterMapper;
 import com.it.yts_project.model.PostProcessingLeduvglitter;
+import com.it.yts_project.service.ClothPaperTypeService;
 import com.it.yts_project.service.PostProcessingLeduvglitterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,9 @@ public class PostProcessingLeduvglitterServiceImpl implements PostProcessingLedu
     
     @Autowired
     private PostProcessingLeduvglitterMapper mapper;
+
+    @Autowired(required = false)
+    private ClothPaperTypeService clothPaperTypeService;
     
     @Override
     public List<PostProcessingLeduvglitter> getAllLeduvglitterConfigs() {
@@ -46,6 +51,7 @@ public class PostProcessingLeduvglitterServiceImpl implements PostProcessingLedu
         postProcessingLeduvglitter.setUpdatedAt(now);
         
         mapper.insert(postProcessingLeduvglitter);
+        fillClothPaperTypeName(postProcessingLeduvglitter);
         return postProcessingLeduvglitter;
     }
     
@@ -53,7 +59,24 @@ public class PostProcessingLeduvglitterServiceImpl implements PostProcessingLedu
     public PostProcessingLeduvglitter updateLeduvglitterConfig(PostProcessingLeduvglitter postProcessingLeduvglitter) {
         postProcessingLeduvglitter.setUpdatedAt(LocalDateTime.now());
         mapper.update(postProcessingLeduvglitter);
+        fillClothPaperTypeName(postProcessingLeduvglitter);
         return postProcessingLeduvglitter;
+    }
+
+    /** 回填布面纸类型名称，便于接口返回与操作日志显示 */
+    private void fillClothPaperTypeName(PostProcessingLeduvglitter config) {
+        if (config == null || config.getClothPaperTypeId() == null || clothPaperTypeService == null) return;
+        try {
+            ClothPaperTypeDTO dto = clothPaperTypeService.getById(config.getClothPaperTypeId());
+            if (dto != null) {
+                String name = dto.getCategory() != null && !dto.getCategory().isBlank()
+                    ? (dto.getTypeName() != null && !dto.getTypeName().isBlank() ? dto.getCategory() + "." + dto.getTypeName() : dto.getCategory())
+                    : (dto.getTypeName() != null ? dto.getTypeName() : "");
+                config.setClothPaperTypeName(name);
+            }
+        } catch (Exception ignored) {
+            // 仅用于展示，失败不抛
+        }
     }
     
     @Override

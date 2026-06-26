@@ -117,6 +117,13 @@
         LIMIT 1
     </select>
     
+    <!-- 解除绑定：将引用指定规则ID的布面纸类型的 series_priority_rule_id 置为 null -->
+    <update id="unsetSeriesPriorityRuleId">
+        UPDATE cloth_paper_types
+        SET series_priority_rule_id = NULL, updated_at = CURRENT_TIMESTAMP
+        WHERE series_priority_rule_id = #{ruleId}
+    </update>
+
     <!-- 根据类型名称获取布料纸类型（返回第一个匹配的） -->
     <select id="getByTypeName" resultType="com.it.yts_project.dto.ClothPaperTypeDTO">
         SELECT 

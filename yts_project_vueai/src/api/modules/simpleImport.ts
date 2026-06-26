@@ -4,7 +4,7 @@ export const simpleImportApi = {
    * 导入产品信息
    */
   async importProduct(type: string, formData: FormData): Promise<any> {
-    const response = await fetch(`/api/product-import/${type}`, {
+    const response = await fetch(`/product-import/${type}`, {
       method: 'POST',
       body: formData,
       headers: {
@@ -26,7 +26,7 @@ export const simpleImportApi = {
     const formData = new FormData()
     formData.append('file', file)
 
-    const response = await fetch('/api/product-import/validate', {
+    const response = await fetch('/product-import/validate', {
       method: 'POST',
       body: formData,
       headers: {
@@ -45,7 +45,7 @@ export const simpleImportApi = {
    * 获取配置选项
    */
   async getConfigOptions(): Promise<any> {
-    const response = await fetch('/api/product-import/config-options', {
+    const response = await fetch('/product-import/config-options', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`

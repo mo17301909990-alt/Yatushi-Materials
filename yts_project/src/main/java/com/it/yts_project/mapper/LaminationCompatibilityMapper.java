@@ -157,4 +157,9 @@ public interface LaminationCompatibilityMapper {
                                            @Param("postProcessingStepId") Integer postProcessingStepId,
                                            @Param("laminationMaterialId") Integer laminationMaterialId,
                                            @Param("interfaceTypeId") Integer interfaceTypeId);
+
+    /**
+     * 更新注意事项ID列表
+     */
+    void updateNoticeIds(@Param("id") Integer id, @Param("noticeIds") List<Integer> noticeIds);
 }

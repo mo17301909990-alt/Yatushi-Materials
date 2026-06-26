@@ -1,19 +1,24 @@
 package com.it.yts_project.mapper;
 
+import com.it.yts_project.config.AbstractIntegrationTest;
 import com.it.yts_project.dto.GoldFoilProductDTO;
 import com.it.yts_project.dto.GoldFoilQueryParams;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
+@Disabled("需要真实 PostgreSQL，仅集成测试时启用")
 @SpringBootTest
-public class SecondMatchMapperTestCase {
+@ActiveProfiles("test")
+public class SecondMatchMapperTestCase extends AbstractIntegrationTest {
 
 
     @Autowired

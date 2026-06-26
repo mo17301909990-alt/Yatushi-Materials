@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { ref, watch, computed, onBeforeUnmount } from 'vue'
+import { ref, watch, computed, onMounted, onBeforeUnmount } from 'vue'
 import { goldFoilApi } from '@/api'
 import type { GoldFoilProduct } from '@/types/goldFoil'
 import { useCopilotStore } from '@/stores/copilot'
+import { useRoute } from 'vue-router'
 import GoldFoilFilterPanel from '@/components/match/GoldFoilFilterPanel.vue'
 import MatchResultList from '@/components/match/MatchResultList.vue'
 import CopilotSidebar from '@/components/copilot/CopilotSidebar.vue'
 import ProductReferencePanel from '@/components/match/ProductReferencePanel.vue'
 
 const copilot = useCopilotStore()
+const route = useRoute()
 const products = ref<GoldFoilProduct[]>([])
 
 // ── 三栏拖动调整大小 ──
@@ -188,6 +190,20 @@ watch(() => copilot.filterParams, async (params) => {
     }
   }
 }, { deep: true })
+
+// 從 URL query 參數自動填充搜索（全局搜索即填充）
+onMounted(() => {
+  const search = route.query.search as string | undefined
+  const code = route.query.code as string | undefined
+  if (search || code) {
+    const params: Record<string, unknown> = {}
+    if (code) {
+      params.gpNo = code
+    }
+    // 通過 copilot store 觸發搜索（filterParams watcher 會調用 doSearch）
+    copilot.setFilterParams(params)
+  }
+})
 </script>
 
 <template>

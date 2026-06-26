@@ -2,7 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.it.yts_project.mapper.SiliconeWrinkleUvMapper">
 
-    <!-- 产品结果映射 -->
     <resultMap id="ProductResultMap" type="com.it.yts_project.model.SiliconeWrinkleUvProduct">
         <id property="id" column="id"/>
         <result property="materialCode" column="material_code"/>
@@ -24,7 +23,6 @@
         <result property="updatedAt" column="updated_at"/>
     </resultMap>
 
-    <!-- 兼容性结果映射 -->
     <resultMap id="CompatibilityResultMap" type="com.it.yts_project.model.SiliconeWrinkleUvCompatibility">
         <id property="id" column="id"/>
         <result property="productId" column="product_id"/>
@@ -32,16 +30,11 @@
         <result property="compatibilityStatus" column="compatibility_status"/>
         <result property="displayOrder" column="display_order"/>
         <result property="createdAt" column="created_at"/>
+        <result property="productName" column="product_name"/>
     </resultMap>
 
-    <!-- ==================== 产品管理 ==================== -->
-
     <select id="findAllProducts" resultMap="ProductResultMap">
-        SELECT * FROM silicone_wrinkle_uv_product ORDER BY id ASC
-    </select>
-
-    <select id="findActiveProducts" resultMap="ProductResultMap">
-        SELECT * FROM silicone_wrinkle_uv_product WHERE is_active = true ORDER BY id ASC
+        SELECT * FROM silicone_wrinkle_uv_product ORDER BY material_code ASC, id ASC
     </select>
 
     <select id="findProductById" resultMap="ProductResultMap">
@@ -52,40 +45,30 @@
         SELECT * FROM silicone_wrinkle_uv_product
         WHERE material_name LIKE CONCAT('%', #{keyword}, '%')
            OR material_code LIKE CONCAT('%', #{keyword}, '%')
-           OR category LIKE CONCAT('%', #{keyword}, '%')
-        ORDER BY id ASC
+           OR stock_code LIKE CONCAT('%', #{keyword}, '%')
+           OR notes LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY material_code ASC, id ASC
     </select>
 
     <insert id="insertProduct" parameterType="com.it.yts_project.model.SiliconeWrinkleUvProduct" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO silicone_wrinkle_uv_product (
-            material_code, supplier_code, stock_code, material_name, usage,
+        INSERT INTO silicone_wrinkle_uv_product (material_code, supplier_code, stock_code, material_name, usage,
             category, color, responsible_person, min_sheet_size, max_sheet_size,
-            min_spacing, design_info, applicable_interface, notes, is_active
-        ) VALUES (
-            #{materialCode}, #{supplierCode}, #{stockCode}, #{materialName}, #{usage},
+            min_spacing, design_info, applicable_interface, notes, is_active)
+        VALUES (#{materialCode}, #{supplierCode}, #{stockCode}, #{materialName}, #{usage},
             #{category}, #{color}, #{responsiblePerson}, #{minSheetSize}, #{maxSheetSize},
-            #{minSpacing}, #{designInfo}, #{applicableInterface}, #{notes}, #{isActive}
-        )
+            #{minSpacing}, #{designInfo}, #{applicableInterface}, #{notes}, #{isActive})
     </insert>
 
     <update id="updateProduct" parameterType="com.it.yts_project.model.SiliconeWrinkleUvProduct">
         UPDATE silicone_wrinkle_uv_product SET
-            material_code = #{materialCode},
-            supplier_code = #{supplierCode},
-            stock_code = #{stockCode},
-            material_name = #{materialName},
-            usage = #{usage},
-            category = #{category},
-            color = #{color},
+            material_code = #{materialCode}, supplier_code = #{supplierCode},
+            stock_code = #{stockCode}, material_name = #{materialName},
+            usage = #{usage}, category = #{category}, color = #{color},
             responsible_person = #{responsiblePerson},
-            min_sheet_size = #{minSheetSize},
-            max_sheet_size = #{maxSheetSize},
-            min_spacing = #{minSpacing},
-            design_info = #{designInfo},
-            applicable_interface = #{applicableInterface},
-            notes = #{notes},
-            is_active = #{isActive},
-            updated_at = CURRENT_TIMESTAMP
+            min_sheet_size = #{minSheetSize}, max_sheet_size = #{maxSheetSize},
+            min_spacing = #{minSpacing}, design_info = #{designInfo},
+            applicable_interface = #{applicableInterface}, notes = #{notes},
+            is_active = #{isActive}, updated_at = CURRENT_TIMESTAMP
         WHERE id = #{id}
     </update>
 
@@ -93,25 +76,17 @@
         DELETE FROM silicone_wrinkle_uv_product WHERE id = #{id}
     </delete>
 
-    <!-- ==================== 兼容性管理 ==================== -->
-
     <select id="findCompatibilitiesByProductId" resultMap="CompatibilityResultMap">
-        SELECT * FROM silicone_wrinkle_uv_compatibility
-        WHERE product_id = #{productId}
-        ORDER BY display_order ASC, id ASC
-    </select>
-
-    <select id="findAllCompatibilities" resultMap="CompatibilityResultMap">
-        SELECT * FROM silicone_wrinkle_uv_compatibility ORDER BY product_id ASC, display_order ASC, id ASC
+        SELECT c.*, p.material_name AS product_name
+        FROM silicone_wrinkle_uv_compatibility c LEFT JOIN silicone_wrinkle_uv_product p ON c.product_id = p.id
+        WHERE c.product_id = #{productId}
+        ORDER BY c.display_order ASC, c.id ASC
     </select>
 
     <select id="findCompatibilityById" resultMap="CompatibilityResultMap">
-        SELECT * FROM silicone_wrinkle_uv_compatibility WHERE id = #{id}
-    </select>
-
-    <select id="findCompatibilityByUniqueKey" resultMap="CompatibilityResultMap">
-        SELECT * FROM silicone_wrinkle_uv_compatibility
-        WHERE product_id = #{productId} AND post_processing_step = #{postProcessingStep}
+        SELECT c.*, p.material_name AS product_name
+        FROM silicone_wrinkle_uv_compatibility c LEFT JOIN silicone_wrinkle_uv_product p ON c.product_id = p.id
+        WHERE c.id = #{id}
     </select>
 
     <insert id="insertCompatibility" parameterType="com.it.yts_project.model.SiliconeWrinkleUvCompatibility" useGeneratedKeys="true" keyProperty="id">
@@ -121,10 +96,8 @@
 
     <update id="updateCompatibility" parameterType="com.it.yts_project.model.SiliconeWrinkleUvCompatibility">
         UPDATE silicone_wrinkle_uv_compatibility SET
-            product_id = #{productId},
-            post_processing_step = #{postProcessingStep},
-            compatibility_status = #{compatibilityStatus},
-            display_order = #{displayOrder}
+            product_id = #{productId}, post_processing_step = #{postProcessingStep},
+            compatibility_status = #{compatibilityStatus}, display_order = #{displayOrder}
         WHERE id = #{id}
     </update>
 
@@ -132,11 +105,8 @@
         DELETE FROM silicone_wrinkle_uv_compatibility WHERE id = #{id}
     </delete>
 
-    <delete id="batchDeleteCompatibilities">
-        DELETE FROM silicone_wrinkle_uv_compatibility WHERE id IN
-        <foreach collection="ids" item="id" open="(" separator="," close=")">
-            #{id}
-        </foreach>
+    <delete id="deleteCompatibilitiesByProductId">
+        DELETE FROM silicone_wrinkle_uv_compatibility WHERE product_id = #{productId}
     </delete>
 
     <insert id="batchInsertCompatibilities" parameterType="java.util.List">
@@ -146,5 +116,53 @@
             (#{item.productId}, #{item.postProcessingStep}, #{item.compatibilityStatus}, #{item.displayOrder})
         </foreach>
     </insert>
+
+    <select id="findCompatibilityByUniqueKey" resultMap="CompatibilityResultMap">
+        SELECT c.*, p.material_name AS product_name
+        FROM silicone_wrinkle_uv_compatibility c LEFT JOIN silicone_wrinkle_uv_product p ON c.product_id = p.id
+        WHERE c.product_id = #{productId} AND c.post_processing_step = #{postProcessingStep}
+    </select>
+
+    <select id="searchProductsWithStep" resultMap="ProductResultMap">
+        SELECT DISTINCT p.* FROM silicone_wrinkle_uv_product p
+        <if test="stepName != null and stepName != ''">
+            INNER JOIN silicone_wrinkle_uv_compatibility c ON p.id = c.product_id
+        </if>
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (p.material_name LIKE CONCAT('%', #{keyword}, '%')
+                   OR p.material_code LIKE CONCAT('%', #{keyword}, '%')
+                   OR p.stock_code LIKE CONCAT('%', #{keyword}, '%')
+                   OR p.notes LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="stepName != null and stepName != ''">
+                AND c.post_processing_step = #{stepName}
+            </if>
+        </where>
+        ORDER BY p.material_code ASC, p.id ASC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countProductsWithStep" resultType="java.lang.Long">
+        SELECT COUNT(DISTINCT p.id) FROM silicone_wrinkle_uv_product p
+        <if test="stepName != null and stepName != ''">
+            INNER JOIN silicone_wrinkle_uv_compatibility c ON p.id = c.product_id
+        </if>
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (p.material_name LIKE CONCAT('%', #{keyword}, '%')
+                   OR p.material_code LIKE CONCAT('%', #{keyword}, '%')
+                   OR p.stock_code LIKE CONCAT('%', #{keyword}, '%')
+                   OR p.notes LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="stepName != null and stepName != ''">
+                AND c.post_processing_step = #{stepName}
+            </if>
+        </where>
+    </select>
+
+    <select id="getDistinctPostProcessingSteps" resultType="java.lang.String">
+        SELECT DISTINCT post_processing_step FROM silicone_wrinkle_uv_compatibility ORDER BY post_processing_step ASC
+    </select>
 
 </mapper>

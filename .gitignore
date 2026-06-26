@@ -68,3 +68,24 @@ audit_script.py
 # database_scripts/p0_etl.py 是核心ETL，不忽略
 ~$
 yst/
+.gstack/
+
+# Database dumps
+gold_foil_db_*.sql/
+gold_foil_db_*.sql
+
+# Screenshots / UI preview images
+database_scripts/*.png
+yts_project_vueai/*.png
+
+# Analysis temp outputs
+scan_uv_oil_result.json
+tmp_audit_results.json
+
+# Exported data files
+完整产品信息_导出*.xlsx
+資源組選取及产能*.xlsx
+
+# Audit export dirs
+审核导出/
+审核导出/*.md

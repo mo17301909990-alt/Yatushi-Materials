@@ -10,10 +10,18 @@
         <result property="hot_stamping_paper_type" column="hot_stamping_paper_type"/>
     </resultMap>
     
+    <select id="getAllDistinctPaperTypes" resultType="java.lang.String">
+        SELECT DISTINCT hot_stamping_paper_type
+        FROM products
+        WHERE hot_stamping_paper_type IS NOT NULL
+        AND hot_stamping_paper_type != ''
+        ORDER BY hot_stamping_paper_type
+    </select>
+
     <select id="getAllSeriesNames" resultType="java.lang.String">
-        SELECT DISTINCT name 
-        FROM products 
-        WHERE name IS NOT NULL 
+        SELECT DISTINCT name
+        FROM products
+        WHERE name IS NOT NULL
         ORDER BY name
     </select>
     

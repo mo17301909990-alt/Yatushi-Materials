@@ -64,7 +64,7 @@ export interface LaminationCompatibilityPageResponse {
   totalPages: number
 }
 
-const API_BASE_URL = '/api/api'
+const API_BASE_URL = '/api'
 
 // 过胶管理API
 export const laminatingApi = {

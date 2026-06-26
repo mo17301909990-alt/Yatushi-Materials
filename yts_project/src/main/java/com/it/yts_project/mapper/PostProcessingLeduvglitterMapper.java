@@ -124,4 +124,24 @@ public interface PostProcessingLeduvglitterMapper {
         @Param("ids") List<Integer> ids,
         @Param("compatibilityStatus") String compatibilityStatus
     );
+    
+    /**
+     * 根据条件获取注意事项ID列表
+     * @param clothPaperTypeId 布面纸类型ID
+     * @param productModelNumber 产品型号
+     * @param productName 产品名称
+     * @return 注意事项ID列表
+     */
+    List<Integer> getNoticeIdsByConditions(
+        @Param("clothPaperTypeId") Integer clothPaperTypeId,
+        @Param("productModelNumber") String productModelNumber,
+        @Param("productName") String productName
+    );
+    
+    /**
+     * 更新注意事项ID列表
+     * @param id 规则ID
+     * @param noticeIds 注意事项ID列表
+     */
+    void updateNoticeIds(@Param("id") Integer id, @Param("noticeIds") List<Integer> noticeIds);
 }

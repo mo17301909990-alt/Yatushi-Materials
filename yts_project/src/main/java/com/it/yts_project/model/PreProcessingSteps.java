@@ -4,6 +4,7 @@ import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 前工序步骤实体类
@@ -109,4 +110,10 @@ public class PreProcessingSteps {
      */
     @ExcelIgnore
     private LocalDateTime updatedAt;
+
+    /**
+     * 关联的注意事项ID数组
+     */
+    @ExcelIgnore
+    private List<Integer> noticeIds;
 }

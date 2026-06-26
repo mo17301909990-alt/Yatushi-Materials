@@ -1,18 +1,73 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import { useProcessStore } from '../../stores/process';
-import type { ProcessType } from '../../types/process';
+import { ref, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { usePermissionStore } from '../../stores/permission';
 import MessageNotification from '../message/MessageNotification.vue';
+import { unifiedSearch } from '@/api/modules/copilot';
+import type { UnifiedCompatibility } from '@/types/copilot';
 
-const processStore = useProcessStore();
 const router = useRouter();
 const route = useRoute();
 const permissionStore = usePermissionStore();
-const loading = ref(false);
 
-/** 後台入口：管理員角色或具備「系統管理」菜單權限（與庫中 system:management / 角色並行） */
+// ====== 全局搜索 ======
+const searchQuery = ref('');
+const searchResults = ref<UnifiedCompatibility[]>([]);
+const showDropdown = ref(false);
+const searching = ref(false);
+let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+function onSearchInput() {
+  if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
+  const q = searchQuery.value.trim();
+  if (!q) {
+    searchResults.value = [];
+    showDropdown.value = false;
+    return;
+  }
+  searchDebounceTimer = setTimeout(async () => {
+    searching.value = true;
+    try {
+      const results = await unifiedSearch(q);
+      searchResults.value = (results || []).slice(0, 5);
+      showDropdown.value = searchResults.value.length > 0;
+    } catch {
+      searchResults.value = [];
+      showDropdown.value = false;
+    } finally {
+      searching.value = false;
+    }
+  }, 300);
+}
+
+function selectSearchResult(item: UnifiedCompatibility) {
+  showDropdown.value = false;
+  searchQuery.value = '';
+  searchResults.value = [];
+  router.push({
+    path: '/smart-version',
+    query: { search: item.materialName, code: item.materialCode }
+  });
+}
+
+function handleSearchBlur() {
+  setTimeout(() => { showDropdown.value = false; }, 200);
+}
+
+function handleSearchFocus() {
+  if (searchResults.value.length > 0) {
+    showDropdown.value = true;
+  }
+}
+
+function statusBadgeClass(status: string): string {
+  if (status === 'compatible' || status === '匹配') return 'bg-green-100 text-green-700';
+  if (status === 'incompatible' || status === '不匹配') return 'bg-red-100 text-red-700';
+  if (status === 'partial' || status === '部分匹配') return 'bg-yellow-100 text-yellow-700';
+  return 'bg-gray-100 text-gray-600';
+}
+
+/** 後台入口：管理員角色或具備「系統管理」菜單權限 */
 const showBackendEntry = computed(() => {
   if (
     permissionStore.currentUserRoles.length === 0 &&
@@ -23,74 +78,7 @@ const showBackendEntry = computed(() => {
   return permissionStore.isAdmin || permissionStore.hasPermission('system:management');
 });
 
-/** 與 ProcessConfig.vue 主內容區 v-permission 一致 */
-const PROCESS_ENTRY_PERMISSION: Partial<Record<ProcessType, string>> = {
-  hotStamping: 'matching:hotstamping:view',
-  printing: 'matching:printing:view',
-  laminating: 'matching:lamination:view',
-  screenPrinting: 'matching:silkscreen:view'
-};
-
-function canSeeProcess(processId: ProcessType): boolean {
-  if (permissionStore.isAdmin) return true;
-  const perm = PROCESS_ENTRY_PERMISSION[processId];
-  if (!perm) {
-    // 数据源入口（如硅胶）：无专属权限时，已登录用户可见
-    return permissionStore.currentUserPermissions.length > 0;
-  }
-  if (
-    permissionStore.currentUserRoles.length === 0 &&
-    permissionStore.currentUserPermissions.length === 0
-  ) {
-    return false;
-  }
-  return permissionStore.hasPermission(perm);
-}
-
-const visibleProcesses = computed(() =>
-  processStore.processes.filter((p) => canSeeProcess(p.id))
-);
-
-watch(
-  visibleProcesses,
-  (list) => {
-    if (list.length === 0) return;
-    const allowed = new Set(list.map((p) => p.id));
-    const cur = processStore.currentProcess;
-    if (cur === 'techManagement' || cur === 'recommended') return;
-    if (!allowed.has(cur)) {
-      processStore.setCurrentProcess(list[0].id);
-    }
-  },
-  { immediate: true }
-);
-
-const handleProcessChange = async (processId: ProcessType) => {
-  loading.value = true;
-  processStore.setCurrentProcess(processId);
-
-  setTimeout(() => {
-    router.push('/process-config');
-    loading.value = false;
-  }, 300);
-};
-
-// 處理移動端下拉菜單變化
-const handleMobileProcessChange = (event: Event) => {
-  const target = event.target as HTMLSelectElement;
-  if (target && target.value) {
-    handleProcessChange(target.value as ProcessType);
-  }
-};
-
-
-
-const handleTechManagement = () => {
-  processStore.setCurrentProcess('techManagement');
-  router.push('/process-config');
-};
-
-/** 匹配偏好 / 標籤匹配 / 技術管理 合併為一個下拉（與原 v-permission 鍵一致；管理員顯示全部） */
+/** 匹配偏好 / 標籤匹配 / 技術管理 合併為一個下拉 */
 const canToolMatchPreference = computed(
   () => permissionStore.isAdmin || permissionStore.hasPermission('match:preference:view')
 );
@@ -104,7 +92,7 @@ const showToolNavDropdown = computed(
   () => canToolMatchPreference.value || canToolTagMatching.value || canToolTechManagement.value
 );
 
-/** 頂欄「系統操作指引」：與路由 /guide/hot-stamping-material 一致（查看指引 或 燙金物料主數據 或管理員） */
+/** 頂欄「系統操作指引」 */
 const showGuideNavLink = computed(
   () =>
     permissionStore.isAdmin ||
@@ -118,7 +106,6 @@ const toolNavValue = computed<ToolNavValue>(() => {
   const path = route.path;
   if (path.startsWith('/match-preference')) return 'preference';
   if (path.startsWith('/tag-matching')) return 'tag';
-  if (path === '/process-config' && processStore.currentProcess === 'techManagement') return 'tech';
   return '';
 });
 
@@ -130,7 +117,7 @@ const onToolNavChange = (event: Event) => {
   } else if (v === 'tag') {
     router.push('/tag-matching');
   } else if (v === 'tech') {
-    handleTechManagement();
+    router.push('/process-config');
   }
   el.blur();
 };
@@ -139,68 +126,130 @@ const logout = () => {
   localStorage.removeItem('isLoggedIn');
   router.push('/login');
 };
+
+/** 5 个模块入口 */
+const moduleEntries = [
+  { path: '/process-config', label: '烫金' },
+  { path: '/matching/uv-oil-matte', label: 'UV油墨' },
+  { path: '/matching/silicone', label: '硅胶' },
+  { path: '/matching/leo', label: 'LEO纸品' },
+  { path: '/matching/lamination-material', label: '印刷加工' },
+] as const;
 </script>
 
 <template>
   <nav class="bg-indigo-600 fixed w-full z-10">
     <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16">
-        <!-- 左側區域：系統標題 + 匹配系統按鈕 -->
-        <div class="flex items-center space-x-6">
-          <!-- 系統標題 -->
+      <!-- 第一行：標題 + 5 模块入口 + 右侧功能 -->
+      <div class="flex items-center justify-between h-14">
+        <!-- 左側：標題 + 模块入口 + 搜索 -->
+        <div class="flex items-center space-x-4 overflow-x-auto">
           <div class="flex-shrink-0">
-            <h1 class="text-white text-xl font-bold">印刷廠物料匹配系統</h1>
+            <h1 class="text-white text-lg lg:text-xl font-bold truncate whitespace-nowrap">印刷廠物料系統</h1>
           </div>
 
-          <!-- 匹配系統：無對應工藝權限則不顯示（與 ProcessConfig 內容區一致） -->
-          <div v-if="visibleProcesses.length > 0" class="hidden lg:flex items-center space-x-1">
-            <button
-              v-for="process in visibleProcesses"
-              :key="process.id"
-              @click="handleProcessChange(process.id)"
-              :disabled="loading"
-              :class="[
-                'nav-button px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 ease-in-out whitespace-nowrap relative',
-                processStore.currentProcess === process.id
-                  ? 'active bg-indigo-700 text-white shadow-lg transform scale-105'
-                  : 'text-white hover:bg-indigo-500 hover:shadow-md hover:transform hover:scale-102',
-                loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
-              ]"
+          <!-- 5 个模块入口按钮（桌面端） -->
+          <div class="items-center space-x-1 hidden lg:flex">
+            <router-link
+              to="/process-config"
+              class="px-3 py-1.5 rounded-md text-xs lg:text-sm font-medium transition-all whitespace-nowrap text-indigo-100 hover:bg-indigo-500 hover:text-white"
+              active-class="bg-indigo-700 text-white shadow-lg"
             >
-              <span class="relative z-10">{{ process.name }}</span>
-              <!-- 加载指示器 -->
-              <div
-                v-if="loading && processStore.currentProcess === process.id"
-                class="absolute inset-0 flex items-center justify-center"
-              >
-                <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              </div>
-            </button>
+              烫金
+            </router-link>
+            <router-link
+              to="/matching/uv-oil-matte"
+              class="px-3 py-1.5 rounded-md text-xs lg:text-sm font-medium transition-all whitespace-nowrap text-indigo-100 hover:bg-indigo-500 hover:text-white"
+              active-class="bg-indigo-700 text-white shadow-lg"
+            >
+              UV油墨
+            </router-link>
+            <router-link
+              to="/matching/silicone"
+              class="px-3 py-1.5 rounded-md text-xs lg:text-sm font-medium transition-all whitespace-nowrap text-indigo-100 hover:bg-indigo-500 hover:text-white"
+              active-class="bg-indigo-700 text-white shadow-lg"
+            >
+              硅胶
+            </router-link>
+            <router-link
+              to="/matching/leo"
+              class="px-3 py-1.5 rounded-md text-xs lg:text-sm font-medium transition-all whitespace-nowrap text-indigo-100 hover:bg-indigo-500 hover:text-white"
+              active-class="bg-indigo-700 text-white shadow-lg"
+            >
+              LEO纸品
+            </router-link>
+            <router-link
+              to="/matching/lamination-material"
+              class="px-3 py-1.5 rounded-md text-xs lg:text-sm font-medium transition-all whitespace-nowrap text-indigo-100 hover:bg-indigo-500 hover:text-white"
+              active-class="bg-indigo-700 text-white shadow-lg"
+            >
+              印刷加工
+            </router-link>
           </div>
 
-          <!-- 移動端：僅列出有權限的工藝 -->
-          <div v-if="visibleProcesses.length > 0" class="lg:hidden">
+          <!-- 移动端模块下拉 -->
+          <div class="lg:hidden">
             <select
-              :value="processStore.currentProcess"
-              @change="handleMobileProcessChange"
-              class="bg-indigo-700 text-white border-indigo-500 rounded-md text-sm px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+              :value="route.path"
+              @change="(e) => { const el = e.target as HTMLSelectElement; if (el.value) router.push(el.value); el.blur(); }"
+              class="bg-indigo-700 text-white border-indigo-500 rounded-md text-xs px-1.5 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-300"
             >
-              <option
-                v-for="process in visibleProcesses"
-                :key="process.id"
-                :value="process.id"
-              >
-                {{ process.name }}
-              </option>
+              <option value="" disabled>选择模块</option>
+              <option value="/process-config">烫金</option>
+              <option value="/matching/uv-oil-matte">UV油墨</option>
+              <option value="/matching/silicone">硅胶</option>
+              <option value="/matching/leo">LEO纸品</option>
+              <option value="/matching/lamination-material">印刷加工</option>
             </select>
+          </div>
+
+          <!-- 全局搜索框 -->
+          <div class="relative hidden lg:block">
+            <div class="flex items-center">
+              <svg class="absolute left-2.5 w-4 h-4 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                v-model="searchQuery"
+                placeholder="搜索物料、型号..."
+                class="w-48 lg:w-56 bg-indigo-500/40 text-white placeholder-indigo-200/70 rounded-md pl-8 pr-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:bg-indigo-500/60 transition-colors"
+                @input="onSearchInput"
+                @focus="handleSearchFocus"
+                @blur="handleSearchBlur"
+              />
+              <svg v-if="searching" class="absolute right-2.5 w-4 h-4 text-indigo-200 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+            </div>
+
+            <!-- 搜索下拉 -->
+            <div
+              v-if="showDropdown && searchResults.length > 0"
+              class="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden z-50"
+            >
+              <div
+                v-for="(item, idx) in searchResults"
+                :key="idx"
+                class="px-3 py-2.5 hover:bg-indigo-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
+                @mousedown.prevent="selectSearchResult(item)"
+              >
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-gray-800 font-medium truncate">{{ item.materialName || '—' }}</span>
+                  <span v-if="item.compatibilityStatus" class="ml-2 inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium"
+                    :class="statusBadgeClass(item.compatibilityStatus)"
+                  >{{ item.compatibilityStatus }}</span>
+                </div>
+                <div class="text-xs text-gray-400 mt-0.5">
+                  {{ item.materialCode || item.moduleType || '' }}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!--
-          右側入口與路由 / 權限目錄一致：在「角色管理」中為角色勾選對應 permission_key 即可控制可見性。
-          （庫表 permissions.parent_id 用於後台權限樹層級；頂欄不讀庫，由下列鍵與角色-權限關聯決定。）
-        -->
-        <div class="flex items-center space-x-2">
+        <!-- 右側：用戶操作 -->
+        <div class="flex items-center space-x-1 lg:space-x-2 flex-shrink-0">
           <span v-permission="'announcement:view'" class="inline-flex items-center">
             <MessageNotification />
           </span>
@@ -208,47 +257,46 @@ const logout = () => {
           <router-link
             v-if="showGuideNavLink"
             to="/guide/hot-stamping-material"
-            class="text-white hover:bg-indigo-500 hover:shadow-md hover:transform hover:scale-105 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 ease-in-out whitespace-nowrap"
-            active-class="bg-indigo-700 shadow-lg"
+            class="text-white hover:bg-indigo-500 px-2 py-1.5 rounded-md text-xs lg:text-sm font-medium transition-colors whitespace-nowrap"
+            active-class="bg-indigo-700"
           >
-            系統操作指引
+            操作指引
           </router-link>
 
           <router-link
             to="/agent/process"
-            class="text-white hover:bg-indigo-500 hover:shadow-md hover:transform hover:scale-105 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 ease-in-out whitespace-nowrap"
-            active-class="bg-indigo-700 shadow-lg"
+            class="text-white hover:bg-indigo-500 px-2 py-1.5 rounded-md text-xs lg:text-sm font-medium transition-colors whitespace-nowrap"
+            active-class="bg-indigo-700"
           >
             工艺 Agent
           </router-link>
 
           <router-link
             to="/agent/chat"
-            class="text-white hover:bg-indigo-500 hover:shadow-md hover:transform hover:scale-105 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 ease-in-out whitespace-nowrap"
-            active-class="bg-indigo-700 shadow-lg"
+            class="text-white hover:bg-indigo-500 px-2 py-1.5 rounded-md text-xs lg:text-sm font-medium transition-colors whitespace-nowrap"
+            active-class="bg-indigo-700"
           >
             Agent 集群
           </router-link>
 
           <router-link
             to="/smart-version"
-            class="bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 shadow-md hover:shadow-lg px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 ease-in-out whitespace-nowrap animate-pulse"
-            active-class="bg-indigo-700 shadow-lg"
+            class="bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 px-3 py-1.5 rounded-md text-xs lg:text-sm font-medium transition-colors whitespace-nowrap"
+            active-class="bg-indigo-700"
           >
-            ✨ AI 智能版
+            AI 智能版
           </router-link>
 
           <div v-if="showToolNavDropdown" class="relative inline-flex items-center">
-            <label class="sr-only" for="tool-nav-select">匹配與技術功能</label>
             <select
               id="tool-nav-select"
               :value="toolNavValue"
               aria-label="匹配與技術"
               @change="onToolNavChange"
-              class="bg-indigo-700 text-white border border-indigo-400/80 rounded-md text-sm font-medium pl-2 pr-7 py-2 max-w-[11rem] sm:max-w-none focus:outline-none focus:ring-2 focus:ring-indigo-300 cursor-pointer appearance-none bg-[length:1rem] bg-[right_0.35rem_center] bg-no-repeat"
+              class="bg-indigo-700 text-white border border-indigo-400/80 rounded-md text-xs lg:text-sm font-medium pl-1.5 pr-5 py-1.5 max-w-[8rem] lg:max-w-none focus:outline-none focus:ring-2 focus:ring-indigo-300 cursor-pointer appearance-none bg-[length:0.8rem] bg-[right_0.25rem_center] bg-no-repeat"
               style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 fill=%22none%22 viewBox=%220 0 24 24%22 stroke=%22white%22%3E%3Cpath stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M19 9l-7 7-7-7%22/%3E%3C/svg%3E')"
             >
-              <option value="" disabled>匹配與技術</option>
+              <option value="" disabled>工具</option>
               <option v-if="canToolMatchPreference" value="preference">匹配偏好</option>
               <option v-if="canToolTagMatching" value="tag">標籤匹配</option>
               <option v-if="canToolTechManagement" value="tech">技術管理</option>
@@ -258,121 +306,29 @@ const logout = () => {
           <router-link
             v-permission="'resource:group:selector:view'"
             to="/resource-group-selector"
-            class="text-white hover:bg-indigo-500 hover:shadow-md hover:transform hover:scale-105 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 ease-in-out whitespace-nowrap"
-            active-class="bg-indigo-700 shadow-lg"
+            class="text-white hover:bg-indigo-500 px-2 py-1.5 rounded-md text-xs lg:text-sm font-medium transition-colors whitespace-nowrap hidden lg:inline-block"
+            active-class="bg-indigo-700"
           >
-            資源組選擇工具
+            资源组
           </router-link>
 
           <router-link
             v-if="showBackendEntry"
             to="/admin"
-            class="text-white hover:bg-indigo-500 hover:shadow-md hover:transform hover:scale-105 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 ease-in-out whitespace-nowrap"
-            active-class="bg-indigo-700 shadow-lg"
+            class="text-white hover:bg-indigo-500 px-2 py-1.5 rounded-md text-xs lg:text-sm font-medium transition-colors whitespace-nowrap"
+            active-class="bg-indigo-700"
           >
-            後台管理
+            后台管理
           </router-link>
+
           <button
             @click="logout"
-            class="text-white hover:bg-red-500 hover:shadow-md hover:transform hover:scale-105 px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 ease-in-out whitespace-nowrap"
+            class="text-white hover:bg-red-500 px-2 py-1.5 rounded-md text-xs lg:text-sm font-medium transition-colors whitespace-nowrap"
           >
-            退出登錄
+            退出
           </button>
         </div>
       </div>
     </div>
   </nav>
 </template>
-
-<style scoped>
-/* 导航按钮动画效果 */
-.nav-button {
-  position: relative;
-  overflow: hidden;
-}
-
-.nav-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transition: left 0.5s;
-}
-
-.nav-button:hover::before {
-  left: 100%;
-}
-
-/* 活跃状态的特殊效果 */
-.nav-button.active {
-  background: linear-gradient(135deg, #4f46e5, #6366f1);
-  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
-}
-
-/* 加载动画 */
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
-
-/* 微交互效果 */
-.hover\:scale-102:hover {
-  transform: scale(1.02);
-}
-
-.hover\:scale-105:hover {
-  transform: scale(1.05);
-}
-
-/* 确保导航栏在小屏幕下也能正常显示 */
-@media (max-width: 1024px) {
-  .flex.items-center.space-x-6 {
-    gap: 1rem;
-  }
-
-  .flex.items-center.space-x-3 {
-    gap: 0.5rem;
-  }
-}
-
-/* 优化按钮在小屏幕下的显示 */
-@media (max-width: 768px) {
-  .text-xl {
-    font-size: 1.125rem; /* 18px */
-  }
-
-  .px-3 {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-  }
-
-  .text-sm {
-    font-size: 0.75rem; /* 12px */
-  }
-}
-
-/* 确保移动端下拉菜单样式 */
-select option {
-  background-color: #4f46e5;
-  color: white;
-}
-
-/* 防止按钮文字换行 */
-.whitespace-nowrap {
-  white-space: nowrap;
-}
-
-/* 优化系统标题在小屏幕下的显示 */
-@media (max-width: 640px) {
-  h1 {
-    font-size: 1rem; /* 16px */
-  }
-}
-</style>

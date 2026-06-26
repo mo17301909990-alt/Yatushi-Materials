@@ -70,6 +70,8 @@ const loading = ref(false);
 const error = ref<string | null>(null);
 const searching = ref(false);
 const searchResults = ref<any[]>([]);
+// 折叠状态：默认收起非关键筛选条件
+const collapsed = ref(true);
 
 // 计算属性：检查是否显示印刷警告
 const showPrintingWarning = computed(() => {
@@ -2437,6 +2439,12 @@ defineExpose({
       <div v-if="error" class="mt-2 text-sm text-red-600">{{ error }}</div>
     </div>
 
+    <!-- 折叠分割线 -->
+    <div class="border-t border-gray-200 my-4"></div>
+
+    <!-- 更多筛选条件（折叠区） -->
+    <div v-show="!collapsed" class="space-y-6">
+
     <!-- 适用界面(前工序) -->
     <div class="mb-4">
       <div class="flex justify-between items-center mb-3">
@@ -2793,6 +2801,26 @@ defineExpose({
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- 关闭折叠区 -->
+    </div>
+
+    <!-- 展开/收起按钮 -->
+    <div class="flex justify-center mt-2">
+      <button
+        @click="collapsed = !collapsed"
+        class="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs text-gray-500 hover:text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-full transition-colors"
+      >
+        <svg
+          class="w-3.5 h-3.5 transition-transform duration-200"
+          :class="{ 'rotate-180': !collapsed }"
+          fill="none" stroke="currentColor" viewBox="0 0 24 24"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+        {{ collapsed ? '展开更多筛选条件' : '收起筛选条件' }}
+      </button>
     </div>
 
   </div>

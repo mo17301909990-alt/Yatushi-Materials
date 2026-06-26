@@ -8,6 +8,10 @@ import com.it.yts_project.service.DashScopeChatService;
 import com.it.yts_project.service.GoldFoilProductService;
 import com.it.yts_project.service.ai.AiChatOrchestratorService;
 import com.it.yts_project.service.MatchingNoticeService;
+import com.it.yts_project.agent.Intent;
+import com.it.yts_project.agent.IntentDetector;
+import com.it.yts_project.agent.KeywordIntentDetector;
+import com.it.yts_project.service.CompatibilityQueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +66,10 @@ public class AiController {
     private GoldFoilProductService goldFoilProductService;
     @Autowired
     private MatchingNoticeService matchingNoticeService;
+    @Autowired
+    private KeywordIntentDetector keywordIntentDetector;
+    @Autowired
+    private CompatibilityQueryService compatibilityQueryService;
 
     /**
      * 简单对话（烫金匹配问答）
@@ -280,6 +288,73 @@ public class AiController {
             log.error("解析或匹配失败", e);
             return ResponseEntity.status(500).body(emptyResponse());
         }
+    }
+
+    /**
+     * 关键词兼容性查询（Phase 1 MVP）
+     * 接收自然语言关键词，返回匹配的物料兼容性信息
+     */
+    @PostMapping("/compatibility/query")
+    public ResponseEntity<CopilotResponse> queryCompatibility(@RequestBody Map<String, String> request) {
+        String keywords = request.getOrDefault("message", "");
+        if (keywords.isBlank()) {
+            return ResponseEntity.badRequest().body(
+                CopilotResponse.builder().reply("请输入查询关键词").build()
+            );
+        }
+
+        // 1. 检测意图
+        IntentDetector.DetectionResult result = keywordIntentDetector.detect(keywords);
+        Intent intent = result.intent();
+
+        // 2. 如果不是兼容性/匹配意图，走通用回复
+        if (intent != Intent.COMPATIBILITY && intent != Intent.MATCH) {
+            return ResponseEntity.ok(
+                CopilotResponse.builder()
+                    .reply("请输入物料名称或兼容性关键词进行查询，例如 \"UV哑油\"、\"烫金纸\"")
+                    .suggestions(List.of("查兼容产品", "看匹配方案", "工艺建议"))
+                    .type("text")
+                    .build()
+            );
+        }
+
+        // 3. 调用 CompatibilityQueryService 搜索
+        CompatibilityQueryResult queryResult = compatibilityQueryService.searchCompatibility(keywords);
+        List<CompatibilityProductDTO> products = queryResult.getProducts();
+
+        // 4. 如果无匹配，返回提示
+        if (products.isEmpty()) {
+            return ResponseEntity.ok(
+                CopilotResponse.builder()
+                    .reply("未找到与 \"" + keywords + "\" 相关的物料，请尝试其他关键词")
+                    .suggestions(List.of("重新搜索", "查看全部物料", "咨询客服"))
+                    .type("text")
+                    .build()
+            );
+        }
+
+        // 5. 取第一个物料名称查询生产统计
+        String firstMaterialName = products.get(0).getMaterialName();
+        CompatibilityQueryResult.ProductionStats stats = compatibilityQueryService.getProductionStats(firstMaterialName);
+
+        // 6. 构造返回 data
+        Map<String, Object> data = new HashMap<>();
+        data.put("products", products);
+        if (stats != null) {
+            Map<String, Object> statsMap = new HashMap<>();
+            statsMap.put("v", stats.getVerifiedCount());
+            statsMap.put("x", stats.getNotCompatibleCount());
+            data.put("productionStats", statsMap);
+        }
+
+        return ResponseEntity.ok(
+            CopilotResponse.builder()
+                .reply("找到 " + products.size() + " 个相关物料")
+                .type("compatibility")
+                .data(data)
+                .suggestions(List.of("查看详情", "重新搜索", "工艺建议"))
+                .build()
+        );
     }
 
     private static String stripMarkdownJson(String raw) {

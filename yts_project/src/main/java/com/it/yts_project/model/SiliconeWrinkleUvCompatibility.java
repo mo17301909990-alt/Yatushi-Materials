@@ -46,4 +46,9 @@ public class SiliconeWrinkleUvCompatibility {
      * 创建时间
      */
     private LocalDateTime createdAt;
+
+    /**
+     * 关联产品名称（非数据库字段，用于前端显示）
+     */
+    private String productName;
 }

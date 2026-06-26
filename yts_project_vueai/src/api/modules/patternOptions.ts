@@ -53,7 +53,7 @@ export const patternOptionsApi = {
    * 根据产品类型ID获取图案选项
    */
   getPatternOptionsByProductTypeId: async (productTypeId: number): Promise<HotStampingPatternBase[]> => {
-    const response = await axios.get(`/api/api/compatibility/pattern-options/${productTypeId}`);
+    const response = await axios.get(`/api/compatibility/pattern-options/${productTypeId}`);
     return response.data;
   },
 
@@ -61,7 +61,7 @@ export const patternOptionsApi = {
    * 获取所有激活的烫金图案基础信息
    */
   getActivePatterns: async (): Promise<HotStampingPatternBase[]> => {
-    const response = await axios.get('/api/api/hot-stamping-pattern-base/active');
+    const response = await axios.get('/api/hot-stamping-pattern-base/active');
     return response.data;
   },
 
@@ -69,7 +69,7 @@ export const patternOptionsApi = {
    * 获取所有烫金图案基础信息
    */
   getAllPatterns: async (): Promise<HotStampingPatternBase[]> => {
-    const response = await axios.get('/api/api/hot-stamping-pattern-base');
+    const response = await axios.get('/api/hot-stamping-pattern-base');
     return response.data;
   },
 
@@ -77,7 +77,7 @@ export const patternOptionsApi = {
    * 分页获取烫金图案基础信息
    */
   getPatternsPaginated: async (params: HotStampingPatternBaseQueryParams = {}): Promise<PaginatedResponse<HotStampingPatternBase>> => {
-    const response = await axios.get('/api/api/hot-stamping-pattern-base/paginated', { params });
+    const response = await axios.get('/api/hot-stamping-pattern-base/paginated', { params });
     return response.data;
   },
 
@@ -85,7 +85,7 @@ export const patternOptionsApi = {
    * 根据ID获取烫金图案基础信息
    */
   getPatternById: async (id: number): Promise<HotStampingPatternBase> => {
-    const response = await axios.get(`/api/api/hot-stamping-pattern-base/${id}`);
+    const response = await axios.get(`/api/hot-stamping-pattern-base/${id}`);
     return response.data;
   },
 
@@ -93,7 +93,7 @@ export const patternOptionsApi = {
    * 创建烫金图案基础信息
    */
   createPattern: async (pattern: CreateHotStampingPatternBase): Promise<HotStampingPatternBase> => {
-    const response = await axios.post('/api/api/hot-stamping-pattern-base', pattern);
+    const response = await axios.post('/api/hot-stamping-pattern-base', pattern);
     return response.data;
   },
 
@@ -101,7 +101,7 @@ export const patternOptionsApi = {
    * 更新烫金图案基础信息
    */
   updatePattern: async (id: number, pattern: Partial<CreateHotStampingPatternBase>): Promise<HotStampingPatternBase> => {
-    const response = await axios.put(`/api/api/hot-stamping-pattern-base/${id}`, pattern);
+    const response = await axios.put(`/api/hot-stamping-pattern-base/${id}`, pattern);
     return response.data;
   },
 
@@ -109,13 +109,13 @@ export const patternOptionsApi = {
    * 删除烫金图案基础信息
    */
   deletePattern: async (id: number): Promise<void> => {
-    await axios.delete(`/api/api/hot-stamping-pattern-base/${id}`);
+    await axios.delete(`/api/hot-stamping-pattern-base/${id}`);
   },
 
   /**
    * 批量删除烫金图案基础信息
    */
   batchDeletePatterns: async (ids: number[]): Promise<void> => {
-    await axios.delete('/api/api/hot-stamping-pattern-base/batch', { data: { ids } });
+    await axios.delete('/api/hot-stamping-pattern-base/batch', { data: { ids } });
   }
 };

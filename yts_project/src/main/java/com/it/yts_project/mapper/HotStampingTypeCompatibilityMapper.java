@@ -72,4 +72,19 @@ public interface HotStampingTypeCompatibilityMapper {
      * 获取所有兼容性配置（包含烫金类型信息）
      */
     List<HotStampingTypeCompatibility> findAll();
+
+    /**
+     * 根据条件获取注意事项ID列表
+     * @param hotStampingTypeOptionId 烫金类型选项ID
+     * @return 注意事项ID列表
+     */
+    List<Integer> getNoticeIdsByConditions(@Param("hotStampingTypeOptionId") Integer hotStampingTypeOptionId);
+
+    /**
+     * 根据燙金紙系列、纸张类型、烫金类型ID获取兼容性配置（用于导入时 upsert）
+     */
+    HotStampingTypeCompatibility findByProductNameAndPaperTypeAndHotStampingTypeId(
+        @Param("productName") String productName,
+        @Param("paperType") String paperType,
+        @Param("hotStampingTypeId") Integer hotStampingTypeId);
 }

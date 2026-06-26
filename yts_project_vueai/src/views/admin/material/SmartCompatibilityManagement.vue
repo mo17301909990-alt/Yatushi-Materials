@@ -735,7 +735,6 @@ import { smartCompatibilityApi, type SmartCompatibilityRule, type SmartCompatibi
 import { preProcessingStepsApi } from '../../../api/modules/preProcessingSteps'
 import { productTypeOptionsApi } from '../../../api/modules/productTypeOptions'
 import { wearResistantGoldPaperMappingApi } from '../../../api/modules/wearResistantGoldPaperMapping'
-import { productApi } from '../../../api/modules/product'
 
 // 路由实例
 const route = useRoute()

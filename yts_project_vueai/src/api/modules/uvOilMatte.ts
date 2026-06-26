@@ -9,6 +9,10 @@ export interface UvOilMatteProduct {
   usage?: string;
   category?: string;
   color?: string;
+  /** 厚度 */
+  thickness?: string;
+  /** 形状 */
+  shape?: string;
   responsiblePerson?: string;
   minSheetSize?: string;
   maxSheetSize?: string;
@@ -19,6 +23,10 @@ export interface UvOilMatteProduct {
   isActive?: boolean;
   createdAt?: string;
   updatedAt?: string;
+  /** 兼容性状态（V/X/null），仅匹配查询时返回 */
+  compatibilityStatus?: string;
+  /** 多步骤匹配时，每步骤兼容性状态映射 */
+  compatibilityStatusMap?: Record<string, string>;
 }
 
 export interface UvOilMatteCompatibility {
@@ -29,6 +37,33 @@ export interface UvOilMatteCompatibility {
   displayOrder?: number;
   createdAt?: string;
   productName?: string;
+}
+
+/** 后加工工序分类分组 */
+export interface StepCategoryGroup {
+  /** 大类名称（印刷/烫金/过胶/丝印/植毛/啤/手工/其他） */
+  category: string;
+  /** 该大类下的所有具体步骤 */
+  steps: string[];
+}
+
+// ========== 匹配查询接口 ==========
+
+export interface UvOilMatteMatchParams {
+  keyword?: string;
+  stepName?: string;
+  /** 多步骤 INTERSECT 查询（与 stepName 二选一） */
+  steps?: string[];
+  page?: number;
+  size?: number;
+}
+
+export interface PagedItems<T> {
+  items: T[];
+  total: number;
+  pageSize: number;
+  currentPage: number;
+  totalPages: number;
 }
 
 export const uvOilMatteApi = {
@@ -99,5 +134,22 @@ export const uvOilMatteApi = {
   /** 批量删除兼容性 */
   batchDeleteCompatibilities(ids: number[]) {
     return request.delete('/uv_oil_matte/compatibilities/batch', { data: ids });
+  },
+
+  // ========== 匹配查询（前端匹配页面使用） ==========
+
+  /** 匹配查询：关键词搜索 + 工序筛选 + 分页 */
+  match(params: UvOilMatteMatchParams) {
+    return request.post<PagedItems<UvOilMatteProduct>>('/uv_oil_matte/match', params);
+  },
+
+  /** 获取后加工工序步骤（按大类分组） */
+  getSteps() {
+    return request.get<StepCategoryGroup[]>('/uv_oil_matte/steps');
+  },
+
+  /** 获取产品详情（含兼容性列表） */
+  getProductDetail(id: number) {
+    return request.get(`/uv_oil_matte/products/${id}/detail`);
   },
 };

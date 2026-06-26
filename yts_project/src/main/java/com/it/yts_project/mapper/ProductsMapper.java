@@ -13,6 +13,12 @@ import java.util.List;
 public interface ProductsMapper {
     
     /**
+     * 获取所有去重的纸张类型
+     * @return 纸张类型列表
+     */
+    List<String> getAllDistinctPaperTypes();
+
+    /**
      * 获取所有产品系列名称
      * @return 产品系列名称列表
      */

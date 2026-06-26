@@ -15,6 +15,33 @@ const currentPage = ref(1);
 const pageSize = ref(15);
 const dialogVisible = ref(false);
 const currentProduct = ref<GoldFoilProduct | null>(null);
+const inquiryDialogVisible = ref(false);
+
+// 兼容性狀態徽標
+const compatibilityBadgeIcon = (status: string): string => {
+  if (status === 'compatible' || status === '匹配' || status === 'V') return 'V';
+  if (status === 'incompatible' || status === '不匹配' || status === 'X') return 'X';
+  if (status === 'partial' || status === '部分匹配') return '▷';
+  return '—';
+};
+
+const compatibilityBadgeClass = (status: string): string => {
+  if (status === 'compatible' || status === '匹配' || status === 'V') return 'bg-green-100 text-green-700 border-green-300';
+  if (status === 'incompatible' || status === '不匹配' || status === 'X') return 'bg-red-100 text-red-700 border-red-300';
+  if (status === 'partial' || status === '部分匹配') return 'bg-yellow-100 text-yellow-700 border-yellow-300';
+  return 'bg-gray-100 text-gray-600 border-gray-300';
+};
+
+// 格式化價格
+const formatPrice = (price: number | null | undefined): string => {
+  if (price == null) return '';
+  return Number(price).toFixed(2);
+};
+
+// 詢價
+const showInquiry = () => {
+  inquiryDialogVisible.value = true;
+};
 
 // 處理空值和特殊值的輔助函數
 const formatValue = (value: string | number | null | undefined): string => {
@@ -175,21 +202,43 @@ onMounted(() => {
        <span class="font-medium">{{ filteredProducts.length }}</span> 條記錄
     </div>
 
-    <!-- 数据列表 -->
-    <div v-if="!loading && !error" class="space-y-4">
+    <!-- 卡片列表 -->
+    <div v-if="!loading && !error" class="grid gap-3">
       <div v-for="item in paginatedProducts" :key="item.materialNumber"
-        class="bg-gray-50 rounded-lg p-4 text-sm border border-gray-200">
-        <div class="flex justify-between items-center">
-          <div>
-            <div class="font-medium text-gray-900">型號: {{ formatValue(item.modelNumber) }}</div>
-            <div class="text-sm text-gray-500">系列：{{ formatValue(item.name) }}</div>
+        class="card-item bg-white rounded-lg border border-gray-200 p-4 text-sm transition-shadow">
+        <div class="flex justify-between items-start">
+          <div class="flex-1 min-w-0">
+            <!-- 型號 + 兼容性徽標 -->
+            <div class="flex items-center gap-2">
+              <span class="font-semibold text-gray-900 truncate">{{ formatValue(item.modelNumber) }}</span>
+              <span v-if="(item as any).compatibilityStatus"
+                class="inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold border"
+                :class="compatibilityBadgeClass((item as any).compatibilityStatus)">
+                {{ compatibilityBadgeIcon((item as any).compatibilityStatus) }}
+              </span>
+            </div>
+            <!-- 系列名 -->
+            <div class="text-xs text-gray-500 mt-0.5">系列：{{ formatValue(item.name) }}</div>
+            <!-- 價格 -->
+            <div v-if="item.price != null && item.price !== ''" class="text-xs text-gray-600 mt-1">
+              價格：<span class="text-orange-600 font-medium">¥{{ formatPrice(item.price) }}</span>
+            </div>
           </div>
-          <button
-            class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm"
-            @click="openDetails(item)"
-          >
-            查看詳情
-          </button>
+          <!-- 操作按鈕 -->
+          <div class="flex items-center space-x-2 shrink-0 ml-3">
+            <button
+              class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded text-sm"
+              @click="showInquiry"
+            >
+              询价
+            </button>
+            <button
+              class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm"
+              @click="openDetails(item)"
+            >
+              查看詳情
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -349,6 +398,22 @@ onMounted(() => {
         </div>
       </template>
     </el-dialog>
+
+    <!-- 询价对话框 -->
+    <el-dialog v-model="inquiryDialogVisible" title="询价" width="30%" destroy-on-close center>
+      <div class="text-center py-6">
+        <svg class="w-16 h-16 mx-auto mb-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z" />
+        </svg>
+        <p class="text-gray-700 text-base font-medium">请联系销售获取报价</p>
+        <p class="text-gray-400 text-sm mt-2">如需了解具体价格，请致电或联系在线客服</p>
+      </div>
+      <template #footer>
+        <div class="flex justify-center">
+          <el-button type="primary" @click="inquiryDialogVisible = false">知道了</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -431,5 +496,14 @@ onMounted(() => {
 
 :deep(.el-pagination__jump .el-pagination__classifier) {
   display: none;
+}
+
+/* 卡片樣式 */
+.card-item {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.card-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 </style>

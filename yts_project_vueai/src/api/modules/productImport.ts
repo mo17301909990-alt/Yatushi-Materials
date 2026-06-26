@@ -46,7 +46,7 @@ export const productImportApi = {
       }
 
       const response = await request({
-        url: `/api/product-import/${type}`,
+        url: `/product-import/${type}`,
         method: 'POST',
         data: formData,
         headers: {
@@ -76,7 +76,7 @@ export const productImportApi = {
       formData.append('file', file)
 
       const response = await request({
-        url: '/api/product-import/validate',
+        url: '/product-import/validate',
         method: 'POST',
         data: formData,
         headers: {
@@ -98,7 +98,7 @@ export const productImportApi = {
   async getConfigOptions(): Promise<any> {
     try {
       const response = await request({
-        url: '/api/product-import/config-options',
+        url: '/product-import/config-options',
         method: 'GET'
       })
 
@@ -117,7 +117,7 @@ export const productImportApi = {
   async downloadTemplate(type: 'complete' | 'basic'): Promise<Blob> {
     try {
       const response = await request({
-        url: `/api/product-import/template/${type}`,
+        url: `/product-import/template/${type}`,
         method: 'GET',
         responseType: 'blob'
       })

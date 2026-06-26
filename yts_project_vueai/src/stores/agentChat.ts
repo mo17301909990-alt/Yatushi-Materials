@@ -247,7 +247,6 @@ export const useAgentChatStore = defineStore('agentChat', () => {
   async function handleAdminMessage(conv: AgentConversation, text: string) {
     // Simple pattern matching for admin commands
     const previewMatch = text.match(/预览[：:]\s*(.+)/)
-    const executeMatch = text.match(/^(?:执行|确认|应用|修改|调整|改)[：:]/)
     const rollbackMatch = text.match(/回滚[：:]\s*(\d+)/)
     const changeQueryMatch = text.match(/变更记录|查看变更|变更历史|changes/)
     const isPreview = text.includes('预览') && !previewMatch
@@ -417,17 +416,6 @@ export const useAgentChatStore = defineStore('agentChat', () => {
         '所有操作均先预览 → 确认 → 执行，支持自动回滚。',
       timestamp: Date.now(),
     })
-  }
-
-  /** 从回复中解析 PARAMS 标记 */
-  function parseParamsFromReply(reply: string): Record<string, unknown> | null {
-    const m = reply.match(/===PARAMS===\s*(\{[\s\S]*?\})\s*===PARAMS===/);
-    if (m) {
-      try {
-        return JSON.parse(m[1]);
-      } catch { /* ignore */ }
-    }
-    return null;
   }
 
   /** 构建当前累积筛选参数的文本描述，注入 AI 上下文 */
