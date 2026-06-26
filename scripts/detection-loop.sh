@@ -81,6 +81,12 @@ fi
 if [ "$RUN_ALL" = true ] || [ "$SINGLE_STEP" = "routes" ]; then
 echo ""
 echo "── Wave 1: 静态分析 ────────────────────────────────────"
+run_step "1c" "UI browse smoke" bash -c "cd '$PROJECT_ROOT/yts_project_vueai' && npx tsx --no-warnings ../scripts/ui-browse-smoke.ts 2>&1 | tail -5"
+fi
+
+if [ "$RUN_ALL" = true ] || [ "$SINGLE_STEP" = "types" ]; then
+echo ""
+echo "── Wave 1: 静态分析 ────────────────────────────────────"
 run_step "1a" "Route integrity" bash -c "cd '$PROJECT_ROOT/yts_project_vueai' && npx tsx scripts/smoke-routes.ts"
 fi
 
