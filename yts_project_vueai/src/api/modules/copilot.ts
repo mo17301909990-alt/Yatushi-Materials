@@ -1,5 +1,6 @@
 import request from '../request';
 import type { CardPayload } from '@/types/channel';
+import type { UnifiedCompatibility } from '@/types/copilot';
 
 export interface SourceRef {
   title: string;
@@ -33,8 +34,11 @@ export function extractSources(reply: string): { sources: SourceRef[]; cleanRepl
   return { sources, cleanReply: cleanedLines.join('\n').trim() };
 }
 
-export const queryCompatibility = (message: string): Promise<CopilotResponse> => {
-  return request.post('/api/ai/compatibility/query', { message }) as any;
+export const unifiedSearch = (keywords: string): Promise<UnifiedCompatibility[]> => {
+  return request.get('/compatibility/unified-search', {
+    params: { keywords },
+    paramsSerializer: { encode: encodeURIComponent },
+  }) as any;
 };
 
 export const copilotApi = {

@@ -3,9 +3,11 @@ package com.it.yts_project.service;
 import com.it.yts_project.dto.CompatibilityProductDTO;
 import com.it.yts_project.dto.CompatibilityQueryResult;
 import com.it.yts_project.mapper.CodeMappingMapper;
+import com.it.yts_project.model.UnifiedCompatibility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -207,6 +209,36 @@ public class CompatibilityQueryService {
         stats.setNotCompatibleCount(notCompatible);
         stats.setTotalCount(verified + notCompatible);
         return stats;
+    }
+
+    // ======================== 统一兼容性查询 ========================
+
+    /**
+     * 统一兼容性查询 — 收敛到 material_process_compatibility 主表。
+     * 此表已有 10,071 行、95 种工序、8 个工序大类，覆盖大部分场景。
+     * 对于特殊表，后续通过 code_mapping 桥接。
+     *
+     * @param keywords 搜索关键词（物料名称或编码）
+     * @return 统一兼容性记录列表
+     */
+    public List<UnifiedCompatibility> searchUnified(String keywords) {
+        if (keywords == null || keywords.isBlank()) {
+            return List.of();
+        }
+
+        String likePattern = "%" + keywords.trim() + "%";
+        String sql = """
+            SELECT mc.material_code, mc.material_name,
+                   mpc.operation_name AS process_operation,
+                   mpc.compatibility_status, mpc.condition_desc
+            FROM material_process_compatibility mpc
+            JOIN material_catalog mc ON mpc.material_id = mc.id
+            WHERE mc.material_name ILIKE ? OR mc.material_code ILIKE ?
+            LIMIT 20
+            """;
+        return jdbcTemplate.query(sql,
+                new BeanPropertyRowMapper<>(UnifiedCompatibility.class),
+                likePattern, likePattern);
     }
 
     // ======================== Internal ========================

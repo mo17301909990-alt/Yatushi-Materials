@@ -21,7 +21,7 @@ export interface ChatMessage {
   actions?: ActionButton[]
   isStreaming?: boolean;
   cardType?: MessageCardType;
-  cardData?: ProductCardData | CompatibilityTableData | ActionCardData | AdminPreviewData | AdminResultData | CompatibilityResultData;
+  cardData?: ProductCardData | CompatibilityTableData | ActionCardData | AdminPreviewData | AdminResultData;
 }
 
 export type AgentRole = 'general' | 'matching' | 'guide'
@@ -58,7 +58,7 @@ export const STAGE_SYSTEM_PROMPTS: Record<ConversationStage, string> = {
 
 // ====== 交互式消息卡片类型 ======
 export type MessageCardType = 'text' | 'product_card' | 'compatibility_table' | 'action_buttons'
-  | 'admin_preview' | 'admin_result' | 'admin_dialog' | 'compatibility'
+  | 'admin_preview' | 'admin_result' | 'admin_dialog'
 
 export interface AdminPreviewData {
   entityType: string
@@ -82,17 +82,6 @@ export interface AdminDialogData {
   risk: string
 }
 
-export interface CompatibilityItem {
-  materialName: string
-  status: 'compatible' | 'incompatible' | 'partial'
-  verifyCount: number
-}
-
-export interface CompatibilityResultData {
-  items: CompatibilityItem[]
-  title?: string
-}
-
 export interface ProductCardData {
   materialNumber: string
   color: string
@@ -101,6 +90,23 @@ export interface ProductCardData {
   /** e.g. { hotStamping: 'compatible', screenPrinting: 'incompatible', laminating: 'compatible', postProcessing: 'partial' } */
   compatibility: Record<string, 'compatible' | 'incompatible' | 'partial'>
   postProcesses: string[]
+}
+
+export interface CompatibilityItem {
+  materialName: string
+  status: 'compatible' | 'incompatible' | 'partial'
+  verifyCount: number
+}
+
+export interface UnifiedCompatibility {
+  id?: number;
+  materialCode?: string;
+  materialName?: string;
+  moduleType?: string;
+  processOperation?: string;
+  compatibilityStatus?: string;
+  conditionDesc?: string;
+  sourceTable?: string;
 }
 
 export interface CompatibilityTableData {

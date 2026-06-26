@@ -21,6 +21,7 @@
     "noFallthroughCasesInSwitch": true,
 
     /* Path alias */
+    "types": ["vitest/globals"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]

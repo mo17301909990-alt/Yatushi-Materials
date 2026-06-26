@@ -5,7 +5,6 @@ import MatchResultCard from '@/components/match/MatchResultCard.vue';
 import ProductCardResult from './ProductCardResult.vue';
 import CompatibilityTableCard from './CompatibilityTableCard.vue';
 import ActionCard from './ActionCard.vue';
-import CompatibilityResultCard from './CompatibilityResultCard.vue';
 import AdminChangePreview from '@/components/admin/AdminChangePreview.vue';
 import AdminChangeResult from '@/components/admin/AdminChangeResult.vue';
 
@@ -97,9 +96,6 @@ function formatTime(ts: number): string {
       </div>
       <div v-else-if="message.cardType === 'action_buttons'" class="px-0.5 mt-1">
         <ActionCard :actions="(message.cardData as any)?.actions" @action="(id: string) => emit('suggestion-click', id)" />
-      </div>
-      <div v-else-if="message.cardType === 'compatibility'" class="px-0.5 mt-1">
-        <CompatibilityResultCard :data="message.cardData as any" />
       </div>
 
       <!-- 管理员变更卡片 -->
