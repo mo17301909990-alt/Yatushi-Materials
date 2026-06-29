@@ -37,7 +37,7 @@ fail()  { echo "  ❌ FAIL: $*"; FAIL=1; }
 
 # 等待服务器响应（curl 重试，最长 $TIMEOUT 秒）
 wait_for_server() {
-  local url="$1" label="$2" waited=0
+  local url="$1" label="${2:-server}" waited=0
   while [ $waited -lt $TIMEOUT ]; do
     if curl -s -o /dev/null -w "%{http_code}" "$url" 2>/dev/null | grep -q .; then
       return 0
